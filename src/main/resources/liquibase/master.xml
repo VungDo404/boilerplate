@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.27.xsd">
+    <property name="now" value="now()" dbms="mysql" />
+    <property name="uuid" value="unhex(replace(uuid(),'-',''))" dbms="mysql"/>
+
+	<include file="liquibase/changelog/schema/29-01-changelog.xml"/>
+	<include file="liquibase/changelog/schema/13-01-seeding-user-changelog.xml"/>
+
+</databaseChangeLog>

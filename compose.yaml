@@ -1,0 +1,30 @@
+name: boilerplate-app
+services:
+    mysql:
+        image: 'mysql:latest'
+        restart: always
+        container_name: mysql
+        environment:
+            MYSQL_DATABASE: 'boilerplate-master'
+            MYSQL_ROOT_PASSWORD: 'Root_Password_123'
+        ports:
+            - '3307:3306'
+        volumes:
+            - mysqlboilerplate:/data/db
+    redis:
+        image: redis:6.2-alpine
+        container_name: redis
+        ports:
+            - '6379:6379'
+        environment:
+            - REDIS_PASSWORD=your_secure_password
+            - REDIS_DISABLE_COMMANDS=FLUSHDB;FLUSHALL
+        command: ["redis-server", "--requirepass", "your_secure_password"]
+        networks:
+            - backend
+networks:
+    backend:
+        driver: bridge
+
+volumes:
+    mysqlboilerplate:

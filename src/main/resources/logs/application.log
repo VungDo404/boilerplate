@@ -1,0 +1,215 @@
+2024-11-03 19:47:35.019 [restartedMain] INFO  c.a.b.BoilerplateApplication - Starting BoilerplateApplication using Java 17.0.10 with PID 11480 (D:\boilerplate\boilerplate\target\classes started by Admin in D:\boilerplate\boilerplate)
+2024-11-03 19:47:35.030 [restartedMain] INFO  c.a.b.BoilerplateApplication - The following 1 profile is active: "local"
+2024-11-03 19:47:35.092 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2024-11-03 19:47:35.093 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2024-11-03 19:47:35.115 [restartedMain] INFO  o.s.b.d.c.l.DockerComposeLifecycleManager - Using Docker Compose file 'D:\boilerplate\boilerplate\compose.yaml'
+2024-11-03 19:47:50.186 [restartedMain] INFO  c.a.b.BoilerplateApplication - Starting BoilerplateApplication using Java 17.0.10 with PID 17472 (D:\boilerplate\boilerplate\target\classes started by Admin in D:\boilerplate\boilerplate)
+2024-11-03 19:47:50.189 [restartedMain] INFO  c.a.b.BoilerplateApplication - The following 1 profile is active: "local"
+2024-11-03 19:47:50.234 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2024-11-03 19:47:50.235 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2024-11-03 19:47:50.252 [restartedMain] INFO  o.s.b.d.c.l.DockerComposeLifecycleManager - Using Docker Compose file 'D:\boilerplate\boilerplate\compose.yaml'
+2024-11-03 19:47:52.206 [restartedMain] INFO  o.s.b.d.c.l.DockerComposeLifecycleManager - There are already Docker Compose services running, skipping startup
+2024-11-03 19:47:53.683 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2024-11-03 19:47:53.685 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-11-03 19:47:53.847 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 154 ms. Found 2 JPA repository interfaces.
+2024-11-03 19:47:53.864 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2024-11-03 19:47:53.866 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2024-11-03 19:47:53.883 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.app.boilerplate.Repository.TokenRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2024-11-03 19:47:53.884 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.app.boilerplate.Repository.UserRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2024-11-03 19:47:53.885 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 8 ms. Found 0 Redis repository interfaces.
+2024-11-03 19:47:54.688 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2024-11-03 19:47:54.698 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2024-11-03 19:47:54.699 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.26]
+2024-11-03 19:47:54.756 [restartedMain] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring embedded WebApplicationContext
+2024-11-03 19:47:54.757 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2542 ms
+2024-11-03 19:47:55.755 [restartedMain] INFO  liquibase.changelog - Reading from `boilerplate-master`.DATABASECHANGELOG
+2024-11-03 19:47:55.809 [restartedMain] INFO  liquibase.ui - Database is up to date, no changesets to execute
+2024-11-03 19:47:55.812 [restartedMain] INFO  liquibase.changelog - Reading from `boilerplate-master`.DATABASECHANGELOG
+2024-11-03 19:47:55.821 [restartedMain] INFO  liquibase.util - UPDATE SUMMARY
+2024-11-03 19:47:55.821 [restartedMain] INFO  liquibase.util - Run:                          0
+2024-11-03 19:47:55.821 [restartedMain] INFO  liquibase.util - Previously run:              11
+2024-11-03 19:47:55.821 [restartedMain] INFO  liquibase.util - Filtered out:                 0
+2024-11-03 19:47:55.821 [restartedMain] INFO  liquibase.util - -------------------------------
+2024-11-03 19:47:55.821 [restartedMain] INFO  liquibase.util - Total change sets:           11
+2024-11-03 19:47:55.823 [restartedMain] INFO  liquibase.util - Update summary generated
+2024-11-03 19:47:55.844 [restartedMain] INFO  liquibase.lockservice - Successfully released change log lock
+2024-11-03 19:47:55.846 [restartedMain] INFO  liquibase.command - Command execution complete
+2024-11-03 19:47:55.925 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-11-03 19:47:55.995 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.5.2.Final
+2024-11-03 19:47:56.046 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2024-11-03 19:47:56.337 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-11-03 19:47:56.364 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2024-11-03 19:47:56.394 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@43566c60
+2024-11-03 19:47:56.396 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2024-11-03 19:47:57.402 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-11-03 19:47:57.431 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-11-03 19:47:57.449 [restartedMain] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'loggingAspect' defined in file [D:\boilerplate\boilerplate\target\classes\com\app\boilerplate\Aop\Logging\LoggingAspect.class]: Unsatisfied dependency expressed through constructor parameter 0: Bean named 'asyncLogger' is expected to be of type 'com.app.boilerplate.Aop.Logging.AsyncLogger' but was actually of type 'jdk.proxy4.$Proxy181'
+2024-11-03 19:47:57.449 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-11-03 19:47:57.452 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2024-11-03 19:47:57.464 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2024-11-03 19:47:57.465 [restartedMain] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
+2024-11-03 19:47:57.483 [restartedMain] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2024-11-03 19:59:58.820 [restartedMain] INFO  c.a.b.BoilerplateApplication - Starting BoilerplateApplication using Java 17.0.10 with PID 9572 (D:\boilerplate\boilerplate\target\classes started by Admin in D:\boilerplate\boilerplate)
+2024-11-03 19:59:58.824 [restartedMain] INFO  c.a.b.BoilerplateApplication - The following 1 profile is active: "local"
+2024-11-03 19:59:58.868 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2024-11-03 19:59:58.868 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2024-11-03 19:59:58.888 [restartedMain] INFO  o.s.b.d.c.l.DockerComposeLifecycleManager - Using Docker Compose file 'D:\boilerplate\boilerplate\compose.yaml'
+2024-11-03 20:00:00.292 [restartedMain] INFO  o.s.b.d.c.l.DockerComposeLifecycleManager - There are already Docker Compose services running, skipping startup
+2024-11-03 20:00:01.316 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2024-11-03 20:00:01.317 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-11-03 20:00:01.468 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 145 ms. Found 2 JPA repository interfaces.
+2024-11-03 20:00:01.481 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2024-11-03 20:00:01.482 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2024-11-03 20:00:01.496 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.app.boilerplate.Repository.TokenRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2024-11-03 20:00:01.498 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.app.boilerplate.Repository.UserRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2024-11-03 20:00:01.498 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 7 ms. Found 0 Redis repository interfaces.
+2024-11-03 20:00:02.241 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2024-11-03 20:00:02.251 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2024-11-03 20:00:02.252 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.26]
+2024-11-03 20:00:02.308 [restartedMain] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring embedded WebApplicationContext
+2024-11-03 20:00:02.308 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2006 ms
+2024-11-03 20:00:03.294 [restartedMain] INFO  liquibase.changelog - Reading from `boilerplate-master`.DATABASECHANGELOG
+2024-11-03 20:00:03.337 [restartedMain] INFO  liquibase.ui - Database is up to date, no changesets to execute
+2024-11-03 20:00:03.340 [restartedMain] INFO  liquibase.changelog - Reading from `boilerplate-master`.DATABASECHANGELOG
+2024-11-03 20:00:03.347 [restartedMain] INFO  liquibase.util - UPDATE SUMMARY
+2024-11-03 20:00:03.347 [restartedMain] INFO  liquibase.util - Run:                          0
+2024-11-03 20:00:03.347 [restartedMain] INFO  liquibase.util - Previously run:              11
+2024-11-03 20:00:03.347 [restartedMain] INFO  liquibase.util - Filtered out:                 0
+2024-11-03 20:00:03.348 [restartedMain] INFO  liquibase.util - -------------------------------
+2024-11-03 20:00:03.348 [restartedMain] INFO  liquibase.util - Total change sets:           11
+2024-11-03 20:00:03.349 [restartedMain] INFO  liquibase.util - Update summary generated
+2024-11-03 20:00:03.369 [restartedMain] INFO  liquibase.lockservice - Successfully released change log lock
+2024-11-03 20:00:03.372 [restartedMain] INFO  liquibase.command - Command execution complete
+2024-11-03 20:00:03.453 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-11-03 20:00:03.520 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.5.2.Final
+2024-11-03 20:00:03.558 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2024-11-03 20:00:03.837 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-11-03 20:00:03.862 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2024-11-03 20:00:03.887 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@6aed017d
+2024-11-03 20:00:03.888 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2024-11-03 20:00:04.842 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-11-03 20:00:04.869 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-11-03 20:00:04.889 [restartedMain] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'loggingAspect' defined in file [D:\boilerplate\boilerplate\target\classes\com\app\boilerplate\Aop\Logging\LoggingAspect.class]: Unsatisfied dependency expressed through constructor parameter 0: Bean named 'asyncLogger' is expected to be of type 'com.app.boilerplate.Aop.Logging.AsyncLogger' but was actually of type 'jdk.proxy4.$Proxy181'
+2024-11-03 20:00:04.889 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-11-03 20:00:04.892 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2024-11-03 20:00:04.904 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2024-11-03 20:00:04.905 [restartedMain] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
+2024-11-03 20:00:04.922 [restartedMain] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2024-11-03 20:08:27.581 [restartedMain] INFO  c.a.b.BoilerplateApplication - Starting BoilerplateApplication using Java 17.0.10 with PID 15336 (D:\boilerplate\boilerplate\target\classes started by Admin in D:\boilerplate\boilerplate)
+2024-11-03 20:08:27.583 [restartedMain] INFO  c.a.b.BoilerplateApplication - The following 1 profile is active: "local"
+2024-11-03 20:08:27.622 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2024-11-03 20:08:27.622 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2024-11-03 20:08:27.638 [restartedMain] INFO  o.s.b.d.c.l.DockerComposeLifecycleManager - Using Docker Compose file 'D:\boilerplate\boilerplate\compose.yaml'
+2024-11-03 20:08:28.981 [restartedMain] INFO  o.s.b.d.c.l.DockerComposeLifecycleManager - There are already Docker Compose services running, skipping startup
+2024-11-03 20:08:29.935 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2024-11-03 20:08:29.936 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-11-03 20:08:30.055 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 113 ms. Found 2 JPA repository interfaces.
+2024-11-03 20:08:30.066 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2024-11-03 20:08:30.067 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2024-11-03 20:08:30.080 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.app.boilerplate.Repository.TokenRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2024-11-03 20:08:30.081 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.app.boilerplate.Repository.UserRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2024-11-03 20:08:30.081 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 8 ms. Found 0 Redis repository interfaces.
+2024-11-03 20:08:30.750 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2024-11-03 20:08:30.758 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2024-11-03 20:08:30.758 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.26]
+2024-11-03 20:08:30.816 [restartedMain] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring embedded WebApplicationContext
+2024-11-03 20:08:30.816 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1827 ms
+2024-11-03 20:08:31.700 [restartedMain] INFO  liquibase.changelog - Reading from `boilerplate-master`.DATABASECHANGELOG
+2024-11-03 20:08:31.739 [restartedMain] INFO  liquibase.ui - Database is up to date, no changesets to execute
+2024-11-03 20:08:31.742 [restartedMain] INFO  liquibase.changelog - Reading from `boilerplate-master`.DATABASECHANGELOG
+2024-11-03 20:08:31.749 [restartedMain] INFO  liquibase.util - UPDATE SUMMARY
+2024-11-03 20:08:31.749 [restartedMain] INFO  liquibase.util - Run:                          0
+2024-11-03 20:08:31.749 [restartedMain] INFO  liquibase.util - Previously run:              11
+2024-11-03 20:08:31.749 [restartedMain] INFO  liquibase.util - Filtered out:                 0
+2024-11-03 20:08:31.750 [restartedMain] INFO  liquibase.util - -------------------------------
+2024-11-03 20:08:31.750 [restartedMain] INFO  liquibase.util - Total change sets:           11
+2024-11-03 20:08:31.750 [restartedMain] INFO  liquibase.util - Update summary generated
+2024-11-03 20:08:31.768 [restartedMain] INFO  liquibase.lockservice - Successfully released change log lock
+2024-11-03 20:08:31.770 [restartedMain] INFO  liquibase.command - Command execution complete
+2024-11-03 20:08:31.841 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-11-03 20:08:31.887 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.5.2.Final
+2024-11-03 20:08:31.918 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2024-11-03 20:08:32.152 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-11-03 20:08:32.173 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2024-11-03 20:08:32.199 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@53ac3b40
+2024-11-03 20:08:32.201 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2024-11-03 20:08:33.048 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-11-03 20:08:33.076 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-11-03 20:08:34.074 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-11-03 20:08:34.111 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeAuthenticationProviderBeanManagerConfigurer$InitializeAuthenticationProviderManagerConfigurer - Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2024-11-03 20:08:34.112 [restartedMain] WARN  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used for username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider.
+2024-11-03 20:08:34.468 [restartedMain] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint beneath base path '/actuator'
+2024-11-03 20:08:34.539 [task-1] INFO  c.a.b.Service.Auth.AuthService - → AuthService.jwtDecoder() with argument[s]: []
+2024-11-03 20:08:34.565 [task-2] INFO  c.a.b.Service.Auth.AuthService - ← AuthService.jwtDecoder() returned: com.app.boilerplate.Service.Auth.AuthService$$Lambda$2119/0x0000017d3dcfd440@668fd1f7 (execution time: 25 ms)
+2024-11-03 20:08:35.198 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2024-11-03 20:08:35.262 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/api'
+2024-11-03 20:08:35.282 [restartedMain] INFO  c.a.b.BoilerplateApplication - Started BoilerplateApplication in 8.083 seconds (process running for 8.696)
+2024-11-03 20:08:35.879 [RMI TCP Connection(3)-192.168.0.108] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2024-11-03 20:08:35.879 [RMI TCP Connection(3)-192.168.0.108] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2024-11-03 20:08:35.881 [RMI TCP Connection(3)-192.168.0.108] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2024-11-03 20:09:00.033 [task-3] INFO  c.a.b.Service.Token.TokenService - → TokenService.deleteExpiredTokens() with argument[s]: []
+2024-11-03 20:09:00.164 [task-4] INFO  c.a.b.Service.Token.TokenService - ← TokenService.deleteExpiredTokens() returned: null (execution time: 130 ms)
+2024-11-03 20:09:17.872 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-11-03 20:09:17.875 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2024-11-03 20:09:17.890 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2024-11-03 21:13:29.025 [restartedMain] INFO  c.a.b.BoilerplateApplication - Starting BoilerplateApplication using Java 17.0.10 with PID 28428 (D:\boilerplate\boilerplate\target\classes started by Admin in D:\boilerplate\boilerplate)
+2024-11-03 21:13:29.027 [restartedMain] INFO  c.a.b.BoilerplateApplication - The following 1 profile is active: "local"
+2024-11-03 21:13:29.083 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2024-11-03 21:13:29.083 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2024-11-03 21:13:29.105 [restartedMain] INFO  o.s.b.d.c.l.DockerComposeLifecycleManager - Using Docker Compose file 'D:\boilerplate\boilerplate\compose.yaml'
+2024-11-03 21:13:30.720 [restartedMain] INFO  o.s.b.d.c.l.DockerComposeLifecycleManager - There are already Docker Compose services running, skipping startup
+2024-11-03 21:13:31.936 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2024-11-03 21:13:31.938 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-11-03 21:13:32.117 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 171 ms. Found 2 JPA repository interfaces.
+2024-11-03 21:13:32.133 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2024-11-03 21:13:32.135 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2024-11-03 21:13:32.152 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.app.boilerplate.Repository.TokenRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2024-11-03 21:13:32.154 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.app.boilerplate.Repository.UserRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2024-11-03 21:13:32.154 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 9 ms. Found 0 Redis repository interfaces.
+2024-11-03 21:13:33.042 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2024-11-03 21:13:33.054 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2024-11-03 21:13:33.054 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.26]
+2024-11-03 21:13:33.124 [restartedMain] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring embedded WebApplicationContext
+2024-11-03 21:13:33.125 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2396 ms
+2024-11-03 21:13:34.291 [restartedMain] INFO  liquibase.changelog - Reading from `boilerplate-master`.DATABASECHANGELOG
+2024-11-03 21:13:34.337 [restartedMain] INFO  liquibase.ui - Database is up to date, no changesets to execute
+2024-11-03 21:13:34.340 [restartedMain] INFO  liquibase.changelog - Reading from `boilerplate-master`.DATABASECHANGELOG
+2024-11-03 21:13:34.348 [restartedMain] INFO  liquibase.util - UPDATE SUMMARY
+2024-11-03 21:13:34.349 [restartedMain] INFO  liquibase.util - Run:                          0
+2024-11-03 21:13:34.349 [restartedMain] INFO  liquibase.util - Previously run:              11
+2024-11-03 21:13:34.349 [restartedMain] INFO  liquibase.util - Filtered out:                 0
+2024-11-03 21:13:34.349 [restartedMain] INFO  liquibase.util - -------------------------------
+2024-11-03 21:13:34.349 [restartedMain] INFO  liquibase.util - Total change sets:           11
+2024-11-03 21:13:34.350 [restartedMain] INFO  liquibase.util - Update summary generated
+2024-11-03 21:13:34.370 [restartedMain] INFO  liquibase.lockservice - Successfully released change log lock
+2024-11-03 21:13:34.373 [restartedMain] INFO  liquibase.command - Command execution complete
+2024-11-03 21:13:34.455 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-11-03 21:13:34.516 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.5.2.Final
+2024-11-03 21:13:34.556 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2024-11-03 21:13:34.830 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-11-03 21:13:34.858 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2024-11-03 21:13:34.890 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@1c6ae3a
+2024-11-03 21:13:34.891 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2024-11-03 21:13:35.826 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-11-03 21:13:35.863 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-11-03 21:13:36.864 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-11-03 21:13:36.902 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeAuthenticationProviderBeanManagerConfigurer$InitializeAuthenticationProviderManagerConfigurer - Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2024-11-03 21:13:36.902 [restartedMain] WARN  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used for username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider.
+2024-11-03 21:13:37.251 [restartedMain] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint beneath base path '/actuator'
+2024-11-03 21:13:37.318 [task-1] INFO  c.a.b.Service.Auth.AuthService - → AuthService.jwtDecoder() with argument[s]: []
+2024-11-03 21:13:37.344 [task-2] INFO  c.a.b.Service.Auth.AuthService - ← AuthService.jwtDecoder() returned: com.app.boilerplate.Service.Auth.AuthService$$Lambda$2119/0x00000280abc13c50@178e0ae4 (execution time: 25 ms)
+2024-11-03 21:13:37.905 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2024-11-03 21:13:37.984 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/api'
+2024-11-03 21:13:38.002 [restartedMain] INFO  c.a.b.BoilerplateApplication - Started BoilerplateApplication in 9.469 seconds (process running for 10.245)
+2024-11-03 21:13:38.541 [RMI TCP Connection(2)-192.168.0.108] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2024-11-03 21:13:38.541 [RMI TCP Connection(2)-192.168.0.108] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2024-11-03 21:13:38.542 [RMI TCP Connection(2)-192.168.0.108] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2024-11-03 21:14:00.021 [task-3] INFO  c.a.b.Service.Token.TokenService - → TokenService.deleteExpiredTokens() with argument[s]: []
+2024-11-03 21:14:00.128 [task-4] INFO  c.a.b.Service.Token.TokenService - ← TokenService.deleteExpiredTokens() returned: null (execution time: 106 ms)
+2024-11-03 21:14:08.052 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-11-03 21:14:08.056 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2024-11-03 21:14:08.070 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.

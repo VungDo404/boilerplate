@@ -1,0 +1,18 @@
+package com.app.boilerplate.Repository;
+
+import com.app.boilerplate.Domain.User.Token;
+import com.app.boilerplate.Shared.Authentication.TokenType;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+@Repository
+public interface TokenRepository extends JpaRepository<Token, Long> {
+	Optional<Token> findByTypeAndValue(TokenType type, String value);
+
+	void deleteByExpireDateBefore(LocalDateTime date);
+
+	void deleteByValue(String value);
+}
