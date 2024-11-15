@@ -1,9 +1,7 @@
 package com.app.boilerplate.Shared.User.Dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -30,6 +28,11 @@ public class PostUserDto implements Serializable {
 	private final String email;
 	@NotNull
 	private final Locale locale;
+	@NotNull
+	@Size(min = 2, max = 50)
+	@NotEmpty
+	@NotBlank
+	private final String displayName;
 	private final String password;
 	private final String image;
 	private final Boolean enabled;
@@ -40,5 +43,6 @@ public class PostUserDto implements Serializable {
 	private final int lockOutAccessFailedCount;
 	private final LocalDateTime lockOutLockoutEndDate;
 	private final Boolean shouldSendConfirmationEmail;
+
 
 }

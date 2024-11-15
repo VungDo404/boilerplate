@@ -22,17 +22,17 @@ public class Token implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, columnDefinition = "INT UNSIGNED")
+    @Column(name = "id", nullable = false, columnDefinition = "INT UNSIGNED", updatable = false)
     private Long id;
 
     @Enumerated(EnumType.ORDINAL)
-    @Column(name = "type", nullable = false, columnDefinition = "SMALLINT")
+    @Column(name = "type", nullable = false, columnDefinition = "SMALLINT", updatable = false)
     private TokenType type;
 
     @Column(name = "value", length = 40, unique = true, nullable = false)
     private String value;
 
-    @Column(name = "expire_date")
+    @Column(name = "expire_date", nullable = false, updatable = false)
     private LocalDateTime expireDate;
 
     @JsonIgnore

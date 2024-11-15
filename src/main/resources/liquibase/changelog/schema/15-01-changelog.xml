@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.27.xsd"
+	objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+	<changeSet id="1731652117146-1" author="Admin (generated)">
+		<createTable tableName="audit_envers_modified_entity">
+			<column name="revision_id" type="INT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="entity_name" type="VARCHAR(255)"/>
+		</createTable>
+	</changeSet>
+	<changeSet id="1731652117146-2" author="Admin (generated)">
+		<createTable tableName="audit_envers_revision">
+			<column autoIncrement="true" name="id" type="INT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_audit_envers_revision"/>
+			</column>
+			<column name="timestamp" type="DATETIME"/>
+			<column name="user_id" type="binary(16)"/>
+		</createTable>
+	</changeSet>
+	<changeSet id="1731652117146-3" author="Admin (generated)">
+		<createTable tableName="token">
+			<column autoIncrement="true" name="id" type="INT UNSIGNED">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_token"/>
+			</column>
+			<column name="type" type="SMALLINT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="value" type="VARCHAR(40)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="expire_date" type="DATETIME">
+				<constraints nullable="false"/>
+			</column>
+			<column name="user_id" type="binary(16)">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="1731652117146-4" author="Admin (generated)">
+		<createTable tableName="user">
+			<column name="id" type="binary(16)">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_user"/>
+			</column>
+			<column name="display_name" type="VARCHAR(50)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="username" type="VARCHAR(50)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="password" type="VARCHAR(60)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="email" type="VARCHAR(50)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="image" type="VARCHAR(100)"/>
+			<column name="email_specify" type="DATETIME"/>
+			<column defaultValueComputed="0" name="enabled" type="BIT">
+				<constraints nullable="false"/>
+			</column>
+			<column defaultValueComputed="0" name="account_non_locked" type="BIT">
+				<constraints nullable="false"/>
+			</column>
+			<column defaultValueComputed="0" name="credentials_non_expired" type="BIT">
+				<constraints nullable="false"/>
+			</column>
+			<column defaultValueComputed="0" name="account_non_expired" type="BIT">
+				<constraints nullable="false"/>
+			</column>
+			<column defaultValueComputed="0" name="is_two_factor_enabled" type="BIT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="provider" type="TINYINT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="security_stamp" type="VARCHAR(50)">
+				<constraints nullable="false"/>
+			</column>
+			<column defaultValueComputed="0" name="is_lockout_enabled" type="BIT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="access_failed_count" type="SMALLINT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="lockout_end_date" type="DATETIME"/>
+		</createTable>
+	</changeSet>
+	<changeSet id="1731652117146-5" author="Admin (generated)">
+		<createTable tableName="user_history">
+			<column name="rev" type="INT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_user_history"/>
+			</column>
+			<column name="rev_type" type="tinyint"/>
+			<column name="id" type="binary(16)">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_user_history"/>
+			</column>
+			<column name="display_name" type="VARCHAR(50)"/>
+			<column name="display_name_mod" type="bit"/>
+			<column name="image" type="VARCHAR(100)"/>
+			<column name="image_mod" type="bit"/>
+			<column name="email_specify" type="DATETIME"/>
+			<column name="email_specify_mod" type="bit"/>
+			<column defaultValueComputed="0" name="enabled" type="BIT"/>
+			<column name="enabled_mod" type="bit"/>
+			<column defaultValueComputed="0" name="account_non_locked" type="BIT"/>
+			<column name="account_non_locked_mod" type="bit"/>
+			<column defaultValueComputed="0" name="credentials_non_expired" type="BIT"/>
+			<column name="credentials_non_expired_mod" type="bit"/>
+			<column defaultValueComputed="0" name="account_non_expired" type="BIT"/>
+			<column name="account_non_expired_mod" type="bit"/>
+			<column defaultValueComputed="0" name="is_two_factor_enabled" type="BIT"/>
+			<column name="is_two_factor_enabled_mod" type="bit"/>
+			<column name="is_lockout_enabled" type="bit"/>
+			<column name="access_failed_count" type="INT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="lockout_end_date" type="DATETIME"/>
+		</createTable>
+	</changeSet>
+	<changeSet id="1731652117146-6" author="Admin (generated)">
+		<addUniqueConstraint columnNames="value" constraintName="uc_token_value" tableName="token"/>
+	</changeSet>
+	<changeSet id="1731652117146-7" author="Admin (generated)">
+		<addUniqueConstraint columnNames="display_name" constraintName="uc_user_displayname" tableName="user"/>
+	</changeSet>
+	<changeSet id="1731652117146-8" author="Admin (generated)">
+		<createIndex indexName="idx_token_value" tableName="token">
+			<column name="value"/>
+		</createIndex>
+	</changeSet>
+	<changeSet id="1731652117146-9" author="Admin (generated)">
+		<createIndex indexName="idx_user_username" tableName="user">
+			<column name="username"/>
+		</createIndex>
+	</changeSet>
+	<changeSet id="1731652117146-10" author="Admin (generated)">
+		<addForeignKeyConstraint baseColumnNames="user_id" baseTableName="token" constraintName="FK_TOKEN_ON_USER"
+								 referencedColumnNames="id" referencedTableName="user"/>
+	</changeSet>
+	<changeSet id="1731652117146-11" author="Admin (generated)">
+		<addForeignKeyConstraint baseColumnNames="rev" baseTableName="user_history"
+								 constraintName="FK_USER_HISTORY_ON_REV" referencedColumnNames="id"
+								 referencedTableName="audit_envers_revision"/>
+	</changeSet>
+	<changeSet id="1731652117146-12" author="Admin (generated)">
+		<addForeignKeyConstraint baseColumnNames="revision_id" baseTableName="audit_envers_modified_entity"
+								 constraintName="fk_audit_envers_modified_entity_on_audit_envers_revision"
+								 referencedColumnNames="id" referencedTableName="audit_envers_revision"/>
+	</changeSet>
+
+</databaseChangeLog>

@@ -68,3 +68,5 @@ src/main/resources/certs
 ### Env ###
 src/main/resources/application-local.properties
 
+### Logging ###
+src/main/resources/logs/

@@ -13,11 +13,11 @@ public class PreAuthenticationChecker implements UserDetailsChecker, Translator 
 	public void check(UserDetails userDetails) {
 		if (!(userDetails instanceof User user))
 			throw new ClassCastException("UserDetails must be an instance of User");
-		if(user.isEnabled())
+		if(!user.isEnabled())
 			throw new DisabledException("error.auth.disabled");
 		if(!user.getAccountNonLocked())
 			throw new LockedException("error.auth.locked");
-		if(user.getAccountNonExpired())
+		if(!user.getAccountNonExpired())
 			throw new AccountExpiredException("error.auth.expired");
 
 	}

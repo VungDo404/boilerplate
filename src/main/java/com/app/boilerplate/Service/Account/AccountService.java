@@ -39,7 +39,9 @@ public class AccountService {
 	}
 
 	public String profile(AccessJwt jwt) {
-
 		return jwt.getSecurityStamp();
 	}
+
+
+
 }

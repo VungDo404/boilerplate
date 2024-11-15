@@ -32,4 +32,6 @@ public class RegisterDto implements Serializable {
 	@Email
 	private final String email;
 	private final Locale locale;
+    @Size(min = 2, max = 10)
+    private final String displayName;
 }

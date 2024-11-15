@@ -4,7 +4,9 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.envers.Audited;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -12,14 +14,18 @@ import java.time.LocalDateTime;
 @Setter
 @Embeddable
 public class LockOut implements Serializable {
-    private static final long serialVersionUID = -7139354382957927520L;
+    @Serial
+	private static final long serialVersionUID = -7139354382957927520L;
 
-    @Column(name = "is_lockout_enabled", columnDefinition = "BIT default 0")
+	@Audited(withModifiedFlag = true)
+    @Column(name = "is_lockout_enabled", columnDefinition = "BIT default 0", nullable = false)
     private Boolean isLockoutEnabled;
 
-    @Column(name = "access_failed_count", columnDefinition = "SMALLINT")
+	@Audited(withModifiedFlag = true)
+    @Column(name = "access_failed_count", columnDefinition = "SMALLINT", nullable = false)
     private int accessFailedCount;
 
+	@Audited(withModifiedFlag = true)
     @Column(name = "lockout_end_date")
     private LocalDateTime lockoutEndDate;
 }

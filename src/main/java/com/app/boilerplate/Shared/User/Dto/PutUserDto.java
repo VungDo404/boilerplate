@@ -1,8 +1,8 @@
 package com.app.boilerplate.Shared.User.Dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -16,16 +16,16 @@ import java.util.UUID;
 @AllArgsConstructor
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PutUserDto implements Serializable {
 	@NotNull
-	private UUID id;
-	@NotNull
-	@Size(message = "Username must be between {min} and {max} characters long", min = 2, max = 50)
-	private final String username;
+	private final UUID id;
+	private final String displayName;
 	private final String image;
-	private final Boolean blocked;
-	private final Boolean shouldChangePasswordOnNextLogin;
 	private final Boolean isTwoFactorEnabled;
+	private final Boolean accountNonLocked;
+	private final Boolean credentialsNonExpired;
+	private final Boolean accountNonExpired;
 	private final Boolean lockOutIsLockoutEnabled;
 	private final int lockOutAccessFailedCount;
 	private final LocalDateTime lockOutLockoutEndDate;

@@ -7,7 +7,8 @@
     <property name="now" value="now()" dbms="mysql" />
     <property name="uuid" value="unhex(replace(uuid(),'-',''))" dbms="mysql"/>
 
-	<include file="liquibase/changelog/schema/29-01-changelog.xml"/>
+	<include file="liquibase/changelog/schema/15-01-changelog.xml"/>
 	<include file="liquibase/changelog/schema/13-01-seeding-user-changelog.xml"/>
+
 
 </databaseChangeLog>
