@@ -70,3 +70,4 @@ src/main/resources/application-local.properties
 
 ### Logging ###
 src/main/resources/logs/
+

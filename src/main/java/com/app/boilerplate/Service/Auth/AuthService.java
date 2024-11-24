@@ -166,7 +166,7 @@ public class AuthService {
 
 	}
 
-	private String createAccessToken(User user, UUID refreshTokenId) {
+	public String createAccessToken(User user, UUID refreshTokenId) {
 		final var claims = generateClaims(TokenType.AccessToken, user,
 			tokenAuthConfig.getAccessTokenExpirationInSeconds(), refreshTokenId);
 		return createJwtToken(claims, tokenAuthConfig.getAccessTokenExpirationInSeconds(), JWSAlgorithm.RS256);

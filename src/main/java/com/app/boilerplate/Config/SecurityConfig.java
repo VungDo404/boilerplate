@@ -5,9 +5,9 @@ import com.app.boilerplate.Security.PreAuthenticationChecker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -16,12 +16,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 @RequiredArgsConstructor
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig {
-
 	public static final String[] POST_PUBLIC_URL = {
 		"/account/register",
 		"/auth/authenticate",
@@ -31,26 +31,52 @@ public class SecurityConfig {
 		"/swagger-ui/**",
 		"/v3/api-docs/**",
 		"/swagger-resources/**",
-		"/webjars" + "/**"
+		"/webjars" + "/**",
+		"/swagger-ui.html"
+
 	};
 
 	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtDecoder jwtDecoder) throws Exception {
+	@Order(1)
+	public SecurityFilterChain swaggerSecurityFilterChain(HttpSecurity http,
+                                                          AuthenticationSuccessHandler successHandler) throws Exception {
 		http
-			.authorizeHttpRequests((authorize) -> authorize
-				.requestMatchers(HttpMethod.POST, POST_PUBLIC_URL)
+			.securityMatcher("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/swagger/login")
+			.authorizeHttpRequests(auth -> auth
+				.requestMatchers("/swagger/login")
 				.permitAll()
-				.requestMatchers(HttpMethod.GET, GET_PUBLIC_URL)
+				.anyRequest()
+				.authenticated())
+			.formLogin(form -> form
+				.loginPage("/swagger/login")
+				.successHandler(successHandler)
+				.failureUrl("/swagger/login?error=true")
+				.permitAll())
+			.logout(logout -> logout
+				.logoutUrl("/swagger/logout")
+				.logoutSuccessUrl("/swagger/login?logout=true"))
+			.csrf(AbstractHttpConfigurer::disable)
+			.sessionManagement(session -> session
+				.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
+		return http.build();
+	}
+
+	@Bean
+	@Order(2)
+	public SecurityFilterChain restApiSecurityFilterChain(HttpSecurity http, JwtDecoder jwtDecoder) throws Exception {
+		http
+			.securityMatcher("/**")
+			.authorizeHttpRequests(auth -> auth
+				.requestMatchers(HttpMethod.POST, POST_PUBLIC_URL)
 				.permitAll()
 				.anyRequest()
 				.authenticated())
 			.csrf(AbstractHttpConfigurer::disable)
-			.sessionManagement(
-				config -> config.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-			.oauth2ResourceServer((oauth2) -> oauth2.jwt((jwt) -> jwt.decoder(jwtDecoder)))
-			.formLogin(AbstractHttpConfigurer::disable)
-			.httpBasic(Customizer.withDefaults());
-
+			.sessionManagement(session -> session
+				.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+				.disable()) //
+			.oauth2ResourceServer(oauth2 -> oauth2
+				.jwt(jwt -> jwt.decoder(jwtDecoder)));
 		return http.build();
 	}
 
@@ -69,6 +95,5 @@ public class SecurityConfig {
 		authProvider.setUserDetailsService(userDetailsService);
 		return authProvider;
 	}
-
 
 }

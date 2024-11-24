@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Swagger Documentation Login</title>
+	<style>
+		body {
+			font-family: "Helvetica Neue", Arial, sans-serif;
+			background-color: #f4f8f4;
+			margin: 0;
+			padding: 0;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 100vh;
+		}
+
+		.login-container {
+			width: 100%;
+			max-width: 400px;
+			padding: 30px;
+			background: white;
+			border-radius: 10px;
+			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+			border: 1px solid #e0e0e0;
+		}
+
+		.header {
+			text-align: center;
+			margin-bottom: 20px;
+		}
+
+		.header h2 {
+			color: #3f9c35;
+			font-weight: bold;
+			margin: 0;
+			font-size: 1.5em;
+		}
+
+		.form-group {
+			margin-bottom: 20px;
+		}
+
+		.form-group label {
+			display: block;
+			font-weight: bold;
+			margin-bottom: 8px;
+			color: #4b4b4b;
+		}
+
+		.form-group input {
+			width: 100%;
+			padding: 10px;
+			font-size: 14px;
+			border: 1px solid #ced4da;
+			border-radius: 5px;
+			box-sizing: border-box;
+		}
+
+		.form-group input:focus {
+			outline: none;
+			border-color: #3f9c35;
+			box-shadow: 0 0 5px rgba(63, 156, 53, 0.3);
+		}
+
+		.submit-btn {
+			width: 100%;
+			padding: 12px;
+			font-size: 16px;
+			font-weight: bold;
+			color: white;
+			background: linear-gradient(90deg, #4caf50, #3f9c35);
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+			transition: background 0.3s ease;
+		}
+
+		.submit-btn:hover {
+			background: #3f9c35;
+		}
+
+		.error-message {
+			color: #e53935;
+			font-size: 14px;
+			text-align: center;
+			margin-bottom: 15px;
+		}
+
+		@media (max-width: 500px) {
+			.login-container {
+				padding: 20px;
+			}
+
+			.submit-btn {
+				font-size: 14px;
+				padding: 10px;
+			}
+		}
+	</style>
+</head>
+<body>
+<div class="login-container">
+	<div class="header">
+		<h2>Swagger Documentation Access</h2>
+	</div>
+	<div th:if="${param.error}" class="error-message">
+		Invalid username or password
+	</div>
+	<form th:action="@{/swagger/login}" method="post">
+		<div class="form-group">
+			<label for="username">Username:</label>
+			<input type="text" id="username" name="username" placeholder="Enter your username" required>
+		</div>
+		<div class="form-group">
+			<label for="password">Password:</label>
+			<input type="password" id="password" name="password" placeholder="Enter your password" required>
+		</div>
+		<button type="submit" class="submit-btn">Access Documentation</button>
+	</form>
+	<script>
+
+	</script>
+</div>
+</body>
+</html>
