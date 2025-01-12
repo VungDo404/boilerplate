@@ -263,6 +263,8 @@ public class AuthService {
 			.map(id -> {
 				claims.put(AppConsts.REFRESH_TOKEN_ID, id);
 				claims.put(AppConsts.SECURITY_STAMP, user.getSecurityStamp());
+				claims.put(AppConsts.ACCESS_TOKEN_PROVIDER, user.getProvider());
+				claims.put(AppConsts.ACCESS_TOKEN_USERNAME, user.getUsername());
 				setSecurityStampInCache(user.getId(), user.getSecurityStamp());
 				return null;
 			});

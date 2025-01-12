@@ -32,13 +32,13 @@ import java.util.UUID;
 	@Index(name = "idx_user_username", columnList = User_.USERNAME)
 })
 public class User implements UserDetails {
-    @Serial
+	@Serial
 	private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+	@Id
+	@GeneratedValue(strategy = GenerationType.UUID)
 	@Column(unique = true, nullable = false)
-    private UUID id;
+	private UUID id;
 
 	@Audited(withModifiedFlag = true)
 	@Size(min = 2, max = 50, message = "DisplayName must be between {min} and {max} characters long")

@@ -26,9 +26,9 @@ import java.util.UUID;
 @Service
 public class UserService implements Translator {
 	private final Logger log = LoggerFactory.getLogger(UserService.class);
-	private final UserRepository userRepository;
 	private final RandomUtil randomUtil;
 	private final IUserMapper userMapper;
+	private final UserRepository userRepository;
 
 	@Transactional(readOnly = true)
 	public Page<User> getAllUsers(Optional<UserCriteriaDto> userCriteriaDto, Pageable pageable) {
@@ -88,9 +88,8 @@ public class UserService implements Translator {
 				userMapper.update(user, request);
 				user.setSecurityStamp(UUID.randomUUID()
 					.toString());
-				save(user);
 				log.debug("Updated Information for User: {}", user);
-				return user;
+				return save(user);
 			})
 			.orElseThrow(() -> new NotFoundException(
 				translateEnglish("error.user.email.notfound", request.getId()),

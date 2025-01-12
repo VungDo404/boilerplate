@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 public class TokenService {
 	private final TokenRepository tokenRepository;
 
+	@Async
 	public void addToken(TokenType type, String value, LocalDateTime expireDate, User user) {
 		final var token = Token.builder()
 			.type(type)
