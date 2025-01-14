@@ -61,6 +61,7 @@ public class AuthService {
 	private final RedisTemplate<String, Object> redisTemplate;
 	private final ObjectMapper objectMapper;
 
+
 	public LoginResultModel authenticate(LoginDto request, HttpServletResponse response) {
 		final var authenticationToken = new UsernamePasswordAuthenticationToken(request.getUsername(),
 			request.getPassword());

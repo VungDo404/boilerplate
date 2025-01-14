@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 	<include resource="org/springframework/boot/logging/logback/base.xml"/>
-	<property name="LOG_PATH" value="./src/main/resources/logs"/>
+	<property name="LOG_PATH" value="logs"/>
 	<property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/>
 
 	<appender name="APPLICATION_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">

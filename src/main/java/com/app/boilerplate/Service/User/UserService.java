@@ -108,4 +108,5 @@ public class UserService implements Translator {
 		return userRepository.existsByIdAndSecurityStamp(id, securityStamp);
 	}
 
+
 }

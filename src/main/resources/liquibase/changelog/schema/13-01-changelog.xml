@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.27.xsd"
+	objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+
+	<changeSet id="1736751986943-1" author="Admin">
+		<createTable tableName="authority">
+			<column name="user_id" type="binary(16)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="sid_id" type="BIGINT UNSIGNED">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="1736753310589-1" author="Admin">
+		<addForeignKeyConstraint baseTableName="authority" baseColumnNames="user_id" referencedTableName="user"
+								 referencedColumnNames="id" constraintName="FK_AUTHORITY_ON_USER" onDelete="CASCADE"/>
+	</changeSet>
+	<changeSet id="1736753385327-1" author="Admin">
+		<addForeignKeyConstraint baseTableName="authority" baseColumnNames="sid_id" referencedTableName="acl_sid"
+								 referencedColumnNames="id" constraintName="FK_AUTHORITY_ON_ACL_SID"
+								 onDelete="CASCADE"/>
+	</changeSet>
+</databaseChangeLog>

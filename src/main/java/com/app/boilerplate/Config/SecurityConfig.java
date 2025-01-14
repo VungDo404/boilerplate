@@ -1,6 +1,7 @@
 package com.app.boilerplate.Config;
 
 import com.app.boilerplate.Security.AuthenticationUserDetailsService;
+import com.app.boilerplate.Security.JwtAuthenticationConverter;
 import com.app.boilerplate.Security.PreAuthenticationChecker;
 import com.app.boilerplate.Shared.Authentication.AccessJwt;
 import lombok.RequiredArgsConstructor;
@@ -83,7 +84,8 @@ public class SecurityConfig {
 
 	@Bean
 	@Order(2)
-	public SecurityFilterChain restApiSecurityFilterChain(HttpSecurity http, JwtDecoder jwtDecoder) throws Exception {
+	public SecurityFilterChain restApiSecurityFilterChain(HttpSecurity http, JwtDecoder jwtDecoder,
+														  JwtAuthenticationConverter authenticationConverter) throws Exception {
 		http
 			.authorizeHttpRequests(auth -> auth
 				.requestMatchers(HttpMethod.POST, POST_PUBLIC_URL)
@@ -94,7 +96,11 @@ public class SecurityConfig {
 			.sessionManagement(session -> session
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.oauth2ResourceServer(oauth2 -> oauth2
-				.jwt(jwt -> jwt.decoder(jwtDecoder)));
+				.jwt(jwt -> jwt
+					.decoder(jwtDecoder)
+					.jwtAuthenticationConverter(authenticationConverter)
+				)
+			);
 		return http.build();
 	}
 
@@ -124,7 +130,6 @@ public class SecurityConfig {
 
 		return mutableAclService;
 	}
-
 
 
 	@Bean
@@ -157,6 +162,7 @@ public class SecurityConfig {
 			new ConsoleAuditLogger()
 		);
 	}
+
 	@Bean
 	public MethodSecurityExpressionHandler defaultMethodSecurityExpressionHandler(JdbcMutableAclService aclService) {
 		DefaultMethodSecurityExpressionHandler expressionHandler = new DefaultMethodSecurityExpressionHandler();
@@ -179,15 +185,17 @@ public class SecurityConfig {
 			if (principal instanceof AccessJwt jwt) {
 				// Create SID in format "LOCAL:email"
 				String sidValue = String.format("%s:%s",
-					jwt.getProvider().name(),
+					jwt.getProvider()
+						.name(),
 					jwt.getUsername());
 				sids.add(new PrincipalSid(sidValue));
 			}
 
 			// Add roles if needed
-//			authentication.getAuthorities().forEach(authority ->
-//				sids.add(new GrantedAuthoritySid(authority.getAuthority()))
-//			);
+			authentication.getAuthorities()
+				.forEach(authority ->
+					sids.add(new GrantedAuthoritySid(authority.getAuthority()))
+				);
 
 			return sids;
 		};
