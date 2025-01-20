@@ -1,5 +1,6 @@
 package com.app.boilerplate.Security;
 
+import com.app.boilerplate.Shared.Authentication.AccessJwt;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.dao.DataAccessException;
@@ -19,26 +20,39 @@ import java.util.Collections;
 public class JwtAuthenticationConverter implements Converter<Jwt, AbstractAuthenticationToken> {
 	private final JdbcTemplate jdbcTemplate;
 	private final String QUERY = """
-        SELECT s.sid
-		FROM authority a
-		JOIN acl_sid s
-		ON a.sid_id = s.id
-		WHERE a.user_id = UUID_TO_BIN(?)""";
+		    SELECT s.sid
+			FROM acl_sid s
+			WHERE s.principal = 0
+		 			AND EXISTS(
+						SELECT 1
+						FROM acl_sid u
+						WHERE u.sid = ?
+							AND u.principal = 1
+							AND s.priority <= u.priority
+				)
+		""";
+
 	@Override
 	public AbstractAuthenticationToken convert(Jwt jwt) {
-		Collection<GrantedAuthority> authorities = extractAuthorities(jwt.getSubject());
-		return new JwtAuthenticationToken(jwt, authorities);
+		if (jwt instanceof AccessJwt accessJwt) {
+			final var sid = String.format("%s:%s",
+				accessJwt.getProvider()
+					.name(),
+				accessJwt.getUsername());
+			Collection<GrantedAuthority> authorities = extractAuthorities(sid);
+			return new JwtAuthenticationToken(jwt, authorities);
+		}
+		return new JwtAuthenticationToken(jwt, Collections.singleton(new SimpleGrantedAuthority("ROLE_ANONYMOUS")));
 	}
 
-	private Collection<GrantedAuthority> extractAuthorities(String id) {
+	private Collection<GrantedAuthority> extractAuthorities(String sid) {
 		try {
 			return jdbcTemplate.query(
 				QUERY,
 				(rs, rowNum) -> new SimpleGrantedAuthority(rs.getString("sid")),
-				id
+				sid
 			);
 		} catch (DataAccessException e) {
-			// Handle the exception appropriately for your use case
 			return Collections.emptyList();
 		}
 	}

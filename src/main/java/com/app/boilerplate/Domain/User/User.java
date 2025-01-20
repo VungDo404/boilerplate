@@ -42,7 +42,7 @@ public class User implements UserDetails {
 
 	@Audited(withModifiedFlag = true)
 	@Size(min = 2, max = 50, message = "DisplayName must be between {min} and {max} characters long")
-    @Column(length = 50, unique = true, nullable = false)
+    @Column(length = 50, nullable = false)
     private String displayName;
 
 	@NotAudited

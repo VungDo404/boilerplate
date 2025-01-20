@@ -17,7 +17,7 @@ import org.springframework.util.StopWatch;
 @RequiredArgsConstructor
 @Component
 public class LoggingAspect {
-	private final AsyncLogging asyncLogger;
+	private final transient AsyncLogging asyncLogger;
 
 	@Pointcut(
 		"within(@org.springframework.stereotype.Repository *)" +

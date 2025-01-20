@@ -10,11 +10,13 @@ import com.app.boilerplate.Shared.User.Dto.UserCriteriaDto;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -44,17 +46,17 @@ public class UserController {
 
 	@ResponseStatus(CREATED)
 	@PostMapping
-	public User createUser(@RequestBody @Valid PostUserDto request) {
+	public User createUser(@RequestBody @Validated(Default.class) PostUserDto request) {
 		final var userRequest = userMapper.toUser(request);
 		final var user = userService.createUser(userRequest);
 		if (request.getShouldSendConfirmationEmail())
-			eventPublisher.publishEvent(new RegistrationEvent(user, request.getLocale()));
+			eventPublisher.publishEvent(new RegistrationEvent(user));
 		return user;
 	}
 
 	@ResponseStatus(CREATED)
 	@PutMapping
-	public User putUser(@RequestBody PutUserDto request) {
+	public User putUser(@RequestBody @Valid PutUserDto request) {
 		return userService.putUser(request);
 	}
 

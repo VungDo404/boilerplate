@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.event.EventListener;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -92,14 +93,16 @@ public class MailService {
 	@EventListener(ResetPasswordEvent.class)
 	@Async
 	public void sendResetPasswordEmail(ResetPasswordEvent event) {
+		final var locale = LocaleContextHolder.getLocale();
 		sendEmailWithTemplateSync(event.getUser(), "mail/reset-password", "mail.reset.title",
-			event.getLocale());
+			locale);
 	}
 
 	@EventListener(RegistrationEvent.class)
 	@Async
 	public void sendEmailActivation(RegistrationEvent event) {
+		final var locale = LocaleContextHolder.getLocale();
 		sendEmailWithTemplateSync(event.getUser(), "mail/email-activation", "mail.activation.title",
-			event.getLocale());
+			locale);
 	}
 }

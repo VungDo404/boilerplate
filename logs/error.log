@@ -1,4 +1,4 @@
-2025-01-14 14:47:06.008 [restartedMain] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+2025-01-20 12:32:30.899 [restartedMain] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
 
 ***************************
 APPLICATION FAILED TO START
@@ -6,14 +6,9 @@ APPLICATION FAILED TO START
 
 Description:
 
-The dependencies of some of the beans in the application context form a cycle:
-
-┌──->──┐
-|  hierarchicalPermissionGrantingStrategy defined in file [D:\boilerplate\boilerplate\target\classes\com\app\boilerplate\Security\HierarchicalPermissionGrantingStrategy.class]
-└──<-──┘
-
+The bean 'aclService', defined in class path resource [com/app/boilerplate/Config/AclConfig.class], could not be registered. A bean with that name has already been defined in file [D:\boilerplate\boilerplate\target\classes\com\app\boilerplate\Service\Auth\AclService.class] and overriding is disabled.
 
 Action:
 
-Relying upon circular references is discouraged and they are prohibited by default. Update your application to remove the dependency cycle between beans. As a last resort, it may be possible to break the cycle automatically by setting spring.main.allow-circular-references to true.
+Consider renaming one of the beans or enabling overriding by setting spring.main.allow-bean-definition-overriding=true
 

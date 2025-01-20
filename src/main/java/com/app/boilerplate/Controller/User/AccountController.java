@@ -3,15 +3,17 @@ package com.app.boilerplate.Controller.User;
 import com.app.boilerplate.Domain.User.User;
 import com.app.boilerplate.Service.Account.AccountService;
 import com.app.boilerplate.Shared.Account.Dto.ChangePasswordDto;
-import com.app.boilerplate.Shared.Account.Dto.RegisterDto;
 import com.app.boilerplate.Shared.Account.Event.RegistrationEvent;
+import com.app.boilerplate.Shared.Account.Group.RegisterUser;
 import com.app.boilerplate.Shared.Authentication.AccessJwt;
+import com.app.boilerplate.Shared.User.Dto.CreateUserDto;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Account")
@@ -24,9 +26,9 @@ public class AccountController {
 
 	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping("/register")
-	public User register(@RequestBody @Valid RegisterDto request) {
+	public User register(@RequestBody @Validated(RegisterUser.class) CreateUserDto request) {
 		final var user = accountService.register(request);
-		eventPublisher.publishEvent(new RegistrationEvent(user, request.getLocale()));
+		eventPublisher.publishEvent(new RegistrationEvent(user));
 		return user;
 	}
 

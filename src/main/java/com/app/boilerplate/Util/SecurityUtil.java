@@ -1,6 +1,7 @@
 package com.app.boilerplate.Util;
 
 import com.app.boilerplate.Shared.Authentication.AccessJwt;
+import org.springframework.security.acls.domain.PrincipalSid;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,15 @@ public class SecurityUtil {
 		final var principal = authentication.getPrincipal();
 		return (AccessJwt) principal;
 	}
+
+	public PrincipalSid getPrincipalSid(){
+		final var jwt = getAccessJwt();
+		final var sidValue = String.format("%s:%s",
+			jwt.getProvider().name(),
+			jwt.getUsername());
+		return new PrincipalSid(sidValue);
+	}
+
 	public UUID getUserId() {
 		return getAccessJwt().getSub();
 	}

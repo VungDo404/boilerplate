@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.HttpStatus.CREATED;
@@ -25,28 +26,31 @@ import static org.springframework.http.HttpStatus.CREATED;
 public class OrganizationController {
 	private final OrganizationService organizationService;
 
+	@PreAuthorize("hasPermission(#id, 'com.app.boilerplate.Domain.Dev.Organization', 'READ')")
 	@GetMapping("/{id}")
 	public Organization getById(@PathVariable @NotNull Integer id) {
 		return organizationService.getOrganizationById(id);
 	}
 
 	@GetMapping("/")
-	public Page<Organization> getById(@ParameterObject Pageable pageable) {
+	public Page<Organization> getAll(@ParameterObject Pageable pageable) {
 		return organizationService.findAll(pageable);
 	}
+
 
 	@ResponseStatus(CREATED)
 	@PostMapping()
 	public Organization create(@RequestBody @Valid CreateOrganizationDto organizationDto) {
 		return organizationService.createOrganization(organizationDto);
 	}
-
+	@PreAuthorize("hasPermission(#request.id, 'com.app.boilerplate.Domain.Dev.Organization', 'WRITE')")
 	@ResponseStatus(HttpStatus.CREATED)
 	@PutMapping
 	public Organization put(@RequestBody PutOrganizationDto request) {
 		return organizationService.updateOrganization(request);
 	}
 
+	@PreAuthorize("hasPermission(#id, 'com.app.boilerplate.Domain.Dev.Organization', 'DELETE')")
 	@DeleteMapping("/{id}")
 	public void delete(@PathVariable @NotNull Integer id) {
 		organizationService.deleteOrganization(id);

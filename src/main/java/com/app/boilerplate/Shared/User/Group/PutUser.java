@@ -1,0 +1,4 @@
+package com.app.boilerplate.Shared.User.Group;
+
+public interface PutUser {
+}

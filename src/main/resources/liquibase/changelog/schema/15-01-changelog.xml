@@ -125,9 +125,6 @@
 	<changeSet id="1731652117146-6" author="Admin (generated)">
 		<addUniqueConstraint columnNames="value" constraintName="uc_token_value" tableName="token"/>
 	</changeSet>
-	<changeSet id="1731652117146-7" author="Admin (generated)">
-		<addUniqueConstraint columnNames="display_name" constraintName="uc_user_displayname" tableName="user"/>
-	</changeSet>
 	<changeSet id="1731652117146-8" author="Admin (generated)">
 		<createIndex indexName="idx_token_value" tableName="token">
 			<column name="value"/>
