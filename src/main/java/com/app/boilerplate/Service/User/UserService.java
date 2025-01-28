@@ -5,6 +5,9 @@ import com.app.boilerplate.Exception.EmailAlreadyUsedException;
 import com.app.boilerplate.Exception.NotFoundException;
 import com.app.boilerplate.Mapper.IUserMapper;
 import com.app.boilerplate.Repository.UserRepository;
+import com.app.boilerplate.Shared.Account.Event.RegistrationEvent;
+import com.app.boilerplate.Shared.User.Dto.CreateUserDto;
+import com.app.boilerplate.Shared.User.Dto.PostUserDto;
 import com.app.boilerplate.Shared.User.Dto.PutUserDto;
 import com.app.boilerplate.Shared.User.Dto.UserCriteriaDto;
 import com.app.boilerplate.Util.RandomUtil;
@@ -12,6 +15,7 @@ import com.app.boilerplate.Util.Translator;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -29,6 +33,7 @@ public class UserService implements Translator {
 	private final RandomUtil randomUtil;
 	private final IUserMapper userMapper;
 	private final UserRepository userRepository;
+	private final ApplicationEventPublisher eventPublisher;
 
 	@Transactional(readOnly = true)
 	public Page<User> getAllUsers(Optional<UserCriteriaDto> userCriteriaDto, Pageable pageable) {
@@ -63,13 +68,18 @@ public class UserService implements Translator {
 					"error.user.email.notfound", email));
 	}
 
-	public User createUser(User request) {
+	public User createUser(CreateUserDto request, Boolean shouldSendConfirmationEmail) {
 		Optional.of(request.getEmail())
 			.filter(userRepository::existsByEmailIgnoreCase)
 			.ifPresent(email -> {
 				throw new EmailAlreadyUsedException(email);
 			});
-		return Optional.of(request)
+		final var u = Optional.of(request)
+			.filter(PostUserDto.class::isInstance)
+			.map(PostUserDto.class::cast)
+			.map(userMapper::toUser)
+			.orElseGet(() -> userMapper.toUser(request));
+		final var user = Optional.of(u)
 			.map(req -> {
 				req.setPassword(Optional.ofNullable(req.getPassword())
 					.orElseGet(randomUtil::randomPassword));
@@ -79,6 +89,10 @@ public class UserService implements Translator {
 			})
 			.map(this::save)
 			.orElseThrow();
+		if (shouldSendConfirmationEmail) {
+			eventPublisher.publishEvent(new RegistrationEvent(user));
+		}
+		return user;
 	}
 
 	public User putUser(PutUserDto request) {

@@ -1,11 +1,9 @@
 package com.app.boilerplate.Service.Account;
 
-import com.app.boilerplate.Domain.User.User;
 import com.app.boilerplate.Mapper.IUserMapper;
 import com.app.boilerplate.Service.User.UserService;
 import com.app.boilerplate.Shared.Account.Dto.ChangePasswordDto;
 import com.app.boilerplate.Shared.Authentication.AccessJwt;
-import com.app.boilerplate.Shared.User.Dto.CreateUserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,11 +18,6 @@ public class AccountService {
 	private final UserService userService;
 	private final IUserMapper userMapper;
 	private final PasswordEncoder passwordEncoder;
-
-	public User register(CreateUserDto request) {
-		User user = userMapper.toUser(request);
-		return userService.createUser(user);
-	}
 
 	public void changePassword(ChangePasswordDto request) {
 		Optional.of(request.getId())

@@ -10,11 +10,12 @@
 	<include file="liquibase/changelog/schema/15-01-changelog.xml" />
     <include file="liquibase/changelog/schema/16-01-changelog.xml" />
 	<include file="liquibase/changelog/schema/08-01-changelog.xml" context="!prod"/>
-	<include file="liquibase/changelog/schema/18-01-changelog.xml" />
+	<include file="liquibase/changelog/schema/23-01-changelog.xml" />
 
 	<include file="liquibase/changelog/schema/13-01-seeding-user-changelog.xml"/>
-	<include file="liquibase/changelog/schema/07-01-seeding-acl-changelog.xml"/>
+			<include file="liquibase/changelog/schema/07-01-seeding-acl-changelog.xml"/>
 	<include file="liquibase/changelog/schema/08-01-seeding-dev-changelog.xml" context="!prod"/>
+	<include file="liquibase/changelog/schema/23-01-seeding-authority-changelog.xml"/>
 
 
 </databaseChangeLog>

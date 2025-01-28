@@ -69,6 +69,10 @@ public class SecurityConfig {
 	public SecurityFilterChain restApiSecurityFilterChain(HttpSecurity http, JwtDecoder jwtDecoder,
 														  JwtAuthenticationConverter authenticationConverter) throws Exception {
 		http
+			.anonymous(anonymous -> anonymous
+				.principal("anonymousUser")
+				.authorities("ROLE_ANONYMOUS")
+			)
 			.authorizeHttpRequests(auth -> auth
 				.requestMatchers(HttpMethod.POST, POST_PUBLIC_URL)
 				.permitAll()

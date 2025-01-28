@@ -4,10 +4,11 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.27.xsd">
-
-	<changeSet id="1737202371708-1" author="Admin">
-		<addColumn tableName="acl_sid">
-			<column name="priority" type="INT UNSIGNED" defaultValue="0"/>
-		</addColumn>
+	<changeSet id="1736754393449-1" author="Admin">
+		<preConditions onFail="MARK_RAN">
+			<tableExists tableName="user"/>
+			<tableExists tableName="acl_sid"/>
+		</preConditions>
+		<sqlFile path="liquibase/changelog/seed/23-01-authority-seeding.sql"/>
 	</changeSet>
 </databaseChangeLog>

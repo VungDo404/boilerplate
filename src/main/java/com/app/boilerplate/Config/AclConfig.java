@@ -2,14 +2,13 @@ package com.app.boilerplate.Config;
 
 import com.app.boilerplate.Security.HierarchicalPermission;
 import com.app.boilerplate.Security.HierarchicalPermissionGrantingStrategy;
-import com.app.boilerplate.Service.Auth.AuthorizeService;
+import com.app.boilerplate.Service.Auth.AccessControlListService;
 import com.app.boilerplate.Shared.Authentication.AccessJwt;
 import com.app.boilerplate.Util.SecurityUtil;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.acls.AclPermissionEvaluator;
@@ -31,9 +30,18 @@ public class AclConfig {
 	private final String insertSid = "insert into acl_sid (principal, sid, priority) values (?, ?, ?)";
 
 	@Bean
-	public JdbcMutableAclService aclService(SpringCacheBasedAclCache aclCache, LookupStrategy lookupStrategy,
-											DataSource dataSource, SecurityUtil securityUtil, JdbcTemplate jdbcTemplate) {
-		final var mutableAclService = new AuthorizeService(dataSource, lookupStrategy, aclCache, securityUtil, jdbcTemplate);
+	public JdbcMutableAclService aclService(
+		SpringCacheBasedAclCache aclCache,
+		LookupStrategy lookupStrategy,
+		DataSource dataSource,
+		SecurityUtil securityUtil
+	) {
+		final var mutableAclService = new AccessControlListService(
+			dataSource,
+			lookupStrategy,
+			aclCache,
+			securityUtil
+		);
 		mutableAclService.setSidIdentityQuery("SELECT LAST_INSERT_ID()");
 		mutableAclService.setClassIdentityQuery("SELECT LAST_INSERT_ID()");
 		mutableAclService.setInsertSidSql(insertSid);

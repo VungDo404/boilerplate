@@ -105,7 +105,8 @@ WHERE child.object_id_identity <> 0
 INSERT INTO acl_entry(acl_object_identity, ace_order, sid, mask, granting, audit_success, audit_failure)
 SELECT aoi.id, 1, @role_admin_id, @admin, 1, 1, 1
 FROM acl_object_identity aoi
-WHERE aoi.object_id_identity = 0;
+WHERE aoi.object_id_identity = 0 AND NOT EXISTS( SELECT 1 FROM acl_entry WHERE ace_order = 1 AND acl_object_identity
+                                                                                                     = aoi.id);
 
 INSERT INTO acl_entry(acl_object_identity, ace_order, sid, mask, granting, audit_success, audit_failure)
 SELECT aoi.id, 1, @bob_id, @admin, 1, 1, 1

@@ -1,4 +1,4 @@
-package com.app.boilerplate.Controller.User;
+package com.app.boilerplate.Controller.Auth;
 
 import com.app.boilerplate.Service.Auth.AuthService;
 import com.app.boilerplate.Shared.Authentication.AccessJwt;
@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,17 +21,21 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 	private final AuthService authService;
 
+
+	@PreAuthorize("@permissionUtil.hasPermission(@permissionUtil.AUTHENTICATION, @permissionUtil.READ)")
 	@PostMapping("/authenticate")
 	public LoginResultModel authenticate(@RequestBody @Valid LoginDto request, HttpServletResponse response) {
 		return authService.authenticate(request, response);
 	}
 
+	@PreAuthorize("@permissionUtil.hasPermission(@permissionUtil.AUTHENTICATION, @permissionUtil.WRITE)")
 	@PostMapping("/refresh-token")
 	public RefreshAccessTokenModel refreshToken(@CookieValue(AppConsts.REFRESH_TOKEN) String refreshToken,
 												HttpServletResponse response) {
 		return authService.refreshAccessToken(refreshToken, response);
 	}
 
+	@PreAuthorize("@permissionUtil.hasPermission(@permissionUtil.AUTHENTICATION, @permissionUtil.READ)")
 	@PostMapping("/logout")
 	public void logout(@AuthenticationPrincipal AccessJwt jwt, HttpServletResponse response,
 					   @CookieValue(AppConsts.REFRESH_TOKEN) String refreshToken) {

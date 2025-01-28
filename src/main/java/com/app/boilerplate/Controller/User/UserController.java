@@ -3,7 +3,6 @@ package com.app.boilerplate.Controller.User;
 import com.app.boilerplate.Domain.User.User;
 import com.app.boilerplate.Mapper.IUserMapper;
 import com.app.boilerplate.Service.User.UserService;
-import com.app.boilerplate.Shared.Account.Event.RegistrationEvent;
 import com.app.boilerplate.Shared.User.Dto.PostUserDto;
 import com.app.boilerplate.Shared.User.Dto.PutUserDto;
 import com.app.boilerplate.Shared.User.Dto.UserCriteriaDto;
@@ -16,6 +15,7 @@ import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,36 +33,35 @@ public class UserController {
 	private final ApplicationEventPublisher eventPublisher;
 	private final IUserMapper userMapper;
 
+	@PreAuthorize("@permissionUtil.hasPermission(@permissionUtil.USER, @permissionUtil.READ)")
 	@GetMapping("/")
-	public Page<User> getUsers(Optional<UserCriteriaDto> userCriteriaDto,
-							   @ParameterObject Pageable pageable) {
+	public Page<User> getUsers(Optional<UserCriteriaDto> userCriteriaDto, @ParameterObject Pageable pageable) {
 		return userService.getAllUsers(userCriteriaDto, pageable);
 	}
 
+	@PreAuthorize("@permissionUtil.hasPermission(#id, @permissionUtil.USER, @permissionUtil.READ)")
 	@GetMapping("/{id}")
 	public User getUserById(@PathVariable @NotNull UUID id) {
 		return userService.getUserById(id);
 	}
 
+	@PreAuthorize("@permissionUtil.hasPermission(@permissionUtil.USER, @permissionUtil.CREATE)")
 	@ResponseStatus(CREATED)
 	@PostMapping
 	public User createUser(@RequestBody @Validated(Default.class) PostUserDto request) {
-		final var userRequest = userMapper.toUser(request);
-		final var user = userService.createUser(userRequest);
-		if (request.getShouldSendConfirmationEmail())
-			eventPublisher.publishEvent(new RegistrationEvent(user));
-		return user;
+		return userService.createUser(request, request.getShouldSendConfirmationEmail());
 	}
 
+	@PreAuthorize("@permissionUtil.hasPermission(#request.id, @permissionUtil.USER, @permissionUtil.WRITE)")
 	@ResponseStatus(CREATED)
 	@PutMapping
 	public User putUser(@RequestBody @Valid PutUserDto request) {
 		return userService.putUser(request);
 	}
 
+	@PreAuthorize("@permissionUtil.hasPermission(#id, @permissionUtil.USER, @permissionUtil.DELETE)")
 	@DeleteMapping("/{id}")
-	public void putUser(@PathVariable @NotNull UUID id) {
+	public void deleteUser(@PathVariable @NotNull UUID id) {
 		userService.deleteUserById(id);
 	}
-
 }

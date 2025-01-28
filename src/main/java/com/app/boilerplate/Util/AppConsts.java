@@ -1,7 +1,7 @@
 package com.app.boilerplate.Util;
 
 
-public class AppConsts {
+public final class AppConsts {
 
 	public static final String TOKEN_TYPE = "typ";
 	public static final String SECURITY_STAMP = "sta";
