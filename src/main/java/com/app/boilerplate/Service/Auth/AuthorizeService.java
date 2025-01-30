@@ -4,6 +4,8 @@ import com.app.boilerplate.Domain.Authorization.*;
 import com.app.boilerplate.Repository.*;
 import com.app.boilerplate.Service.User.UserService;
 import com.app.boilerplate.Shared.Authorization.Dto.CreateAuthorityDto;
+import com.app.boilerplate.Shared.Authorization.Dto.CreateObjectIdentityDto;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +34,10 @@ public class AuthorizeService {
 
 	public Page<AclSid> getSid(Pageable pageable) {
 		return aclSidRepository.findAll(pageable);
+	}
+
+	public List<AclSid> getSidByPrincipal(boolean principal){
+		return aclSidRepository.findByPrincipal(principal);
 	}
 
 	public Page<AclClass> getClasses(Pageable pageable) {
@@ -85,7 +91,47 @@ public class AuthorizeService {
 		return authorityRepository.save(authority);
 	}
 
+	public Long addObjectIdentity(CreateObjectIdentityDto createObjectIdentityDto) {
+		final var objectIdentity = new AclObjectIdentity();
+
+		final var aclClass = aclClassRepository.findById(createObjectIdentityDto.getObjectIdClass())
+			.orElseThrow(() -> new EntityNotFoundException("AclClass not found"));
+		objectIdentity.setObjectIdClass(aclClass);
+
+		objectIdentity.setObjectIdIdentity(createObjectIdentityDto.getObjectIdIdentity());
+
+		if (createObjectIdentityDto.getParentObject() != null) {
+			final var parentObject = aclObjectIdentityRepository
+				.findById(createObjectIdentityDto.getParentObject())
+				.orElseThrow(() -> new EntityNotFoundException("Parent object not found"));
+			checkForCircularDependency(parentObject);
+			objectIdentity.setParentObject(parentObject);
+		}
+
+		final var ownerSid = aclSidRepository.findById(createObjectIdentityDto.getOwnerSid())
+			.orElseThrow(() -> new EntityNotFoundException("Owner SID not found"));
+		objectIdentity.setOwnerSid(ownerSid);
+
+		objectIdentity.setEntriesInheriting(createObjectIdentityDto.isEntriesInheriting());
+
+		final var returnedObjectIdentity = aclObjectIdentityRepository.save(objectIdentity);
+
+		return returnedObjectIdentity.getId();
+	}
+
 	public Page<Authority> getAuthorities(Pageable pageable) {
 		return authorityRepository.findAll(pageable);
+	}
+
+	private void checkForCircularDependency(AclObjectIdentity parentObject) {
+		var slow = parentObject;
+		var fast = parentObject.getParentObject();
+		while (fast != null && fast.getParentObject() != null) {
+			slow = slow.getParentObject();
+			fast = fast.getParentObject().getParentObject();
+			if (slow == fast) {
+				throw new IllegalStateException("Circular dependency detected in ACL object hierarchy");
+			}
+		}
 	}
 }

@@ -3,10 +3,7 @@ package com.app.boilerplate.Controller.Auth;
 import com.app.boilerplate.Domain.Authorization.*;
 import com.app.boilerplate.Service.Auth.AccessControlListService;
 import com.app.boilerplate.Service.Auth.AuthorizeService;
-import com.app.boilerplate.Shared.Authorization.Dto.AclDto;
-import com.app.boilerplate.Shared.Authorization.Dto.CreateAclClass;
-import com.app.boilerplate.Shared.Authorization.Dto.CreateAuthorityDto;
-import com.app.boilerplate.Shared.Authorization.Dto.CreateSidDto;
+import com.app.boilerplate.Shared.Authorization.Dto.*;
 import com.app.boilerplate.Util.PermissionUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -20,6 +17,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 @Tag(name = "AuthorizeController")
@@ -114,6 +112,12 @@ public class AuthorizeController {
 	}
 
 	@PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHORIZATION + "', '" + PermissionUtil.CREATE + "')")
+	@PostMapping("/object-identity")
+	public Long addObjects(@ParameterObject CreateObjectIdentityDto request) {
+		return authorizeService.addObjectIdentity(request);
+	}
+
+	@PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHORIZATION + "', '" + PermissionUtil.CREATE + "')")
 	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping("/sid")
 	public Long addSid(@RequestBody @Valid CreateSidDto request) {
@@ -125,8 +129,14 @@ public class AuthorizeController {
 	}
 
 	@PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHORIZATION + "', '" + PermissionUtil.READ + "')")
-	@GetMapping("/sid")
+	@GetMapping(value = "/sid", params = "!principal")
 	public Page<AclSid> getSid(@ParameterObject Pageable pageable) {
 		return authorizeService.getSid(pageable);
+	}
+
+	@PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHORIZATION + "', '" + PermissionUtil.READ + "')")
+	@GetMapping(value = "/sid", params = "principal")
+	public List<AclSid> getSidByPrincipal(@RequestParam(defaultValue = "true") boolean principal) {
+		return authorizeService.getSidByPrincipal(principal);
 	}
 }
