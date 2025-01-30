@@ -6,6 +6,7 @@ import com.app.boilerplate.Service.User.UserService;
 import com.app.boilerplate.Shared.User.Dto.PostUserDto;
 import com.app.boilerplate.Shared.User.Dto.PutUserDto;
 import com.app.boilerplate.Shared.User.Dto.UserCriteriaDto;
+import com.app.boilerplate.Util.PermissionUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -15,14 +16,13 @@ import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 import java.util.UUID;
-
-import static org.springframework.http.HttpStatus.CREATED;
 
 @Tag(name = "User")
 @RequiredArgsConstructor
@@ -33,33 +33,33 @@ public class UserController {
 	private final ApplicationEventPublisher eventPublisher;
 	private final IUserMapper userMapper;
 
-	@PreAuthorize("@permissionUtil.hasPermission(@permissionUtil.USER, @permissionUtil.READ)")
+	@PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.USER + "', '" + PermissionUtil.READ + "')")
 	@GetMapping("/")
 	public Page<User> getUsers(Optional<UserCriteriaDto> userCriteriaDto, @ParameterObject Pageable pageable) {
 		return userService.getAllUsers(userCriteriaDto, pageable);
 	}
 
-	@PreAuthorize("@permissionUtil.hasPermission(#id, @permissionUtil.USER, @permissionUtil.READ)")
+	@PreAuthorize("hasPermission(#id.toString(), '" + PermissionUtil.USER + "', '" + PermissionUtil.READ + "')")
 	@GetMapping("/{id}")
 	public User getUserById(@PathVariable @NotNull UUID id) {
 		return userService.getUserById(id);
 	}
 
-	@PreAuthorize("@permissionUtil.hasPermission(@permissionUtil.USER, @permissionUtil.CREATE)")
-	@ResponseStatus(CREATED)
+	@PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.USER + "', '" + PermissionUtil.CREATE + "')")
+	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping
 	public User createUser(@RequestBody @Validated(Default.class) PostUserDto request) {
 		return userService.createUser(request, request.getShouldSendConfirmationEmail());
 	}
 
-	@PreAuthorize("@permissionUtil.hasPermission(#request.id, @permissionUtil.USER, @permissionUtil.WRITE)")
-	@ResponseStatus(CREATED)
+	@PreAuthorize("hasPermission(#request.id.toString(), '" + PermissionUtil.USER + "', '" + PermissionUtil.WRITE + "')")
+	@ResponseStatus(HttpStatus.CREATED)
 	@PutMapping
 	public User putUser(@RequestBody @Valid PutUserDto request) {
 		return userService.putUser(request);
 	}
 
-	@PreAuthorize("@permissionUtil.hasPermission(#id, @permissionUtil.USER, @permissionUtil.DELETE)")
+	@PreAuthorize("hasPermission(#id.toString(), '" + PermissionUtil.USER + "', '" + PermissionUtil.DELETE + "')")
 	@DeleteMapping("/{id}")
 	public void deleteUser(@PathVariable @NotNull UUID id) {
 		userService.deleteUserById(id);

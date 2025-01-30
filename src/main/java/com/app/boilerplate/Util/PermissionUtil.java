@@ -9,7 +9,6 @@ public final class PermissionUtil {
 	public static final String AUTHENTICATION = "com.app.boilerplate.Domain.Authentication";
 	public static final String AUTHORIZATION = "com.app.boilerplate.Domain.Authorization";
 	public static final String DOMAIN = "com.app.boilerplate.Domain";
-	public static final String ACCOUNT = "com.app.boilerplate.Domain.Account";
 
 	public static final String READ = "READ";
 	public static final String WRITE = "WRITE";
@@ -18,13 +17,6 @@ public final class PermissionUtil {
 	public static final String GRANT = "GRANT";
 	public static final String ADMIN = "ADMINISTRATION";
 
-	public static String hasPermission(String targetId, String targetType, String permission) {
-		return "hasPermission('" + targetId + "', '" + targetType + "', '" + permission + "')";
-	}
+	public static final String ROOT = "0";
 
-	public static String hasPermission(String targetType, String permission) {
-		return hasPermission("0", targetType, permission);
-	}
-
-	private PermissionUtil() {}
 }

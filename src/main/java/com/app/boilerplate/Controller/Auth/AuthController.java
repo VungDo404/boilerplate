@@ -6,6 +6,7 @@ import com.app.boilerplate.Shared.Authentication.Dto.LoginDto;
 import com.app.boilerplate.Shared.Authentication.Model.LoginResultModel;
 import com.app.boilerplate.Shared.Authentication.Model.RefreshAccessTokenModel;
 import com.app.boilerplate.Util.AppConsts;
+import com.app.boilerplate.Util.PermissionUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -21,21 +22,23 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 	private final AuthService authService;
 
-
-	@PreAuthorize("@permissionUtil.hasPermission(@permissionUtil.AUTHENTICATION, @permissionUtil.READ)")
+	@PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.READ +
+		"')")
 	@PostMapping("/authenticate")
 	public LoginResultModel authenticate(@RequestBody @Valid LoginDto request, HttpServletResponse response) {
 		return authService.authenticate(request, response);
 	}
 
-	@PreAuthorize("@permissionUtil.hasPermission(@permissionUtil.AUTHENTICATION, @permissionUtil.WRITE)")
+	@PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.READ +
+		"')")
 	@PostMapping("/refresh-token")
 	public RefreshAccessTokenModel refreshToken(@CookieValue(AppConsts.REFRESH_TOKEN) String refreshToken,
 												HttpServletResponse response) {
 		return authService.refreshAccessToken(refreshToken, response);
 	}
 
-	@PreAuthorize("@permissionUtil.hasPermission(@permissionUtil.AUTHENTICATION, @permissionUtil.READ)")
+	@PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.READ +
+		"')")
 	@PostMapping("/logout")
 	public void logout(@AuthenticationPrincipal AccessJwt jwt, HttpServletResponse response,
 					   @CookieValue(AppConsts.REFRESH_TOKEN) String refreshToken) {

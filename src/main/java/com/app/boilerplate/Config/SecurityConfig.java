@@ -71,7 +71,7 @@ public class SecurityConfig {
 		http
 			.anonymous(anonymous -> anonymous
 				.principal("anonymousUser")
-				.authorities("ROLE_ANONYMOUS")
+				.authorities("ROLE_AUTHENTICATION_ANONYMOUS")
 			)
 			.authorizeHttpRequests(auth -> auth
 				.requestMatchers(HttpMethod.POST, POST_PUBLIC_URL)

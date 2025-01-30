@@ -7,6 +7,7 @@ import com.app.boilerplate.Shared.Account.Dto.ChangePasswordDto;
 import com.app.boilerplate.Shared.Account.Group.RegisterUser;
 import com.app.boilerplate.Shared.Authentication.AccessJwt;
 import com.app.boilerplate.Shared.User.Dto.CreateUserDto;
+import com.app.boilerplate.Util.PermissionUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,14 +25,16 @@ public class AccountController {
 	private final AccountService accountService;
 	private final UserService userService;
 
-	@PreAuthorize("@permissionUtil.hasPermission(@permissionUtil.ACCOUNT, @permissionUtil.CREATE)")
+	@PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.CREATE +
+		"')")
 	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping("/register")
 	public User register(@RequestBody @Validated(RegisterUser.class) CreateUserDto request) {
 		return userService.createUser(request, true);
 	}
 
-	@PreAuthorize("@permissionUtil.hasPermission(#request.id, @permissionUtil.ACCOUNT, @permissionUtil.WRITE)")
+	@PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.WRITE +
+		"')")
 	@PostMapping("/change-password")
 	public void changePassword(@RequestBody @Valid ChangePasswordDto request) {
 		accountService.changePassword(request);
