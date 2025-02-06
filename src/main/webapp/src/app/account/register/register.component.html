@@ -1,1 +1,21 @@
-<p>register works!</p>
+<form method="post" (ngSubmit)="register()" class="auth-form">
+    <div class="shad-form-item">
+        <label class="shad-form-label" for="username">Username</label>
+        <input class="shad-input" placeholder="Your username" id="username" autocomplete="off" type="text"/>
+    </div>
+    <div class="shad-form-item">
+        <label class="shad-form-label" for="email">Email</label>
+        <input class="shad-input" placeholder="Your email" id="email" autocomplete="off" type="text"/>
+    </div>
+    <div class="shad-form-item">
+        <label class="shad-form-label" for="displayName">Full name</label>
+        <input class="shad-input" placeholder="Your full name" id="displayName" autocomplete="off" type="text"/>
+    </div>
+    <div class="shad-form-item">
+        <label class="shad-form-label" for="password">Password</label>
+        <input class="shad-input" placeholder="Your password" id="password" type="password" autocomplete="off"/>
+    </div>
+
+    <p-button label="Sign Up" styleClass="primary-btn" fluid />
+</form>
+
