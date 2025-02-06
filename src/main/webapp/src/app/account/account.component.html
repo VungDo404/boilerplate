@@ -1,0 +1,34 @@
+<div class="account-container">
+    <section class="left-wrapper">
+        <div class="left">
+            <p-image src="src/assets/logos/02.svg" alt="Logo" width="224" height="82" class="logo-1"/>
+            <div class="text">
+                <h1 class="header-1">Your foundation for building brilliant apps.</h1>
+                <p class="body-1">Emphasizes a smooth, efficient launch for any new project.</p>
+            </div>
+            <p-image src="src/assets/images/01.png" alt="Image" width="342" height="342" class="logo-2"/>
+        </div>
+    </section>
+    <section class="right-wrapper">
+        <div class="right">
+            <div class="logo-wrapper">
+                <p-image src="src/assets/logos/01.svg" alt="Logo" width="224" height="82" class="logo"/>
+            </div>
+            <h1 class="header-1">{{ title }}</h1>
+            <router-outlet></router-outlet>
+            <p-divider align="center" type="solid">or</p-divider>
+            <div class="auth2 body-2">
+                <div class="auth2-button">
+                    <p-image src="src/assets/logos/brand/01.svg" alt="Google Logo" width="30" height="30"/>
+                </div>
+                <div class="auth2-button">
+                    <p-image src="src/assets/logos/brand/02.svg" alt="Github Logo" width="30" height="30"/>
+                </div>
+            </div>
+            <div class="message-wrapper body-2">
+                <p>{{ message }}</p>
+                <a [routerLink]="linkRoute">{{ linkText }}</a>
+            </div>
+        </div>
+    </section>
+</div>

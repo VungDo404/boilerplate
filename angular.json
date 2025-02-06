@@ -20,6 +20,11 @@
 						"outputPath": "dist/webapp",
 						"index": "src/main/webapp/src/index.html",
 						"browser": "src/main/webapp/src/main.ts",
+						"stylePreprocessorOptions": {
+							"includePaths": [
+								"src/main/webapp/src/assets/scss"
+							]
+						},
 						"polyfills": [
 							"zone.js"
 						],
@@ -29,10 +34,12 @@
 							{
 								"glob": "**/*",
 								"input": "src/main/webapp/public"
-							}
+							},
+							"src/main/webapp/src/assets"
 						],
 						"styles": [
-							"src/main/webapp/src/styles.scss"
+							"src/main/webapp/src/styles.scss",
+							"node_modules/primeflex/primeflex.css"
 						],
 						"scripts": []
 					},

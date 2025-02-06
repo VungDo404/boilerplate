@@ -1,0 +1,14 @@
+<form method="post" (ngSubmit)="login()" class="auth-form">
+    <div class="shad-form-item">
+        <label class="shad-form-label" for="username">Username</label>
+        <input class="shad-input" placeholder="Your username" id="username" autocomplete="off" type="text"/>
+    </div>
+
+    <div class="shad-form-item">
+        <label class="shad-form-label" for="password">Password</label>
+        <input class="shad-input" placeholder="Your password" id="password" type="password" autocomplete="off"/>
+    </div>
+    <div class="forgot-password"><small>Forgot password?</small></div>
+    <p-button label="Sign In" styleClass="primary-btn" fluid />
+</form>
+
