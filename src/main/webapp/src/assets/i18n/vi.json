@@ -1,0 +1,22 @@
+{
+  "AccountPageHeader": "Nền tảng của bạn để xây dựng các ứng dụng tuyệt vời.",
+  "AccountPageBody": "Chú trọng vào sự mượt mà, hiệu quả cho mọi dự án mới.",
+  "CreateAccount": "Tạo tài khoản",
+  "Authenticate": "Xác thực",
+  "Username": "Tên đăng nhập",
+  "UsernamePlaceholder": "Tên đăng nhập của bạn",
+  "Password": "Mật khẩu",
+  "PasswordPlaceholder": "Mật khẩu của bạn",
+  "Email": "Email",
+  "EmailPlaceholder": "Email của bạn",
+  "FullName": "Tên đầy đủ",
+  "FullNamePlaceholder": "Họ và tên của bạn",
+  "ForgotPassword": "Quên mật khẩu?",
+  "ConfirmedPassword": "Xác nhận mật khẩu",
+  "ConfirmedPasswordPlaceholder": "Xác nhận mật khẩu của bạn",
+  "SignIn": "Đăng nhập",
+  "SignUp": "Đăng ký",
+  "DontHaveAccount": "Bạn chưa có tài khoản?",
+  "AlreadyHaveAccount": "Bạn đã có tài khoản rồi?",
+  "Or": "hoặc"
+}

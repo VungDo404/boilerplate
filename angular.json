@@ -33,7 +33,7 @@
 						"assets": [
 							{
 								"glob": "**/*",
-								"input": "src/main/webapp/public"
+								"input": "src/main/webapp/src"
 							},
 							"src/main/webapp/src/assets"
 						],

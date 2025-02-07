@@ -1,0 +1,22 @@
+{
+  "AccountPageHeader": "Your foundation for building brilliant apps.",
+  "AccountPageBody": "Emphasizes a smooth, efficient launch for any new project.",
+  "CreateAccount": "Create Account",
+  "Authenticate": "Authenticate",
+  "Username": "Username",
+  "UsernamePlaceholder": "Your username",
+  "Password": "Password",
+  "PasswordPlaceholder": "Your password",
+  "Email": "Email",
+  "EmailPlaceholder": "Your email",
+  "FullName": "FullName",
+  "FullNamePlaceholder": "Your full name",
+  "ForgotPassword": "Forgot password?",
+  "ConfirmedPassword": "Confirmed password",
+  "ConfirmedPasswordPlaceholder": "Your confirmed password",
+  "SignIn": "Sign In",
+  "SignUp": "Sign Up",
+  "DontHaveAccount": "Don't have an account?",
+  "AlreadyHaveAccount": "Already have an account?",
+  "Or": "or"
+}

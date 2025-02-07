@@ -3,8 +3,8 @@
         <div class="left">
             <p-image src="src/assets/logos/02.svg" alt="Logo" width="224" height="82" class="logo-1"/>
             <div class="text">
-                <h1 class="header-1">Your foundation for building brilliant apps.</h1>
-                <p class="body-1">Emphasizes a smooth, efficient launch for any new project.</p>
+                <h1 class="header-1">{{ "AccountPageHeader" | translate }}</h1>
+                <p class="body-1">{{ "AccountPageBody" | translate }}</p>
             </div>
             <p-image src="src/assets/images/01.png" alt="Image" width="342" height="342" class="logo-2"/>
         </div>
@@ -16,7 +16,7 @@
             </div>
             <h1 class="header-1">{{ title }}</h1>
             <router-outlet></router-outlet>
-            <p-divider align="center" type="solid">or</p-divider>
+            <p-divider align="center" type="solid">{{ "Or" | translate }}</p-divider>
             <div class="auth2 body-2">
                 <div class="auth2-button">
                     <p-image src="src/assets/logos/brand/01.svg" alt="Google Logo" width="30" height="30"/>

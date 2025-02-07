@@ -9,3 +9,11 @@ html, body{
 	background-color: #F2F4F8;
 	color: #04050C;
 }
+
+@font-face {
+	font-family: 'FZPoppins';
+	src: url('./assets/fonts/FZPoppins-Regular.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+	font-display: swap;
+}

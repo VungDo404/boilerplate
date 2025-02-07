@@ -1,0 +1,10 @@
+:host{
+  width: 100%;
+  .auth-form {
+    p-button {
+      ::ng-deep button.primary-btn {
+        height: 66px !important;
+      }
+    }
+  }
+}

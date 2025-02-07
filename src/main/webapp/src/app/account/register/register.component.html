@@ -1,21 +1,28 @@
 <form method="post" (ngSubmit)="register()" class="auth-form">
     <div class="shad-form-item">
-        <label class="shad-form-label" for="username">Username</label>
-        <input class="shad-input" placeholder="Your username" id="username" autocomplete="off" type="text"/>
+        <label class="shad-form-label" for="username">{{ "Username" | translate }}</label>
+        <input class="shad-input" placeholder="{{'UsernamePlaceholder' | translate}}" id="username" autocomplete="off"
+               type="text"/>
     </div>
     <div class="shad-form-item">
-        <label class="shad-form-label" for="email">Email</label>
+        <label class="shad-form-label" for="email">{{ "Email" | translate }}</label>
         <input class="shad-input" placeholder="Your email" id="email" autocomplete="off" type="text"/>
     </div>
     <div class="shad-form-item">
-        <label class="shad-form-label" for="displayName">Full name</label>
-        <input class="shad-input" placeholder="Your full name" id="displayName" autocomplete="off" type="text"/>
+        <label class="shad-form-label" for="displayName">{{ "FullName" | translate }}</label>
+        <input class="shad-input" placeholder="{{'FullNamePlaceholder' | translate}}" id="displayName" autocomplete="off" type="text"/>
     </div>
     <div class="shad-form-item">
-        <label class="shad-form-label" for="password">Password</label>
-        <input class="shad-input" placeholder="Your password" id="password" type="password" autocomplete="off"/>
+        <label class="shad-form-label" for="password">{{ "Password" | translate }}</label>
+        <input class="shad-input" placeholder="{{'PasswordPlaceholder' | translate}}" id="password" type="password"
+               autocomplete="off"/>
+    </div>
+    <div class="shad-form-item">
+        <label class="shad-form-label" for="confirmed-password">{{ "ConfirmedPassword" | translate }}</label>
+        <input class="shad-input" placeholder="{{'ConfirmedPasswordPlaceholder' | translate}}" id="confirmed-password" type="password"
+               autocomplete="off"/>
     </div>
 
-    <p-button label="Sign Up" styleClass="primary-btn" fluid />
+    <p-button label="{{'SignUp' | translate}}" styleClass="primary-btn" fluid/>
 </form>
 
