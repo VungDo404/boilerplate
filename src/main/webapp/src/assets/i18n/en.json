@@ -18,5 +18,11 @@
   "SignUp": "Sign Up",
   "DontHaveAccount": "Don't have an account?",
   "AlreadyHaveAccount": "Already have an account?",
-  "Or": "or"
+  "Or": "or",
+
+  "ThisFieldIsRequired": "This field is required",
+  "PleaseEnterAtLeastNCharacter": "Please enter at least {{value}} characters",
+  "PleaseEnterNoMoreThanNCharacter": "Please enter no more than {{value}} characters",
+  "InvalidEmailAddress": "Invalid email address",
+  "InvalidPattern": "Invalid pattern: {{value}}"
 }

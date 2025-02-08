@@ -1,0 +1,5 @@
+<div class="form-message" *ngIf="formCtrl.invalid && (formCtrl.dirty || !formCtrl.untouched)">
+    <div *ngIf="firstErrorMessage | async">
+        {{ firstErrorMessage | async }}
+    </div>
+</div>

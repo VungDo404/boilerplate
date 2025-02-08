@@ -13,7 +13,7 @@
 }
 
 .body-2 {
-  font-size: 14px;
+  font-size: 14px !important;
   line-height: 20px;
   font-weight: normal;
 }
@@ -25,7 +25,7 @@
 }
 
 .primary-btn {
-  @extend btn !optional;
+  @extend .btn !optional;
   background-color: $brand !important;
   transition: all 0.2s ease-in-out !important;
   border-radius: 9999px !important;
@@ -38,7 +38,7 @@
 }
 
 .form-submit-button {
-  @extend primary-btn !optional;
+  @extend .primary-btn !optional;
   height: 66px !important;
 }
 
@@ -53,8 +53,8 @@
 }
 
 .shad-input {
-  @extend body-2 !optional;
-  @extend shad-no-focus !optional;
+  @extend .body-2 !optional;
+  @extend .shad-no-focus !optional;
   border: none;
   box-shadow: none;
   padding: 0;
@@ -78,10 +78,11 @@
   border-radius: 0.75rem;
   box-shadow: 0 10px 30px 0 #4247611A;
   width: 100%;
+  position: relative;
 }
 
 .shad-form-label {
-  @extend body-2 !optional;
+  @extend .body-2 !optional;
   color: $light-100;
   padding-top: 0.5rem;
   width: 100%;
@@ -92,7 +93,8 @@
   padding: 0 10px 0 10px;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 30px;
+
 }
 
 .auth2-button{
@@ -110,4 +112,11 @@
   &:hover{
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
   }
+}
+
+.form-message{
+  position: absolute;
+  @extend .body-2 !optional;
+  color: red;
+  bottom: -1.4rem;
 }

@@ -1,4 +1,4 @@
-<form method="post" (ngSubmit)="login()" class="auth-form">
+<form method="post" (ngSubmit)="login()" class="auth-form" [formGroup]="loginForm">
     <div class="shad-form-item">
         <label class="shad-form-label" for="username">{{ "Username" | translate }}</label>
         <input
@@ -6,8 +6,10 @@
                 placeholder="{{'UsernamePlaceholder' | translate}}"
                 id="username"
                 autocomplete="off"
-               type="text"
+                type="text"
+                formControlName="username"
         />
+        <validation-message [formCtrl]="loginForm.get('username')!"></validation-message>
     </div>
 
     <div class="shad-form-item">
@@ -18,9 +20,11 @@
                 id="password"
                 type="password"
                 autocomplete="off"
+                formControlName="password"
         />
+        <validation-message [formCtrl]="loginForm.get('password')!"></validation-message>
     </div>
     <div class="forgot-password"><small>{{ "ForgotPassword" | translate }}</small></div>
-    <p-button label="{{'SignIn' | translate}}" styleClass="primary-btn" fluid/>
+    <p-button label="{{'SignIn' | translate}}" styleClass="primary-btn" type="submit" fluid/>
 </form>
 

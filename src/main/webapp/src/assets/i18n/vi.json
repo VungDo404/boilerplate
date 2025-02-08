@@ -18,5 +18,11 @@
   "SignUp": "Đăng ký",
   "DontHaveAccount": "Bạn chưa có tài khoản?",
   "AlreadyHaveAccount": "Bạn đã có tài khoản rồi?",
-  "Or": "hoặc"
+  "Or": "hoặc",
+
+  "ThisFieldIsRequired": "Trường này là bắt buộc",
+  "PleaseEnterAtLeastNCharacter": "Vui lòng nhập ít nhất {{value}} ký tự",
+  "PleaseEnterNoMoreThanNCharacter": "Vui lòng nhập không quá {{value}} ký tự",
+  "InvalidEmailAddress": "Địa chỉ email không hợp lệ",
+  "InvalidPattern": "Mẫu không hợp lệ: {{value}}"
 }

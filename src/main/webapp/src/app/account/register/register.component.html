@@ -1,28 +1,65 @@
-<form method="post" (ngSubmit)="register()" class="auth-form">
+<form method="post" (ngSubmit)="register()" class="auth-form" [formGroup]="registerForm">
     <div class="shad-form-item">
         <label class="shad-form-label" for="username">{{ "Username" | translate }}</label>
-        <input class="shad-input" placeholder="{{'UsernamePlaceholder' | translate}}" id="username" autocomplete="off"
-               type="text"/>
+        <input
+                class="shad-input"
+                placeholder="{{'UsernamePlaceholder' | translate}}"
+                id="username"
+                autocomplete="off"
+                type="text"
+                formControlName="username"
+        />
+        <validation-message [formCtrl]="registerForm.get('username')!"></validation-message>
     </div>
     <div class="shad-form-item">
         <label class="shad-form-label" for="email">{{ "Email" | translate }}</label>
-        <input class="shad-input" placeholder="Your email" id="email" autocomplete="off" type="text"/>
+        <input
+                class="shad-input"
+                placeholder="Your email"
+                id="email"
+                autocomplete="off"
+                type="text"
+                formControlName="email"
+        />
+        <validation-message [formCtrl]="registerForm.get('email')!"></validation-message>
     </div>
     <div class="shad-form-item">
         <label class="shad-form-label" for="displayName">{{ "FullName" | translate }}</label>
-        <input class="shad-input" placeholder="{{'FullNamePlaceholder' | translate}}" id="displayName" autocomplete="off" type="text"/>
+        <input
+                class="shad-input"
+                placeholder="{{'FullNamePlaceholder' | translate}}"
+                id="displayName"
+                autocomplete="off"
+                type="text"
+                formControlName="displayName"
+        />
+        <validation-message [formCtrl]="registerForm.get('displayName')!"></validation-message>
     </div>
     <div class="shad-form-item">
         <label class="shad-form-label" for="password">{{ "Password" | translate }}</label>
-        <input class="shad-input" placeholder="{{'PasswordPlaceholder' | translate}}" id="password" type="password"
-               autocomplete="off"/>
+        <input
+                class="shad-input"
+                placeholder="{{'PasswordPlaceholder' | translate}}"
+                id="password"
+                type="password"
+                autocomplete="off"
+                formControlName="password"
+        />
+        <validation-message [formCtrl]="registerForm.get('password')!"></validation-message>
     </div>
     <div class="shad-form-item">
         <label class="shad-form-label" for="confirmed-password">{{ "ConfirmedPassword" | translate }}</label>
-        <input class="shad-input" placeholder="{{'ConfirmedPasswordPlaceholder' | translate}}" id="confirmed-password" type="password"
-               autocomplete="off"/>
+        <input
+                class="shad-input"
+                placeholder="{{'ConfirmedPasswordPlaceholder' | translate}}"
+                id="confirmed-password"
+                type="password"
+                autocomplete="off"
+                formControlName="confirmedPassword"
+        />
+        <validation-message [formCtrl]="registerForm.get('confirmedPassword')!"></validation-message>
     </div>
 
-    <p-button label="{{'SignUp' | translate}}" styleClass="primary-btn" fluid/>
+    <p-button label="{{'SignUp' | translate}}" styleClass="primary-btn" type="submit" fluid/>
 </form>
 
