@@ -6,7 +6,7 @@ import {NgxSpinnerComponent, NgxSpinnerService} from "ngx-spinner";
 	selector: '[appBusy]'
 })
 export class BusyDirective implements OnChanges {
-	@Input() busyIf: boolean;
+	@Input() busyIf!: boolean;
 	private spinnerName = '';
 	private isBusy = false;
 	constructor(private viewContainerRef: ViewContainerRef, private ngxSpinnerService: NgxSpinnerService) {

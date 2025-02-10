@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
+import { AsyncPipe, NgIf } from "@angular/common";
 import { AbstractControl } from "@angular/forms";
 import { TranslateService } from "@ngx-translate/core";
 import { filter, find, concat } from 'lodash';
@@ -13,7 +13,6 @@ export type Error = {
   selector: 'validation-message',
   imports: [
     NgIf,
-    NgForOf,
     AsyncPipe
   ],
   templateUrl: './validation-message.component.html',

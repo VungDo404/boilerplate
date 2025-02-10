@@ -2,6 +2,7 @@ package com.app.boilerplate.Shared.Account.Dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,14 +17,18 @@ import java.io.Serializable;
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ChangePasswordDto implements Serializable {
-	@NotNull
-	@UUID
+	@NotNull(message = "{validation.id.required}")
+	@UUID(message = "{validation.id.invalid}")
 	private java.util.UUID id;
-	@NotNull
-	@Size(message = "Password must be at least {min} characters long", min = 6)
+	@NotNull(message = "{validation.password.required}")
+	@Size(min = 6, max = 60, message = "{validation.password.size}")
+	@Pattern(regexp = "^[\\w!@#$%^&*()\\-+=<>?,.;:'\"{}\\[\\]\\\\/|`~]+$",
+			message = "{validation.password.pattern}")
 	private String currentPassword;
-	@NotNull
-	@Size(message = "Password must be at least {min} characters long", min = 6)
+	@NotNull(message = "{validation.newPassword.required}")
+	@Size(min = 6, max = 60, message = "{validation.newPassword.size}")
+	@Pattern(regexp = "^[\\w!@#$%^&*()\\-+=<>?,.;:'\"{}\\[\\]\\\\/|`~]+$",
+			message = "{validation.newPassword.pattern}")
 	private String newPassword;
 
 }

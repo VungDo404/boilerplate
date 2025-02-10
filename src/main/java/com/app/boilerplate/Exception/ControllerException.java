@@ -1,6 +1,8 @@
 package com.app.boilerplate.Exception;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.MessageSource;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.*;
 import org.springframework.lang.NonNull;
@@ -22,9 +24,10 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @RestControllerAdvice
 public class ControllerException extends ResponseEntityExceptionHandler {
-
+	private final MessageSource messageSource;
 	private static final String FIELD_ERRORS = "fieldErrors";
 	private static final String TIME_STAMP = "timestamp";
 
@@ -65,7 +68,7 @@ public class ControllerException extends ResponseEntityExceptionHandler {
 		NativeWebRequest request) {
 		return handleException(
 			exception,
-			HttpStatus.UNAUTHORIZED,
+			HttpStatus.FORBIDDEN,
 			"error.auth.credential",
 			"Bad credentials",
 			null,
@@ -194,4 +197,5 @@ public class ControllerException extends ResponseEntityExceptionHandler {
 
 		return responseStatus != null ? responseStatus.value() : HttpStatus.INTERNAL_SERVER_ERROR;
 	}
+
 }

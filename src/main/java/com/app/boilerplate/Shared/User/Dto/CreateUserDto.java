@@ -19,17 +19,17 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CreateUserDto implements Serializable {
-	@NotNull
-	@Size(message = "Username must be between {min} and {max} characters long", min = 2, max = 50)
+	@NotNull( message = "{validation.password.size}")
+	@Size( message = "{validation.password.size}", min = 2, max = 50)
 	private final String username;
-	@NotNull(groups = RegisterUser.class)
-	@Size(message = "Password must be at least {min} characters long", min = 6, groups = RegisterUser.class)
+	@NotNull(message = "{validation.password.required}",groups = RegisterUser.class)
+	@Size( message = "{validation.password.size}", min = 6, max = 60, groups = RegisterUser.class)
 	private final String password;
-	@NotNull
-	@Size(message = "Email must be at most {max} characters long", max = 50)
-	@Email
+	@NotNull(message = "{validation.email.required}")
+	@Size(max = 50, message = "{validation.email.size}")
+	@Email(message = "{validation.email.invalid}")
 	private final String email;
-	@NotNull
-	@Size(min = 2, max = 10)
+	@NotNull(message = "{validation.displayName.required}")
+	@Size(min = 2, max = 50, message = "{validation.displayName.size}")
 	private final String displayName;
 }

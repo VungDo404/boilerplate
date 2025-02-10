@@ -5,9 +5,13 @@ import { environment } from "../../environments/environment";
     providedIn: 'root'
 })
 export class ConfigService {
-    private config = null;
+    private readonly config;
 
     constructor() {
         this.config = environment;
+    }
+
+    get baseUrl(){
+        return this.config.apiUrl;
     }
 }
