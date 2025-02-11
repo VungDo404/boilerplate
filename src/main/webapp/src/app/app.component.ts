@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from "@angular/router";
 import { NgxSpinnerComponent } from "ngx-spinner";
+import { ToastModule } from "primeng/toast";
 
 @Component({
     selector: 'app-root',
@@ -11,6 +12,6 @@ import { NgxSpinnerComponent } from "ngx-spinner";
 })
 export class AppComponent {
     constructor() {
-
     }
+
 }

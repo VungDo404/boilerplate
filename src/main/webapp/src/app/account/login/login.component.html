@@ -1,4 +1,5 @@
-<form method="post" (ngSubmit)="login()" class="auth-form" [formGroup]="loginForm" >
+<p-toast/>
+<form method="post" (ngSubmit)="login()" class="auth-form" [formGroup]="loginForm">
     <div class="shad-form-item">
         <label class="shad-form-label" for="username">{{ "Username" | translate }}</label>
         <input
@@ -26,6 +27,5 @@
     </div>
     <div class="forgot-password"><small>{{ "ForgotPassword" | translate }}</small></div>
     <p-button label="{{'SignIn' | translate}}" styleClass="primary-btn" type="submit" fluid/>
-
 </form>
 

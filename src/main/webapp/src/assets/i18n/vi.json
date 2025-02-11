@@ -24,5 +24,6 @@
   "PleaseEnterAtLeastNCharacter": "Vui lòng nhập ít nhất {{value}} ký tự",
   "PleaseEnterNoMoreThanNCharacter": "Vui lòng nhập không quá {{value}} ký tự",
   "InvalidEmailAddress": "Địa chỉ email không hợp lệ",
-  "InvalidPattern": "Mẫu không hợp lệ: {{value}}"
+  "InvalidPattern": "Mẫu không hợp lệ: {{value}}",
+  "PasswordMismatch": "Mật khẩu xác nhận phải trùng khớp với mật khẩu đã nhập."
 }

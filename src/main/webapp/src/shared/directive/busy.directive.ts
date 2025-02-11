@@ -1,4 +1,4 @@
-import {ComponentFactoryResolver, Directive, Input, OnChanges, SimpleChanges, ViewContainerRef} from '@angular/core';
+import { Directive, Input, OnChanges, SimpleChanges, ViewContainerRef} from '@angular/core';
 import {NgxSpinnerComponent, NgxSpinnerService} from "ngx-spinner";
 
 @Directive({
@@ -22,7 +22,7 @@ export class BusyDirective implements OnChanges {
 
 	loadComponent() {
 		const componentRef = this.viewContainerRef.createComponent(NgxSpinnerComponent);
-		this.spinnerName = 'busySpinner-' + Date.now(); // generate random name
+		this.spinnerName = 'busySpinner-' + Date.now();
 		let component = <NgxSpinnerComponent>componentRef.instance;
 		component.name = this.spinnerName;
 		component.fullScreen = false;

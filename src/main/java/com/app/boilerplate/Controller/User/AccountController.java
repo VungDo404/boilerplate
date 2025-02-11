@@ -40,6 +40,8 @@ public class AccountController {
 		accountService.changePassword(request);
 	}
 
+	@PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.WRITE +
+			"')")
 	@GetMapping("/profile")
 	public String profile(@AuthenticationPrincipal AccessJwt jwt) {
 		return accountService.profile(jwt);

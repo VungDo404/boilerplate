@@ -2,16 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Button } from "primeng/button";
 import { TranslatePipe } from "@ngx-translate/core";
-import { NgIf } from "@angular/common";
 import { ValidationMessageComponent } from "../../../shared/component/validation-message/validation-message.component";
 import { LoginService } from "./login.service";
 import { NgxSpinnerService } from "ngx-spinner";
-
-export interface LoginForm {
-    username: string;
-    password: string;
-}
-
+import { MessageService, ToastMessageOptions } from "primeng/api";
+import { Toast } from "primeng/toast";
+import { Subscription } from "rxjs";
 
 @Component({
     selector: 'app-login',
@@ -21,7 +17,9 @@ export interface LoginForm {
         TranslatePipe,
         ReactiveFormsModule,
         ValidationMessageComponent,
+        Toast,
     ],
+    providers: [MessageService],
     templateUrl: './login.component.html',
     standalone: true,
     styleUrl: './login.component.scss'
@@ -29,8 +27,15 @@ export interface LoginForm {
 export class LoginComponent implements OnInit {
     loginForm!: FormGroup;
     submitted = false;
+    toastMessageOptions: ToastMessageOptions[] = [];
+    private toastSubscription!: Subscription;
 
-    constructor(private formBuilder: FormBuilder, private loginService: LoginService, private spinnerService: NgxSpinnerService) {}
+    constructor(
+        private formBuilder: FormBuilder,
+        private loginService: LoginService,
+        private spinnerService: NgxSpinnerService,
+        private messageService: MessageService
+    ) {}
 
     ngOnInit() {
         this.loginForm = this.formBuilder.group({
@@ -53,6 +58,12 @@ export class LoginComponent implements OnInit {
                 ]
             ]
         });
+        this.toastSubscription = this.loginService.toastMessage$.subscribe(
+            option => {
+                this.toastMessageOptions = option;
+                this.messageService.addAll(this.toastMessageOptions);
+            }
+        );
     }
 
     login() {
@@ -60,7 +71,6 @@ export class LoginComponent implements OnInit {
             this.loginForm.markAllAsTouched();
             return;
         }
-
         this.submitted = true;
         this.spinnerService.show();
         const cb = () => {

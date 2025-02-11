@@ -1,3 +1,4 @@
+<p-toast/>
 <form method="post" (ngSubmit)="register()" class="auth-form" [formGroup]="registerForm">
     <div class="shad-form-item">
         <label class="shad-form-label" for="username">{{ "Username" | translate }}</label>
@@ -57,7 +58,10 @@
                 autocomplete="off"
                 formControlName="confirmedPassword"
         />
-        <validation-message [formCtrl]="registerForm.get('confirmedPassword')!"></validation-message>
+        <validation-message
+                [formCtrl]="registerForm.get('confirmedPassword')!"
+                [Errors]="[{ error: 'passwordMismatch', localizationKey: 'PasswordMismatch' }]"
+        ></validation-message>
     </div>
 
     <p-button label="{{'SignUp' | translate}}" styleClass="primary-btn" type="submit" fluid/>

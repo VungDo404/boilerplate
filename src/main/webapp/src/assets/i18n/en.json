@@ -24,5 +24,6 @@
   "PleaseEnterAtLeastNCharacter": "Please enter at least {{value}} characters",
   "PleaseEnterNoMoreThanNCharacter": "Please enter no more than {{value}} characters",
   "InvalidEmailAddress": "Invalid email address",
-  "InvalidPattern": "Invalid pattern: {{value}}"
+  "InvalidPattern": "Invalid pattern: {{value}}",
+  "PasswordMismatch": "Confirmed Password must be the same as Password"
 }
