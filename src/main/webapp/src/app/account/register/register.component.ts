@@ -5,9 +5,7 @@ import { TranslatePipe } from "@ngx-translate/core";
 import { ValidationMessageComponent } from "../../../shared/component/validation-message/validation-message.component";
 import { NgxSpinnerService } from "ngx-spinner";
 import { Toast } from "primeng/toast";
-import { MessageService, ToastMessageOptions } from "primeng/api";
 import { RegisterService } from "./register.service";
-import { Subscription } from "rxjs";
 
 
 @Component({
@@ -20,7 +18,6 @@ import { Subscription } from "rxjs";
         ValidationMessageComponent,
         Toast
     ],
-    providers: [MessageService],
     templateUrl: './register.component.html',
     standalone: true,
     styleUrl: './register.component.scss'
@@ -28,14 +25,11 @@ import { Subscription } from "rxjs";
 export class RegisterComponent implements OnInit {
     registerForm!: FormGroup;
     submitted = false;
-    toastMessageOptions: ToastMessageOptions[] = [];
-    private toastSubscription!: Subscription;
 
     constructor(
         private formBuilder: FormBuilder,
         private spinnerService: NgxSpinnerService,
         private registerService: RegisterService,
-        private messageService: MessageService
     )
     {}
 
@@ -81,12 +75,6 @@ export class RegisterComponent implements OnInit {
             ]
         },
             {validators: this.passwordMatchValidator}
-        );
-        this.toastSubscription = this.registerService.toastMessage$.subscribe(
-            option => {
-                this.toastMessageOptions = option;
-                this.messageService.addAll(this.toastMessageOptions);
-            }
         );
     }
 

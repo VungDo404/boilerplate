@@ -10,6 +10,7 @@ import com.app.boilerplate.Shared.User.Dto.CreateUserDto;
 import com.app.boilerplate.Util.PermissionUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,7 +30,7 @@ public class AccountController {
 		"')")
 	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping("/register")
-	public User register(@RequestBody @Validated(RegisterUser.class) CreateUserDto request) {
+	public User register(@RequestBody @Validated({RegisterUser.class, Default.class}) CreateUserDto request) {
 		return userService.createUser(request, true);
 	}
 

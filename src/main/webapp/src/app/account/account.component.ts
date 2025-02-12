@@ -3,11 +3,17 @@ import { Router, RouterLink, RouterOutlet } from "@angular/router";
 import { ImageModule } from "primeng/image";
 import { Divider } from "primeng/divider";
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { Subject, takeUntil } from "rxjs";
+import { Subject, Subscription, takeUntil } from "rxjs";
+import { Toast } from "primeng/toast";
+import { MessageService, ToastMessageOptions } from "primeng/api";
+import { LoginService } from "./login/login.service";
+import { RegisterService } from "./register/register.service";
+import { merge } from 'rxjs';
 
 @Component({
     selector: 'app-account',
-    imports: [RouterOutlet, ImageModule, RouterLink, Divider, TranslatePipe],
+    imports: [RouterOutlet, ImageModule, RouterLink, Divider, TranslatePipe, Toast],
+    providers: [MessageService],
     templateUrl: './account.component.html',
     standalone: true,
     styleUrl: './account.component.scss'
@@ -17,14 +23,23 @@ export class AccountComponent implements OnDestroy{
     message: string = '';
     linkText: string = '';
     linkRoute: string = '';
+    toastMessageOptions: ToastMessageOptions[] = [];
+    private toastSubscription!: Subscription;
     private destroy$ = new Subject<void>();
 
-    constructor(private router: Router, public translate: TranslateService) {
+    constructor(private router: Router, private translate: TranslateService, private loginService: LoginService, private registerService: RegisterService, private messageService: MessageService) {
         this.router.events
             .pipe(takeUntil(this.destroy$))
             .subscribe(() => {
                 this.updateAuthPage();
             });
+        this.toastSubscription = merge(
+            this.loginService.toastMessage$,
+            this.registerService.toastMessage$
+        ).subscribe((option: ToastMessageOptions[]) => {
+            this.toastMessageOptions = option;
+            this.messageService.addAll(this.toastMessageOptions);
+        });
     }
 
     updateAuthPage() {

@@ -5,9 +5,7 @@ import { TranslatePipe } from "@ngx-translate/core";
 import { ValidationMessageComponent } from "../../../shared/component/validation-message/validation-message.component";
 import { LoginService } from "./login.service";
 import { NgxSpinnerService } from "ngx-spinner";
-import { MessageService, ToastMessageOptions } from "primeng/api";
 import { Toast } from "primeng/toast";
-import { Subscription } from "rxjs";
 
 @Component({
     selector: 'app-login',
@@ -19,7 +17,6 @@ import { Subscription } from "rxjs";
         ValidationMessageComponent,
         Toast,
     ],
-    providers: [MessageService],
     templateUrl: './login.component.html',
     standalone: true,
     styleUrl: './login.component.scss'
@@ -27,14 +24,12 @@ import { Subscription } from "rxjs";
 export class LoginComponent implements OnInit {
     loginForm!: FormGroup;
     submitted = false;
-    toastMessageOptions: ToastMessageOptions[] = [];
-    private toastSubscription!: Subscription;
+
 
     constructor(
         private formBuilder: FormBuilder,
         private loginService: LoginService,
         private spinnerService: NgxSpinnerService,
-        private messageService: MessageService
     ) {}
 
     ngOnInit() {
@@ -58,12 +53,6 @@ export class LoginComponent implements OnInit {
                 ]
             ]
         });
-        this.toastSubscription = this.loginService.toastMessage$.subscribe(
-            option => {
-                this.toastMessageOptions = option;
-                this.messageService.addAll(this.toastMessageOptions);
-            }
-        );
     }
 
     login() {
@@ -80,7 +69,6 @@ export class LoginComponent implements OnInit {
         this.loginService.authenticate(this.loginForm.value, cb);
 
     }
-
 
     resetForm() {
         this.submitted = false;

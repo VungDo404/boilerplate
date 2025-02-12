@@ -31,7 +31,7 @@ public class CreateUserDto implements Serializable {
 			message = "{validation.username.pattern}")
 	private final String password;
 	@NotNull(message = "{validation.email.required}")
-	@Size(max = 50, message = "{validation.email.size}")
+	@Size(min= 3, max = 50, message = "{validation.email.size}")
 	@Email(message = "{validation.email.invalid}")
 	private final String email;
 	@NotNull(message = "{validation.displayName.required}")
