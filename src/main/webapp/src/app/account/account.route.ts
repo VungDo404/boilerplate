@@ -18,6 +18,22 @@ export const  ACCOUNT_ROUTE: Routes = [
 				path: "register",
 				loadComponent: () => import("./register/register.component").then(m => m.RegisterComponent)
 			},
+			{
+				path: "forgot-password",
+				loadComponent: () => import("./forgot-password/forgot-password.component").then(m => m.ForgotPasswordComponent)
+			},
+			{
+				path: "reset-password",
+				loadComponent: () => import("./reset-password/reset-password.component").then(m => m.ResetPasswordComponent)
+			},
+			{
+				path: "email-activation",
+				loadComponent: () => import("./email-activation/email-activation.component").then(m => m.EmailActivationComponent)
+			},
+			{
+				path: "send-email",
+				loadComponent: () => import("./send-email/send-email.component").then(m => m.SendEmailComponent)
+			}
 		]
 	},
 ]

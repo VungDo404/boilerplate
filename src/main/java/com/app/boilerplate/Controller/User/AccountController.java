@@ -1,10 +1,9 @@
 package com.app.boilerplate.Controller.User;
 
-import com.app.boilerplate.Domain.User.User;
 import com.app.boilerplate.Service.Account.AccountService;
-import com.app.boilerplate.Service.User.UserService;
 import com.app.boilerplate.Shared.Account.Dto.ChangePasswordDto;
 import com.app.boilerplate.Shared.Account.Group.RegisterUser;
+import com.app.boilerplate.Shared.Account.Model.RegisterResultModel;
 import com.app.boilerplate.Shared.Authentication.AccessJwt;
 import com.app.boilerplate.Shared.User.Dto.CreateUserDto;
 import com.app.boilerplate.Util.PermissionUtil;
@@ -23,29 +22,35 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/account")
 @RestController
 public class AccountController {
-	private final AccountService accountService;
-	private final UserService userService;
+    private final AccountService accountService;
 
-	@PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.CREATE +
-		"')")
-	@ResponseStatus(HttpStatus.CREATED)
-	@PostMapping("/register")
-	public User register(@RequestBody @Validated({RegisterUser.class, Default.class}) CreateUserDto request) {
-		return userService.createUser(request, true);
-	}
+    @PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.CREATE +
+            "')")
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/register")
+    public RegisterResultModel register(@RequestBody @Validated({RegisterUser.class, Default.class}) CreateUserDto request) {
+        return accountService.register(request);
+    }
 
-	@PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.WRITE +
-		"')")
-	@PostMapping("/change-password")
-	public void changePassword(@RequestBody @Valid ChangePasswordDto request) {
-		accountService.changePassword(request);
-	}
+    @PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.WRITE +
+            "')")
+    @GetMapping("/email-activation")
+    public void emailActivation(@RequestParam("key") String key) {
+        accountService.emailVerification(key);
+    }
 
-	@PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.WRITE +
-			"')")
-	@GetMapping("/profile")
-	public String profile(@AuthenticationPrincipal AccessJwt jwt) {
-		return accountService.profile(jwt);
-	}
+    @PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.WRITE +
+            "')")
+    @PostMapping("/change-password")
+    public void changePassword(@RequestBody @Valid ChangePasswordDto request) {
+        accountService.changePassword(request);
+    }
+
+    @PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.WRITE +
+            "')")
+    @GetMapping("/profile")
+    public String profile(@AuthenticationPrincipal AccessJwt jwt) {
+        return accountService.profile(jwt);
+    }
 
 }

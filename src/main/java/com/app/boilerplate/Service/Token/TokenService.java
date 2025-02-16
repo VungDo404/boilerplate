@@ -38,15 +38,11 @@ public class TokenService {
 		deleteExpiredTokens(LocalDateTime.now());
 	}
 
-	public boolean validateTokenId(TokenType type, String value) {
-
-		return tokenRepository.findByTypeAndValue(type, value).map(token -> {
-			if (LocalDateTime.now().isAfter(token.getExpireDate())) {
-				tokenRepository.delete(token);
-				return false;
-			}
-			return true;
-		}).orElse(false);
+	public Token getTokenByTypeAndValue(TokenType type, String value) {
+		return tokenRepository.findByTypeAndValue(type, value)
+				.filter(token -> !LocalDateTime.now()
+                .isAfter(token.getExpireDate()))
+				.orElse(null);
 	}
 
 	@Async

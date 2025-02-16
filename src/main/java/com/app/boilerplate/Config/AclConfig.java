@@ -15,7 +15,6 @@ import org.springframework.security.acls.AclPermissionEvaluator;
 import org.springframework.security.acls.domain.*;
 import org.springframework.security.acls.jdbc.BasicLookupStrategy;
 import org.springframework.security.acls.jdbc.JdbcMutableAclService;
-import org.springframework.security.acls.jdbc.LookupStrategy;
 import org.springframework.security.acls.model.PermissionGrantingStrategy;
 import org.springframework.security.acls.model.Sid;
 import org.springframework.security.acls.model.SidRetrievalStrategy;
@@ -32,7 +31,7 @@ public class AclConfig {
 	@Bean
 	public JdbcMutableAclService aclService(
 		SpringCacheBasedAclCache aclCache,
-		LookupStrategy lookupStrategy,
+		BasicLookupStrategy lookupStrategy,
 		DataSource dataSource,
 		SecurityUtil securityUtil
 	) {
@@ -83,7 +82,7 @@ public class AclConfig {
 	}
 
 	@Bean
-	public LookupStrategy lookupStrategy(SpringCacheBasedAclCache aclCache, DataSource dataSource,
+	public BasicLookupStrategy lookupStrategy(SpringCacheBasedAclCache aclCache, DataSource dataSource,
 										 AuditLogger auditLogger, PermissionFactory permissionFactory) {
 		var basicLookupStrategy = new BasicLookupStrategy(
 			dataSource,

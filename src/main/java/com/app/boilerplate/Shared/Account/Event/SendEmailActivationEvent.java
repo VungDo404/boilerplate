@@ -6,6 +6,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class RegistrationEvent {
+public class SendEmailActivationEvent {
 	private User user;
+	private String token;
 }

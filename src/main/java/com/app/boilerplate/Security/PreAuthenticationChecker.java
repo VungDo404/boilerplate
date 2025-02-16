@@ -1,14 +1,15 @@
 package com.app.boilerplate.Security;
 
 import com.app.boilerplate.Domain.User.User;
-import com.app.boilerplate.Util.Translator;
-import org.springframework.security.authentication.*;
+import org.springframework.security.authentication.AccountExpiredException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsChecker;
 import org.springframework.stereotype.Component;
 
 @Component("userDetailsChecker")
-public class PreAuthenticationChecker implements UserDetailsChecker, Translator {
+public class PreAuthenticationChecker implements UserDetailsChecker {
 	@Override
 	public void check(UserDetails userDetails) {
 		if (!(userDetails instanceof User user))

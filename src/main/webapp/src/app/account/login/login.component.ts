@@ -5,7 +5,7 @@ import { TranslatePipe } from "@ngx-translate/core";
 import { ValidationMessageComponent } from "../../../shared/component/validation-message/validation-message.component";
 import { LoginService } from "./login.service";
 import { NgxSpinnerService } from "ngx-spinner";
-import { Toast } from "primeng/toast";
+import { RouterLink } from "@angular/router";
 
 @Component({
     selector: 'app-login',
@@ -15,7 +15,7 @@ import { Toast } from "primeng/toast";
         TranslatePipe,
         ReactiveFormsModule,
         ValidationMessageComponent,
-        Toast,
+        RouterLink,
     ],
     templateUrl: './login.component.html',
     standalone: true,

@@ -4,7 +4,6 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { TranslatePipe } from "@ngx-translate/core";
 import { ValidationMessageComponent } from "../../../shared/component/validation-message/validation-message.component";
 import { NgxSpinnerService } from "ngx-spinner";
-import { Toast } from "primeng/toast";
 import { RegisterService } from "./register.service";
 
 
@@ -16,7 +15,6 @@ import { RegisterService } from "./register.service";
         ReactiveFormsModule,
         TranslatePipe,
         ValidationMessageComponent,
-        Toast
     ],
     templateUrl: './register.component.html',
     standalone: true,
@@ -30,8 +28,7 @@ export class RegisterComponent implements OnInit {
         private formBuilder: FormBuilder,
         private spinnerService: NgxSpinnerService,
         private registerService: RegisterService,
-    )
-    {}
+    ) {}
 
     ngOnInit() {
         this.registerForm = this.formBuilder.group({

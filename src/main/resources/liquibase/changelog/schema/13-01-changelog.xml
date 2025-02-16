@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.27.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="1739441460419-6" author="Admin (generated)">
+        <addColumn tableName="user_history">
+            <column name="access_failed_count_mod" type="bit"/>
+            <column name="is_lockout_enabled_mod" type="bit"/>
+            <column name="lockout_end_date_mod" type="bit"/>
+        </addColumn>
+    </changeSet>
+    <changeSet id="1739441460419-1" author="Admin (generated)">
+        <dropNotNullConstraint columnDataType="smallint" columnName="access_failed_count" tableName="user_history"/>
+    </changeSet>
+    <changeSet id="1739441460419-2" author="Admin (generated)">
+        <addDefaultValue columnDataType="smallint" columnName="access_failed_count" defaultValueNumeric="5"
+                         tableName="user_history"/>
+    </changeSet>
+    <changeSet id="1739441460419-3" author="Admin (generated)">
+        <addDefaultValue columnDataType="boolean" columnName="is_lockout_enabled" defaultValueComputed="0"
+                         tableName="user_history"/>
+    </changeSet>
+
+</databaseChangeLog>

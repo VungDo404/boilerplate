@@ -1,14 +1,25 @@
 package com.app.boilerplate.Service.Account;
 
+import com.app.boilerplate.Domain.User.User;
 import com.app.boilerplate.Mapper.IUserMapper;
+import com.app.boilerplate.Service.Token.TokenService;
 import com.app.boilerplate.Service.User.UserService;
 import com.app.boilerplate.Shared.Account.Dto.ChangePasswordDto;
+import com.app.boilerplate.Shared.Account.Event.EmailActivationEvent;
+import com.app.boilerplate.Shared.Account.Event.SendEmailActivationEvent;
+import com.app.boilerplate.Shared.Account.Model.RegisterResultModel;
 import com.app.boilerplate.Shared.Authentication.AccessJwt;
+import com.app.boilerplate.Shared.Authentication.TokenType;
+import com.app.boilerplate.Shared.User.Dto.CreateUserDto;
+import com.app.boilerplate.Util.RandomUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -18,6 +29,9 @@ public class AccountService {
 	private final UserService userService;
 	private final IUserMapper userMapper;
 	private final PasswordEncoder passwordEncoder;
+	private final ApplicationEventPublisher eventPublisher;
+	private final TokenService tokenService;
+	private final RandomUtil randomUtil;
 
 	public void changePassword(ChangePasswordDto request) {
 		Optional.of(request.getId())
@@ -31,10 +45,43 @@ public class AccountService {
 			.map((userService::save));
 	}
 
+	public RegisterResultModel register(CreateUserDto dto){
+		final var user = userService.createUser(dto, true);
+		return RegisterResultModel.builder()
+				.canLogin(user.getEnabled())
+				.build();
+	}
+
+	@EventListener(EmailActivationEvent.class)
+	public void emailActivationEvent(EmailActivationEvent event) {
+		emailActivation(event.getUser());
+	}
+
+	public void emailActivation(User user){
+		final var key = randomUtil.randomToken();
+		tokenService.addToken(
+				TokenType.EmailConfirmationToken,
+				key,
+				LocalDateTime.now()
+						.plusDays(1),
+				user);
+		eventPublisher.publishEvent(new SendEmailActivationEvent(user, key));
+	}
+
+	public void forgotPassword(String email) {
+		final var user = userService.getUserByEmail(email);
+
+	}
+
+	public void emailVerification(String key) {
+		final var token = tokenService.getTokenByTypeAndValue(TokenType.EmailConfirmationToken, key);
+		tokenService.deleteByValue(key);
+		final var user = token.getUser();
+		user.setEmailSpecify(LocalDateTime.now());
+		userService.save(user);
+	}
+
 	public String profile(AccessJwt jwt) {
 		return jwt.getSecurityStamp();
 	}
-
-
-
 }

@@ -6,7 +6,6 @@ import { environment } from "../../environments/environment";
 })
 export class ConfigService {
     private readonly config;
-
     constructor() {
         this.config = environment;
     }

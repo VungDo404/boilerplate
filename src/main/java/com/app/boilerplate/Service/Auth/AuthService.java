@@ -2,6 +2,7 @@ package com.app.boilerplate.Service.Auth;
 
 import com.app.boilerplate.Config.TokenAuthConfig;
 import com.app.boilerplate.Domain.User.User;
+import com.app.boilerplate.Service.Account.AccountService;
 import com.app.boilerplate.Service.Token.TokenService;
 import com.app.boilerplate.Service.User.UserService;
 import com.app.boilerplate.Shared.Authentication.AccessJwt;
@@ -60,7 +61,7 @@ public class AuthService {
 	private final UserService userService;
 	private final RedisTemplate<String, Object> redisTemplate;
 	private final ObjectMapper objectMapper;
-
+	private final AccountService accountService;
 
 	public LoginResultModel authenticate(LoginDto request, HttpServletResponse response) {
 		final var authenticationToken = new UsernamePasswordAuthenticationToken(request.getUsername(),
@@ -296,8 +297,9 @@ public class AuthService {
 	private boolean validateJti(UUID jti, TokenType tokenType) {
 
 		return Optional.ofNullable(jti)
-			.map(id -> validateTokenIdInCache(jti) || tokenService.validateTokenId(tokenType,
-				jti.toString()))
+			.map(id ->
+					validateTokenIdInCache(jti) ||
+							tokenService.getTokenByTypeAndValue(tokenType, jti.toString()) != null)
 			.orElse(false);
 
 	}

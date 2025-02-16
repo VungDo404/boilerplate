@@ -59,8 +59,8 @@ public class AuthorizeController {
 
 	@PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHORIZATION + "', '" + PermissionUtil.READ + "')")
 	@GetMapping("/access-control-entry")
-	public Page<AclEntry> getEntries(@ParameterObject Pageable pageable, @PathVariable UUID id) {
-		return authorizeService.getEntries(pageable, id);
+	public Page<AclEntry> getEntries(@ParameterObject Pageable pageable) {
+		return authorizeService.getEntries(pageable);
 	}
 
 	@PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHORIZATION + "', '" + PermissionUtil.READ + "')")

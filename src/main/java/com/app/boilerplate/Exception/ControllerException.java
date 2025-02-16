@@ -6,6 +6,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.*;
 import org.springframework.lang.NonNull;
+import org.springframework.security.acls.model.AlreadyExistsException;
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -90,6 +91,19 @@ public class ControllerException extends ResponseEntityExceptionHandler {
 		);
 	}
 
+	@ExceptionHandler(value = {AlreadyExistsException.class})
+	ResponseEntity<Object> handleNotFoundException(AlreadyExistsException exception, NativeWebRequest request) {
+		return handleException(
+				exception,
+				HttpStatus.CONFLICT,
+				exception.getMessage(),
+				HttpStatus.CONFLICT.getReasonPhrase(),
+				null,
+				request,
+				null
+		);
+	}
+
 
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(
@@ -125,7 +139,7 @@ public class ControllerException extends ResponseEntityExceptionHandler {
 		return handleException(
 			exception,
 			resolveResponseStatus(exception),
-			null,
+				exception.getMessage(),
 			exception.getMessage(),
 			null,
 			request,
@@ -134,7 +148,7 @@ public class ControllerException extends ResponseEntityExceptionHandler {
 	}
 
 
-	ProblemDetail createProblemDetailWithTimestamp(
+	private ProblemDetail createProblemDetailWithTimestamp(
 		Exception ex,
 		HttpStatus status,
 		String detailMessageCode,
@@ -157,7 +171,7 @@ public class ControllerException extends ResponseEntityExceptionHandler {
 		return problemDetail;
 	}
 
-	ResponseEntity<Object> handleException(
+	private ResponseEntity<Object> handleException(
 		Exception ex,
 		HttpStatus status,
 		String detailMessageCode,
@@ -181,7 +195,7 @@ public class ControllerException extends ResponseEntityExceptionHandler {
 			.body(problemDetail);
 	}
 
-	HttpStatus resolveResponseStatus(Exception exception) {
+	private HttpStatus resolveResponseStatus(Exception exception) {
 		if (exception instanceof ResponseStatusException responseStatusException) {
 			return responseStatusException.getStatusCode()
 				.is5xxServerError()

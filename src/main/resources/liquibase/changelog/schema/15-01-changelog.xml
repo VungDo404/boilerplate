@@ -84,7 +84,7 @@
 			<column defaultValueComputed="0" name="is_lockout_enabled" type="BIT">
 				<constraints nullable="false"/>
 			</column>
-			<column name="access_failed_count" type="SMALLINT">
+			<column name="access_failed_count" defaultValueNumeric="5" type="SMALLINT">
 				<constraints nullable="false"/>
 			</column>
 			<column name="lockout_end_date" type="DATETIME"/>

@@ -1,7 +1,6 @@
 package com.app.boilerplate.Controller.User;
 
 import com.app.boilerplate.Domain.User.User;
-import com.app.boilerplate.Mapper.IUserMapper;
 import com.app.boilerplate.Service.User.UserService;
 import com.app.boilerplate.Shared.User.Dto.PostUserDto;
 import com.app.boilerplate.Shared.User.Dto.PutUserDto;
@@ -13,7 +12,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -30,8 +28,6 @@ import java.util.UUID;
 @RestController
 public class UserController {
 	private final UserService userService;
-	private final ApplicationEventPublisher eventPublisher;
-	private final IUserMapper userMapper;
 
 	@PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.USER + "', '" + PermissionUtil.READ + "')")
 	@GetMapping("/")

@@ -1,0 +1,23 @@
+@use "style" as *;
+
+$gap: 35px;
+:host{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: $gap;
+  text-align: center;
+  margin-top: $gap;
+  .message{
+    :nth-child(2) {
+      line-height: 20px;
+      color: $light-100;
+      font-weight: 600;
+    }
+  }
+  p-button {
+    ::ng-deep button.primary-btn {
+      height: 66px !important;
+    }
+  }
+}

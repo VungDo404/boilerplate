@@ -1,0 +1,14 @@
+<p-image
+        [src]="imageSrc"
+        alt="Logo" width="200"
+        height="200"
+        appSkeleton
+        [busyIf]="isLoading"
+        [shape]="'circle'"
+        [width]="'200px'"
+        [height]="'200px'"
+/>
+<div class="body-2 message">
+    <span appSkeleton [busyIf]="isLoading" [width]="'100%'">{{ messageText }}</span>
+</div>
+<p-button [label]="buttonText" styleClass="primary-btn" type="button" (click)="navigateLogin()" fluid/>

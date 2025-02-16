@@ -1,11 +1,11 @@
 package com.app.boilerplate.Service.User;
 
 import com.app.boilerplate.Domain.User.User;
-import com.app.boilerplate.Exception.EmailAlreadyUsedException;
 import com.app.boilerplate.Exception.NotFoundException;
 import com.app.boilerplate.Mapper.IUserMapper;
 import com.app.boilerplate.Repository.UserRepository;
-import com.app.boilerplate.Shared.Account.Event.RegistrationEvent;
+import com.app.boilerplate.Shared.Account.Event.EmailActivationEvent;
+import com.app.boilerplate.Shared.Authentication.LoginProvider;
 import com.app.boilerplate.Shared.User.Dto.CreateUserDto;
 import com.app.boilerplate.Shared.User.Dto.PostUserDto;
 import com.app.boilerplate.Shared.User.Dto.PutUserDto;
@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.acls.model.AlreadyExistsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -72,7 +73,7 @@ public class UserService implements Translator {
 		Optional.of(request.getEmail())
 			.filter(userRepository::existsByEmailIgnoreCase)
 			.ifPresent(email -> {
-				throw new EmailAlreadyUsedException(email);
+				throw new AlreadyExistsException("error.email.exist");
 			});
 		final var u = Optional.of(request)
 			.filter(PostUserDto.class::isInstance)
@@ -85,13 +86,13 @@ public class UserService implements Translator {
 					.orElseGet(randomUtil::randomPassword));
 				req.setSecurityStamp(UUID.randomUUID()
 					.toString());
+				req.setProvider(LoginProvider.LOCAL);
 				return req;
 			})
 			.map(this::save)
 			.orElseThrow();
-		if (shouldSendConfirmationEmail) {
-			eventPublisher.publishEvent(new RegistrationEvent(user));
-		}
+		if (shouldSendConfirmationEmail)
+			eventPublisher.publishEvent(new EmailActivationEvent(user));
 		return user;
 	}
 
@@ -109,6 +110,8 @@ public class UserService implements Translator {
 				translateEnglish("error.user.email.notfound", request.getId()),
 				"error.user.id.notfound", request.getId()));
 	}
+
+
 
 	public void deleteUserById(UUID id) {
 		userRepository.deleteById(id);
