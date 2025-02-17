@@ -78,6 +78,13 @@ public class AuthService {
 					.requiresEmailVerification(true)
 					.build();
 		}
+		if(!user.getCredentialsNonExpired()){
+			final var key = tokenService.addToken(TokenType.ResetPasswordToken, user);
+			return LoginResultModel.builder()
+					.shouldChangePasswordOnNextLogin(true)
+					.passwordResetCode(key)
+					.build();
+		}
 		final var refreshToken = createRefreshToken(user, tokenAuthConfig.getRefreshTokenExpirationInSeconds());
 		final var accessToken = createAccessToken(user, refreshToken.getRight());
 
@@ -91,7 +98,6 @@ public class AuthService {
 			.expiresInSeconds((int) tokenAuthConfig.getAccessTokenExpirationInSeconds()
 				.toSeconds())
 			.isTwoFactorEnabled(false)
-			.shouldChangePasswordOnNextLogin(false)
 			.build();
 	}
 

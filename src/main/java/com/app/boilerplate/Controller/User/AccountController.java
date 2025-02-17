@@ -2,6 +2,8 @@ package com.app.boilerplate.Controller.User;
 
 import com.app.boilerplate.Service.Account.AccountService;
 import com.app.boilerplate.Shared.Account.Dto.ChangePasswordDto;
+import com.app.boilerplate.Shared.Account.Dto.EmailDto;
+import com.app.boilerplate.Shared.Account.Dto.ResetPasswordDto;
 import com.app.boilerplate.Shared.Account.Group.RegisterUser;
 import com.app.boilerplate.Shared.Account.Model.RegisterResultModel;
 import com.app.boilerplate.Shared.Authentication.AccessJwt;
@@ -44,6 +46,20 @@ public class AccountController {
     @PostMapping("/change-password")
     public void changePassword(@RequestBody @Valid ChangePasswordDto request) {
         accountService.changePassword(request);
+    }
+
+    @PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.WRITE +
+            "')")
+    @PostMapping("/forgot-password")
+    public void forgotPassword(@RequestBody @Valid EmailDto request) {
+        accountService.forgotPassword(request.getEmail());
+    }
+
+    @PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.WRITE +
+            "')")
+    @PostMapping("/reset-password")
+    public void resetPassword(@RequestBody @Valid ResetPasswordDto request, @RequestParam("key") String key) {
+        accountService.resetPassword(key, request.getPassword());
     }
 
     @PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.WRITE +

@@ -94,23 +94,28 @@ public class MailService {
     @Async
     public void sendResetPasswordEmail(ResetPasswordEvent event) {
         final var locale = LocaleContextHolder.getLocale();
-        sendEmailWithTemplateSync(event.getUser(), "mail/reset-password", "mail.reset.title",
-                locale, Collections.emptyMap());
+        final var fullUrl = clientBaseUrl + "/account/reset-password" + "?key=" + event.getKey();
+        final Map<String, Object> properties = Map.of(
+                "returnUrl", fullUrl,
+                "helpLink", "",
+                "unsubscribeUrl", ""
+        );
+        sendEmailWithTemplateSync(event.getUser(), "mail/reset-password", "email.reset.title",
+                locale, properties);
     }
 
     @EventListener(SendEmailActivationEvent.class)
     @Async
     public void sendEmailActivation(SendEmailActivationEvent event) {
         final var locale = LocaleContextHolder.getLocale();
-        final var fullUrl = clientBaseUrl + "/account/email-activation" + "?key=" + event.getToken();
+        final var fullUrl = clientBaseUrl + "/account/email-activation" + "?key=" + event.getKey();
         final Map<String, Object> properties = Map.of(
-                "token", event.getToken(),
                 "returnUrl", fullUrl,
                 "helpLink", "",
                 "unsubscribeUrl", ""
         );
 
-        sendEmailWithTemplateSync(event.getUser(), "mail/email-activation", "mail.activation.title",
+        sendEmailWithTemplateSync(event.getUser(), "mail/email-activation", "email.activation.title",
                 locale, properties );
     }
 

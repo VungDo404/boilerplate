@@ -14,16 +14,19 @@ declare interface RegisterFormWithConfirmedPassword extends RegisterForm {
     confirmedPassword: string;
 }
 
-declare type AuthenticationResult = AuthenticationTokenResult | RequireEmailVerificationResult;
+declare type AuthenticationResult = AuthenticationTokenResult | RequireEmailVerificationResult | ShouldChangePasswordOnNextLoginResult;
 
 declare interface AuthenticationTokenResult {
     accessToken: string;
     encryptedAccessToken: string;
     expiresInSeconds: number;
-    shouldChangePasswordOnNextLogin: boolean;
-    passwordResetCode?: string;
     isTwoFactorEnabled: boolean;
     requiresTwoFactorVerification: boolean;
+}
+
+declare interface ShouldChangePasswordOnNextLoginResult{
+    passwordResetCode: string;
+    shouldChangePasswordOnNextLogin: boolean;
 }
 
 declare interface RequireEmailVerificationResult {

@@ -6,7 +6,7 @@ import { LanguageService } from "../service/language.service";
 @Injectable({
     providedIn: 'root'
 })
-export class LanguageHeaderService implements HttpInterceptor {
+export class LanguageHeaderInterceptor implements HttpInterceptor {
     constructor(private languageService: LanguageService) {}
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {

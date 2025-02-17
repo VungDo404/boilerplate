@@ -8,5 +8,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class SendEmailActivationEvent {
 	private User user;
-	private String token;
+	private String key;
 }

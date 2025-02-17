@@ -41,7 +41,7 @@ to speed up development by providing these features out of the box, allowing dev
 
 ## <a name="features">🔋 Features</a>
 
-🛡️ **Secure Authentication:** Signup, Login, Logout, Spring Security, JWT sessions, Verify Email.
+🛡️ **Secure Authentication:** Signup, Login, Logout, Spring Security, JWT sessions, Verify Email, Reset Password.
 
 🌐 **Internationalization (i18n):**  Reach a global audience with built-in support for multiple languages. Easily adapt
 your application for different locales, with initial support for Vietnamese and English.

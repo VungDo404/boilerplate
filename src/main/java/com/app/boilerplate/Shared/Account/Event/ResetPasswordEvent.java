@@ -7,4 +7,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class ResetPasswordEvent {
 	private User user;
+	private String key;
 }

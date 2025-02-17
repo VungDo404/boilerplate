@@ -6,12 +6,12 @@ import com.app.boilerplate.Service.Token.TokenService;
 import com.app.boilerplate.Service.User.UserService;
 import com.app.boilerplate.Shared.Account.Dto.ChangePasswordDto;
 import com.app.boilerplate.Shared.Account.Event.EmailActivationEvent;
+import com.app.boilerplate.Shared.Account.Event.ResetPasswordEvent;
 import com.app.boilerplate.Shared.Account.Event.SendEmailActivationEvent;
 import com.app.boilerplate.Shared.Account.Model.RegisterResultModel;
 import com.app.boilerplate.Shared.Authentication.AccessJwt;
 import com.app.boilerplate.Shared.Authentication.TokenType;
 import com.app.boilerplate.Shared.User.Dto.CreateUserDto;
-import com.app.boilerplate.Util.RandomUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
@@ -31,7 +31,6 @@ public class AccountService {
 	private final PasswordEncoder passwordEncoder;
 	private final ApplicationEventPublisher eventPublisher;
 	private final TokenService tokenService;
-	private final RandomUtil randomUtil;
 
 	public void changePassword(ChangePasswordDto request) {
 		Optional.of(request.getId())
@@ -59,27 +58,29 @@ public class AccountService {
 
 	public void emailActivation(User user){
 		tokenService.deleteByTypeAndUser(TokenType.EmailConfirmationToken, user);
-		final var key = randomUtil.randomToken();
-		tokenService.addToken(
-				TokenType.EmailConfirmationToken,
-				key,
-				LocalDateTime.now()
-						.plusDays(1),
-				user);
+		final var key = tokenService.addToken(TokenType.EmailConfirmationToken, user);
 		eventPublisher.publishEvent(new SendEmailActivationEvent(user, key));
 	}
 
 	public void forgotPassword(String email) {
 		final var user = userService.getUserByEmail(email);
+		final var key = tokenService.addToken(TokenType.ResetPasswordToken, user);
+		eventPublisher.publishEvent(new ResetPasswordEvent(user, key));
+	}
 
+	public void resetPassword(String key, String newPassword){
+		final var token = tokenService.getTokenByTypeAndValue(TokenType.ResetPasswordToken, key);
+		final var user = token.getUser();
+		user.setPassword(newPassword);
+		tokenService.deleteByValue(key);
 	}
 
 	public void emailVerification(String key) {
 		final var token = tokenService.getTokenByTypeAndValue(TokenType.EmailConfirmationToken, key);
-		tokenService.deleteByValue(key);
 		final var user = token.getUser();
 		user.setEmailSpecify(LocalDateTime.now());
 		userService.save(user);
+		tokenService.deleteByValue(key);
 	}
 
 	public String profile(AccessJwt jwt) {

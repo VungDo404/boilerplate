@@ -6,27 +6,22 @@ import { Router } from "@angular/router";
 @Injectable({
     providedIn: 'root'
 })
-export class RegisterService {
+export class ForgotPasswordService {
     private baseUrl!: string;
 
     constructor(private configService: ConfigService, private http: HttpClient, private router: Router) {
         this.baseUrl = this.configService.baseUrl;
     }
 
-    register(registerForm: RegisterForm, cb: () => void) {
-        this.http.post<RegisterResult>(this.baseUrl + "account/register", registerForm).subscribe({
+    forgotPassword(email: string, cb: () => void) {
+        this.http.post(this.baseUrl + "account/forgot-password", { email }).subscribe({
             next: (response) => {
                 cb();
-                if (!response.canLogin) {
-                    this.router.navigate(['/account/send-email'], {
-                        queryParams: {email: registerForm.email}
-                    });
-                }
-
+                this.router.navigate(['/account/send-email'], {
+                    queryParams: { email }
+                });
             },
-            error: (error) => {
-                cb();
-            }
-        });
+            error: cb
+        })
     }
 }

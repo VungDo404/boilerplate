@@ -4,6 +4,7 @@ import com.app.boilerplate.Domain.User.Token;
 import com.app.boilerplate.Domain.User.User;
 import com.app.boilerplate.Repository.TokenRepository;
 import com.app.boilerplate.Shared.Authentication.TokenType;
+import com.app.boilerplate.Util.RandomUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 @Service
 public class TokenService {
     private final TokenRepository tokenRepository;
+    private final RandomUtil randomUtil;
 
     @Async
     public void addToken(TokenType type, String value, LocalDateTime expireDate, User user) {
@@ -27,6 +29,17 @@ public class TokenService {
                 .user(user)
                 .build();
         tokenRepository.save(token);
+    }
+
+    public String addToken(TokenType type, User user) {
+        final var key = randomUtil.randomToken();
+        addToken(
+                TokenType.EmailConfirmationToken,
+                key,
+                LocalDateTime.now().plusDays(1),
+                user
+        );
+        return key;
     }
 
     public void deleteExpiredTokens(LocalDateTime dateTime) {

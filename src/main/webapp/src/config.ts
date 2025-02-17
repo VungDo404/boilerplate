@@ -14,8 +14,10 @@ import { ROUTE } from "./root.route";
 import { HTTP_INTERCEPTORS, HttpClient, provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
 import { TranslateLoader, TranslateModule } from "@ngx-translate/core";
 import { TranslateHttpLoader } from "@ngx-translate/http-loader";
-import { LanguageHeaderService } from "./shared/interceptor/language-header.service";
+import { LanguageHeaderInterceptor } from "./shared/interceptor/language-header.interceptor";
 import { LanguageService } from "./shared/service/language.service";
+import { ToastService } from "./shared/service/toast.service";
+import { HttpErrorInterceptor } from "./shared/interceptor/http-error.interceptor";
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -44,7 +46,12 @@ export const config: ApplicationConfig = {
         })),
         {
             provide: HTTP_INTERCEPTORS,
-            useClass: LanguageHeaderService,
+            useClass: LanguageHeaderInterceptor,
+            multi: true
+        },
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: HttpErrorInterceptor,
             multi: true
         },
         provideAppInitializer(() =>{

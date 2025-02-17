@@ -5,6 +5,7 @@ import { TranslatePipe } from "@ngx-translate/core";
 import { ValidationMessageComponent } from "../../../shared/component/validation-message/validation-message.component";
 import { NgxSpinnerService } from "ngx-spinner";
 import { RegisterService } from "./register.service";
+import { passwordMatchValidator } from "../../../shared/validator/confirmed-password.validator";
 
 
 @Component({
@@ -71,7 +72,7 @@ export class RegisterComponent implements OnInit {
                 ]
             ]
         },
-            {validators: this.passwordMatchValidator}
+            {validators: passwordMatchValidator}
         );
     }
 
@@ -87,15 +88,6 @@ export class RegisterComponent implements OnInit {
         }
         const { confirmedPassword, ...rest} = this.registerForm.value as RegisterFormWithConfirmedPassword;
         this.registerService.register(rest, cb);
-    }
-
-    passwordMatchValidator(form: FormGroup) {
-        const password = form.get('password');
-        const confirmedPassword = form.get('confirmedPassword');
-
-        if (password && confirmedPassword && password.value !== confirmedPassword.value) {
-            confirmedPassword.setErrors({ passwordMismatch: true });
-        }
     }
 
     resetForm() {

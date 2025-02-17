@@ -5,19 +5,18 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-
 @Getter
 @Setter
 @Builder
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class LoginResultModel {
-	private String accessToken;
-	private String encryptedAccessToken;
-	private Integer expiresInSeconds;
-	private Boolean shouldChangePasswordOnNextLogin;
-	private String passwordResetCode;
-	private Boolean isTwoFactorEnabled;
-	private Boolean requiresTwoFactorVerification;
-	private Boolean requiresEmailVerification;
-	private String email;
+    private String accessToken;
+    private String encryptedAccessToken;
+    private Integer expiresInSeconds;
+    private Boolean shouldChangePasswordOnNextLogin;
+    private String passwordResetCode;
+    private Boolean isTwoFactorEnabled;
+    private Boolean requiresTwoFactorVerification;
+    private Boolean requiresEmailVerification;
+    private String email;
 }
