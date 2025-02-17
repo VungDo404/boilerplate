@@ -13,9 +13,11 @@ import lombok.Setter;
 public class LoginResultModel {
 	private String accessToken;
 	private String encryptedAccessToken;
-	private int expiresInSeconds;
-	private boolean shouldChangePasswordOnNextLogin;
+	private Integer expiresInSeconds;
+	private Boolean shouldChangePasswordOnNextLogin;
 	private String passwordResetCode;
-	private boolean isTwoFactorEnabled;
-	private boolean requiresTwoFactorVerification;
+	private Boolean isTwoFactorEnabled;
+	private Boolean requiresTwoFactorVerification;
+	private Boolean requiresEmailVerification;
+	private String email;
 }

@@ -48,7 +48,7 @@ public class AccountService {
 	public RegisterResultModel register(CreateUserDto dto){
 		final var user = userService.createUser(dto, true);
 		return RegisterResultModel.builder()
-				.canLogin(user.getEnabled())
+				.canLogin(user.getEmailSpecify() != null)
 				.build();
 	}
 
@@ -58,6 +58,7 @@ public class AccountService {
 	}
 
 	public void emailActivation(User user){
+		tokenService.deleteByTypeAndUser(TokenType.EmailConfirmationToken, user);
 		final var key = randomUtil.randomToken();
 		tokenService.addToken(
 				TokenType.EmailConfirmationToken,

@@ -1,7 +1,8 @@
 package com.app.boilerplate.Config;
 
 import com.app.boilerplate.Util.AppConsts;
-import io.swagger.v3.oas.models.*;
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
@@ -18,9 +19,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-import java.util.Collections;
-import java.util.function.BiConsumer;
 
 
 @Configuration
@@ -39,8 +37,7 @@ public class OpenAPI30Configuration {
 					.url("thanhvungcbt@gmail.com"))
 				.license(new License().name("License of API")
 					.url("API license URL")))
-			.addSecurityItem(new SecurityRequirement().addList("Bearer Authentication"))
-			.paths(buildPaths());
+			.addSecurityItem(new SecurityRequirement().addList("Bearer Authentication"));
 	}
 
 	@Bean
@@ -122,28 +119,5 @@ public class OpenAPI30Configuration {
 			.scheme("bearer");
 	}
 
-	private Paths buildPaths() {
-		Paths paths = new Paths();
 
-		addPublicPaths(paths, SecurityConfig.POST_PUBLIC_URL, PathItem::setPost);
-		addPublicPaths(paths, SecurityConfig.GET_PUBLIC_URL, PathItem::setGet);
-
-		return paths;
-	}
-
-
-
-	private void addPublicPaths(Paths paths, String[] urls, BiConsumer<PathItem, Operation> operationSetter) {
-		for (String url : urls) {
-			if (!url.startsWith("/swagger-ui") && !url.startsWith("/v3/api-docs") &&
-				!url.startsWith("/swagger-resources") && !url.startsWith("/webjars")) {
-				PathItem pathItem = new PathItem();
-				Operation operation =
-					new Operation()
-						.security(Collections.emptyList());
-				operationSetter.accept(pathItem, operation);
-				paths.addPathItem(url, pathItem);
-			}
-		}
-	}
 }

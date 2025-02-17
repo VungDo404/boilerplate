@@ -3,18 +3,20 @@ declare interface LoginForm {
     password: string;
 }
 
-declare interface RegisterForm{
+declare interface RegisterForm {
     username: string;
     password: string;
     email: string;
     displayName: string;
 }
 
-declare interface RegisterFormWithConfirmedPassword extends RegisterForm{
+declare interface RegisterFormWithConfirmedPassword extends RegisterForm {
     confirmedPassword: string;
 }
 
-declare interface AuthenticationResult {
+declare type AuthenticationResult = AuthenticationTokenResult | RequireEmailVerificationResult;
+
+declare interface AuthenticationTokenResult {
     accessToken: string;
     encryptedAccessToken: string;
     expiresInSeconds: number;
@@ -22,6 +24,11 @@ declare interface AuthenticationResult {
     passwordResetCode?: string;
     isTwoFactorEnabled: boolean;
     requiresTwoFactorVerification: boolean;
+}
+
+declare interface RequireEmailVerificationResult {
+    email: string;
+    requiresEmailVerification: boolean;
 }
 
 declare interface RegisterResult {

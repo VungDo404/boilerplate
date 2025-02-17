@@ -60,16 +60,16 @@
 			</column>
 			<column name="image" type="VARCHAR(100)"/>
 			<column name="email_specify" type="DATETIME"/>
-			<column defaultValueComputed="0" name="enabled" type="BIT">
+			<column defaultValueComputed="1" name="enabled" type="BIT">
 				<constraints nullable="false"/>
 			</column>
-			<column defaultValueComputed="0" name="account_non_locked" type="BIT">
+			<column defaultValueComputed="1" name="account_non_locked" type="BIT">
 				<constraints nullable="false"/>
 			</column>
-			<column defaultValueComputed="0" name="credentials_non_expired" type="BIT">
+			<column defaultValueComputed="1" name="credentials_non_expired" type="BIT">
 				<constraints nullable="false"/>
 			</column>
-			<column defaultValueComputed="0" name="account_non_expired" type="BIT">
+			<column defaultValueComputed="1" name="account_non_expired" type="BIT">
 				<constraints nullable="false"/>
 			</column>
 			<column defaultValueComputed="0" name="is_two_factor_enabled" type="BIT">

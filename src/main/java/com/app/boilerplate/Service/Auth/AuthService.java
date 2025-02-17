@@ -71,7 +71,13 @@ public class AuthService {
 		SecurityContextHolder.getContext()
 			.setAuthentication(authentication);
 		final var user = (User) authentication.getPrincipal();
-
+		if (user.getEmailSpecify()  == null){
+			accountService.emailActivation(user);
+			return LoginResultModel.builder()
+					.email(user.getEmail())
+					.requiresEmailVerification(true)
+					.build();
+		}
 		final var refreshToken = createRefreshToken(user, tokenAuthConfig.getRefreshTokenExpirationInSeconds());
 		final var accessToken = createAccessToken(user, refreshToken.getRight());
 

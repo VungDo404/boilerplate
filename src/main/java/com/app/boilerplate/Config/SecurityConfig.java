@@ -17,31 +17,17 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 @RequiredArgsConstructor
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
 @Configuration
 public class SecurityConfig {
-    public static final String[] POST_PUBLIC_URL = {
-            "/account/register",
-            "/auth/authenticate",
-            "/auth/refresh-token"
-    };
-    public static final String[] GET_PUBLIC_URL = {
-            "/swagger-ui/**",
-            "/v3/api-docs/**",
-            "/swagger-resources/**",
-            "/webjars" + "/**",
-            "/swagger-ui.html"
 
-    };
 
     @Bean
     @Order(1)
-    public SecurityFilterChain swaggerSecurityFilterChain(HttpSecurity http,
-                                                          AuthenticationSuccessHandler successHandler) throws Exception {
+    public SecurityFilterChain swaggerSecurityFilterChain(HttpSecurity http) throws Exception {
         http
                 .securityMatcher("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/swagger/login")
                 .authorizeHttpRequests(auth -> auth
@@ -51,7 +37,6 @@ public class SecurityConfig {
                         .authenticated())
                 .formLogin(form -> form
                         .loginPage("/swagger/login")
-                        .successHandler(successHandler)
                         .failureUrl("/swagger/login?error=true")
                         .permitAll())
                 .logout(logout -> logout

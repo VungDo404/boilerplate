@@ -26,7 +26,6 @@ import java.util.List;
 
 @Configuration
 public class AclConfig {
-	private final String insertSid = "insert into acl_sid (principal, sid, priority) values (?, ?, ?)";
 
 	@Bean
 	public JdbcMutableAclService aclService(
@@ -43,7 +42,6 @@ public class AclConfig {
 		);
 		mutableAclService.setSidIdentityQuery("SELECT LAST_INSERT_ID()");
 		mutableAclService.setClassIdentityQuery("SELECT LAST_INSERT_ID()");
-		mutableAclService.setInsertSidSql(insertSid);
 		mutableAclService.setAclClassIdSupported(true);
 
 		return mutableAclService;

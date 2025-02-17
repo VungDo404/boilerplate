@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Image } from "primeng/image";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Button } from "primeng/button";
-import { TranslatePipe, TranslateService } from "@ngx-translate/core";
+import { TranslateService } from "@ngx-translate/core";
 import { EmailActivationService } from "./email-activation.service";
 import { SkeletonDirective } from "../../../shared/directive/skeleton.directive";
 import { Subject, takeUntil } from "rxjs";
@@ -12,7 +12,6 @@ import { Subject, takeUntil } from "rxjs";
     imports: [
         Image,
         Button,
-        TranslatePipe,
         SkeletonDirective
     ],
     templateUrl: './email-activation.component.html',

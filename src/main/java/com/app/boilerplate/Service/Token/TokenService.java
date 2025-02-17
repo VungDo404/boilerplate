@@ -16,39 +16,42 @@ import java.time.LocalDateTime;
 @Transactional
 @Service
 public class TokenService {
-	private final TokenRepository tokenRepository;
+    private final TokenRepository tokenRepository;
 
-	@Async
-	public void addToken(TokenType type, String value, LocalDateTime expireDate, User user) {
-		final var token = Token.builder()
-			.type(type)
-			.value(value)
-			.expireDate(expireDate)
-			.user(user)
-			.build();
-		tokenRepository.save(token);
-	}
+    @Async
+    public void addToken(TokenType type, String value, LocalDateTime expireDate, User user) {
+        final var token = Token.builder()
+                .type(type)
+                .value(value)
+                .expireDate(expireDate)
+                .user(user)
+                .build();
+        tokenRepository.save(token);
+    }
 
-	public void deleteExpiredTokens(LocalDateTime dateTime) {
-		tokenRepository.deleteByExpireDateBefore(dateTime);
-	}
+    public void deleteExpiredTokens(LocalDateTime dateTime) {
+        tokenRepository.deleteByExpireDateBefore(dateTime);
+    }
 
-	@Scheduled(cron = "${cleanup.cron.token}")
-	public void deleteExpiredTokens() {
-		deleteExpiredTokens(LocalDateTime.now());
-	}
+    @Scheduled(cron = "${cleanup.cron.token}")
+    public void deleteExpiredTokens() {
+        deleteExpiredTokens(LocalDateTime.now());
+    }
 
-	public Token getTokenByTypeAndValue(TokenType type, String value) {
-		return tokenRepository.findByTypeAndValue(type, value)
-				.filter(token -> !LocalDateTime.now()
-                .isAfter(token.getExpireDate()))
-				.orElse(null);
-	}
+    public Token getTokenByTypeAndValue(TokenType type, String value) {
+        return tokenRepository.findByTypeAndValue(type, value)
+                .filter(token -> !LocalDateTime.now()
+                        .isAfter(token.getExpireDate()))
+                .orElse(null);
+    }
 
-	@Async
-	public void deleteByValue(String value) {
-		tokenRepository.deleteByValue(value);
-	}
+    @Async
+    public void deleteByValue(String value) {
+        tokenRepository.deleteByValue(value);
+    }
 
-
+    @Async
+    public void deleteByTypeAndUser(TokenType type, User user) {
+        tokenRepository.deleteTokenByTypeAndUser(type, user);
+    }
 }

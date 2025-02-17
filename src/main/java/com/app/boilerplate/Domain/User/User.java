@@ -73,20 +73,20 @@ public class User implements UserDetails {
     private LocalDateTime emailSpecify;
 
 	@Audited(withModifiedFlag = true)
-    @Column(columnDefinition = "BIT default 0", nullable = false)
-    private Boolean enabled = Boolean.FALSE;
+    @Column(columnDefinition = "BIT default 1", nullable = false)
+    private Boolean enabled = Boolean.TRUE;
 
 	@Audited(withModifiedFlag = true)
-    @Column(name = "account_non_locked", columnDefinition = "BIT default 0", nullable = false)
-    private Boolean accountNonLocked = Boolean.FALSE;
+    @Column(name = "account_non_locked", columnDefinition = "BIT default 1", nullable = false)
+    private Boolean accountNonLocked = Boolean.TRUE;
 
 	@Audited(withModifiedFlag = true)
-    @Column(name = "credentials_non_expired", columnDefinition = "BIT default 0", nullable = false)
-    private Boolean credentialsNonExpired = Boolean.FALSE;
+    @Column(name = "credentials_non_expired", columnDefinition = "BIT default 1", nullable = false)
+    private Boolean credentialsNonExpired = Boolean.TRUE;
 
 	@Audited(withModifiedFlag = true)
-	@Column(name = "account_non_expired", columnDefinition = "BIT default 0", nullable = false)
-	private Boolean accountNonExpired = Boolean.FALSE;
+	@Column(name = "account_non_expired", columnDefinition = "BIT default 1", nullable = false)
+	private Boolean accountNonExpired = Boolean.TRUE;
 
 	@Audited(withModifiedFlag = true)
     @Column(name = "is_two_factor_enabled", columnDefinition = "BIT default 0", nullable = false)
