@@ -1,5 +1,5 @@
 package com.app.boilerplate.Shared.Authentication;
 
 public enum TokenType {
-    AccessToken, RefreshToken, ResetPasswordToken, EmailConfirmationToken
+    ACCESS_TOKEN, REFRESH_TOKEN, RESET_PASSWORD_TOKEN, EMAIL_CONFIRMATION_TOKEN
 }

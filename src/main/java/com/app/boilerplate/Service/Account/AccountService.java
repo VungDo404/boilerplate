@@ -57,26 +57,31 @@ public class AccountService {
 	}
 
 	public void emailActivation(User user){
-		tokenService.deleteByTypeAndUser(TokenType.EmailConfirmationToken, user);
-		final var key = tokenService.addToken(TokenType.EmailConfirmationToken, user);
-		eventPublisher.publishEvent(new SendEmailActivationEvent(user, key));
+		tokenService.deleteByTypeAndUser(TokenType.EMAIL_CONFIRMATION_TOKEN, user);
+		final var token = tokenService.addToken(TokenType.EMAIL_CONFIRMATION_TOKEN, user);
+		eventPublisher.publishEvent(new SendEmailActivationEvent(user, token.getValue()));
 	}
 
 	public void forgotPassword(String email) {
 		final var user = userService.getUserByEmail(email);
-		final var key = tokenService.addToken(TokenType.ResetPasswordToken, user);
-		eventPublisher.publishEvent(new ResetPasswordEvent(user, key));
+		tokenService.deleteByTypeAndUser(TokenType.EMAIL_CONFIRMATION_TOKEN, user);
+		final var token = tokenService.addToken(TokenType.RESET_PASSWORD_TOKEN, user);
+		eventPublisher.publishEvent(new ResetPasswordEvent(user, token.getValue()));
 	}
 
 	public void resetPassword(String key, String newPassword){
-		final var token = tokenService.getTokenByTypeAndValue(TokenType.ResetPasswordToken, key);
+		final var token = tokenService.getTokenByTypeAndValue(TokenType.RESET_PASSWORD_TOKEN, key);
 		final var user = token.getUser();
 		user.setPassword(newPassword);
+		user.setCredentialsNonExpired(false);
+		if(user.getEmailSpecify() == null){
+			user.setEmailSpecify(LocalDateTime.now());
+		}
 		tokenService.deleteByValue(key);
 	}
 
 	public void emailVerification(String key) {
-		final var token = tokenService.getTokenByTypeAndValue(TokenType.EmailConfirmationToken, key);
+		final var token = tokenService.getTokenByTypeAndValue(TokenType.EMAIL_CONFIRMATION_TOKEN, key);
 		final var user = token.getUser();
 		user.setEmailSpecify(LocalDateTime.now());
 		userService.save(user);

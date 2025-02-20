@@ -26,4 +26,7 @@ public class LoginDto implements Serializable {
 	@Pattern(regexp = "^[\\w!@#$%^&*()\\-+=<>?,.;:'\"{}\\[\\]\\\\/|`~]+$",
 			message = "{validation.password.pattern}")
 	private final String password;
+	@Size(max = 6, message = "{validation.twoFactorCode.size}")
+	@Pattern(regexp = "\\d*", message = "{validation.twoFactorCode.pattern}")
+	private final String twoFactorCode;
 }

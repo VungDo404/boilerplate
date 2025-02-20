@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 	@Index(name = "idx_token_value", columnList = Token_.VALUE)
 })
 public class Token implements Serializable {
+    @Serial
     private static final long serialVersionUID = 3163366597256193499L;
 
     @Id

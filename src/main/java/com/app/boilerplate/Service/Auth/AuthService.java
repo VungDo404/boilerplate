@@ -41,12 +41,12 @@ import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.ZoneId;
 import java.util.*;
 import java.util.function.Function;
 
@@ -55,326 +55,282 @@ import java.util.function.Function;
 @Transactional
 @Service
 public class AuthService {
-	private final AuthenticationManagerBuilder authenticationManagerBuilder;
-	private final TokenAuthConfig tokenAuthConfig;
-	private final TokenService tokenService;
-	private final UserService userService;
-	private final RedisTemplate<String, Object> redisTemplate;
-	private final ObjectMapper objectMapper;
-	private final AccountService accountService;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final TokenAuthConfig tokenAuthConfig;
+    private final TokenService tokenService;
+    private final UserService userService;
+    private final RedisTemplate<String, Object> redisTemplate;
+    private final ObjectMapper objectMapper;
+    private final AccountService accountService;
 
-	public LoginResultModel authenticate(LoginDto request, HttpServletResponse response) {
-		final var authenticationToken = new UsernamePasswordAuthenticationToken(request.getUsername(),
-			request.getPassword());
-		final var authentication = authenticationManagerBuilder.getObject()
-			.authenticate(authenticationToken);
-		SecurityContextHolder.getContext()
-			.setAuthentication(authentication);
-		final var user = (User) authentication.getPrincipal();
-		if (user.getEmailSpecify()  == null){
-			accountService.emailActivation(user);
-			return LoginResultModel.builder()
-					.email(user.getEmail())
-					.requiresEmailVerification(true)
-					.build();
-		}
-		if(!user.getCredentialsNonExpired()){
-			final var key = tokenService.addToken(TokenType.ResetPasswordToken, user);
-			return LoginResultModel.builder()
-					.shouldChangePasswordOnNextLogin(true)
-					.passwordResetCode(key)
-					.build();
-		}
-		final var refreshToken = createRefreshToken(user, tokenAuthConfig.getRefreshTokenExpirationInSeconds());
-		final var accessToken = createAccessToken(user, refreshToken.getRight());
+    public LoginResultModel authenticate(LoginDto request, HttpServletResponse response) {
+        final var authenticationToken = new UsernamePasswordAuthenticationToken(request.getUsername(),
+                request.getPassword());
+        final var authentication = authenticationManagerBuilder.getObject()
+                .authenticate(authenticationToken);
+        SecurityContextHolder.getContext()
+                .setAuthentication(authentication);
+        final var user = (User) authentication.getPrincipal();
+        if (user.getEmailSpecify() == null) {
+            accountService.emailActivation(user);
+            return LoginResultModel.builder()
+                    .email(user.getEmail())
+                    .requiresEmailVerification(true)
+                    .build();
+        }
+        if (!user.getCredentialsNonExpired()) {
+            final var token = tokenService.addToken(TokenType.RESET_PASSWORD_TOKEN, user);
+            return LoginResultModel.builder()
+                    .shouldChangePasswordOnNextLogin(true)
+                    .passwordResetCode(token.getValue())
+                    .build();
+        }
+        if (user.getIsTwoFactorEnabled()) {
 
-		setRefreshTokenOnCookie(response, refreshToken.getRight()
-				.toString(),
-			tokenAuthConfig.getRefreshTokenExpirationInSeconds());
+        }
+        final var refreshToken = createRefreshToken(user, tokenAuthConfig.getRefreshTokenExpirationInSeconds());
+        final var accessToken = createAccessToken(user, refreshToken.getRight());
 
-		return LoginResultModel.builder()
-			.accessToken(accessToken)
-			.encryptedAccessToken("")
-			.expiresInSeconds((int) tokenAuthConfig.getAccessTokenExpirationInSeconds()
-				.toSeconds())
-			.isTwoFactorEnabled(false)
-			.build();
-	}
+        setRefreshTokenOnCookie(response, refreshToken.getRight()
+                        .toString(),
+                tokenAuthConfig.getRefreshTokenExpirationInSeconds());
 
-	public RefreshAccessTokenModel refreshAccessToken(String refreshToken, HttpServletResponse response) {
-		final var jwt = refreshJwtDecoder(refreshToken);
+        return LoginResultModel.builder()
+                .accessToken(accessToken)
+                .encryptedAccessToken("")
+                .expiresInSeconds((int) tokenAuthConfig.getAccessTokenExpirationInSeconds()
+                        .toSeconds())
+                .isTwoFactorEnabled(false)
+                .build();
+    }
 
-		final var user = userService.getUserById(jwt.getSub());
-		final var remainingDuration = Duration.between(Instant.now(), jwt.getExpiresAt());
+    public RefreshAccessTokenModel refreshAccessToken(String refreshToken, HttpServletResponse response) {
+        final var jwt = refreshJwtDecoder(refreshToken);
 
-		final var rotateRefreshToken = createRefreshToken(user, remainingDuration);
-		final var accessToken = createAccessToken(user, rotateRefreshToken.getRight());
+        final var user = userService.getUserById(jwt.getSub());
+        final var remainingDuration = Duration.between(Instant.now(), jwt.getExpiresAt());
 
-		setRefreshTokenOnCookie(response, rotateRefreshToken.getRight()
-			.toString(), remainingDuration);
+        final var rotateRefreshToken = createRefreshToken(user, remainingDuration);
+        final var accessToken = createAccessToken(user, rotateRefreshToken.getRight());
 
-		return RefreshAccessTokenModel.builder()
-			.accessToken(accessToken)
-			.expiresInSeconds((int) tokenAuthConfig.getAccessTokenExpirationInSeconds()
-				.toSeconds())
-			.build();
-	}
+        setRefreshTokenOnCookie(response, rotateRefreshToken.getRight()
+                .toString(), remainingDuration);
 
-	public void logout(AccessJwt accessJwt, HttpServletResponse response, String refreshToken) {
-		final var refreshJwt = refreshJwtDecoder(refreshToken);
-		ResponseCookie[] cookies = new ResponseCookie[]{
-			ResponseCookie.from(AppConsts.REFRESH_TOKEN, "")
-				.httpOnly(true)
-				.secure(true)
-				.path("/auth/refresh-token")
-				.maxAge(Duration.ZERO)
-				.sameSite("Lax")
-				.build(),
-			ResponseCookie.from(AppConsts.REFRESH_TOKEN, "")
-				.httpOnly(true)
-				.secure(true)
-				.path("/account/profile")
-				.maxAge(Duration.ZERO)
-				.sameSite("Lax")
-				.build(),
-			ResponseCookie.from(AppConsts.REFRESH_TOKEN, "")
-				.httpOnly(true)
-				.secure(true)
-				.path("/auth/logout")
-				.maxAge(Duration.ZERO)
-				.sameSite("Lax")
-				.build()
-		};
+        return RefreshAccessTokenModel.builder()
+                .accessToken(accessToken)
+                .expiresInSeconds((int) tokenAuthConfig.getAccessTokenExpirationInSeconds()
+                        .toSeconds())
+                .build();
+    }
 
-		for (ResponseCookie cookie : cookies) {
-			response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-		}
+    public void logout(AccessJwt accessJwt, HttpServletResponse response, String refreshToken) {
+        final var refreshJwt = refreshJwtDecoder(refreshToken);
 
-		clearTokenIdInCache(accessJwt.getJti());
-		clearTokenIdInCache(refreshJwt.getJti());
+        ResponseCookie[] cookies = new ResponseCookie[]{
+                ResponseCookie.from(AppConsts.REFRESH_TOKEN, "")
+                        .httpOnly(true)
+                        .secure(true)
+                        .path("/auth/refresh-token")
+                        .maxAge(Duration.ZERO)
+                        .sameSite("Lax")
+                        .build(),
+                ResponseCookie.from(AppConsts.REFRESH_TOKEN, "")
+                        .httpOnly(true)
+                        .secure(true)
+                        .path("/account/profile")
+                        .maxAge(Duration.ZERO)
+                        .sameSite("Lax")
+                        .build(),
+                ResponseCookie.from(AppConsts.REFRESH_TOKEN, "")
+                        .httpOnly(true)
+                        .secure(true)
+                        .path("/auth/logout")
+                        .maxAge(Duration.ZERO)
+                        .sameSite("Lax")
+                        .build()
+        };
 
-		tokenService.deleteByValue(accessJwt.getId());
-		tokenService.deleteByValue(refreshJwt.getId());
+        for (ResponseCookie cookie : cookies) {
+            response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        }
 
-	}
+        tokenService.deleteByValue(accessJwt.getId());
+        tokenService.deleteByValue(refreshJwt.getId());
 
-	@Bean
-	public JwtDecoder jwtDecoder() {
-		final var jwtDecoder = NimbusJwtDecoder.withPublicKey(tokenAuthConfig.getRsaPublicKey())
-			.signatureAlgorithm(SignatureAlgorithm.RS256)
-			.build();
+    }
 
-		return token -> decoder(jwtDecoder, token, AccessJwt::new);
-	}
+    @Bean
+    public JwtDecoder jwtDecoder() {
+        final var jwtDecoder = NimbusJwtDecoder.withPublicKey(tokenAuthConfig.getRsaPublicKey())
+                .signatureAlgorithm(SignatureAlgorithm.RS256)
+                .build();
 
-	public RefreshJwt refreshJwtDecoder(String token) {
-		final var keySpec = new SecretKeySpec(tokenAuthConfig.getGetHmacSecret()
-			.getBytes(StandardCharsets.UTF_8),
-			AppConsts.HMAC_SHA_256);
-		final var jwtDecoder =
-			NimbusJwtDecoder.withSecretKey(keySpec)
-				.macAlgorithm(MacAlgorithm.HS512)
-				.build();
+        return token -> decoder(jwtDecoder, token, AccessJwt::new);
+    }
 
-		return decoder(jwtDecoder, token, RefreshJwt::new);
+    public RefreshJwt refreshJwtDecoder(String token) {
+        final var keySpec = new SecretKeySpec(tokenAuthConfig.getGetHmacSecret()
+                .getBytes(StandardCharsets.UTF_8),
+                AppConsts.HMAC_SHA_256);
+        final var jwtDecoder =
+                NimbusJwtDecoder.withSecretKey(keySpec)
+                        .macAlgorithm(MacAlgorithm.HS512)
+                        .build();
 
-	}
+        return decoder(jwtDecoder, token, RefreshJwt::new);
 
-	public String createAccessToken(User user, UUID refreshTokenId) {
-		final var claims = generateClaims(TokenType.AccessToken, user,
-			tokenAuthConfig.getAccessTokenExpirationInSeconds(), refreshTokenId);
-		return createJwtToken(claims, tokenAuthConfig.getAccessTokenExpirationInSeconds(), JWSAlgorithm.RS256);
-	}
+    }
 
-	private Pair<String, UUID> createRefreshToken(User user, Duration expired) {
-		final var claims = generateClaims(TokenType.RefreshToken, user, expired, null);
-		final var refreshToken = createJwtToken(claims, expired, JWSAlgorithm.HS256);
-		return Pair.of(refreshToken, (UUID) claims.get(AppConsts.JWT_JTI));
-	}
+    public String createAccessToken(User user, UUID refreshTokenId) {
+        final var claims = generateClaims(TokenType.ACCESS_TOKEN, user, refreshTokenId);
+        return createJwtToken(claims, tokenAuthConfig.getAccessTokenExpirationInSeconds(), JWSAlgorithm.RS256);
+    }
 
-	private <T extends BaseJwt> T decoder(NimbusJwtDecoder decoder, String token, Function<Jwt, T> function) {
-		return Optional.of(token)
-			.map(decoder::decode)
-			.map(function)
-			.filter(this::validateCommonClaims)
-			.filter(this::validateSpecificClaims)
-			.orElseThrow(() -> new JwtException("JWT validation failed"));
-	}
+    private Pair<String, UUID> createRefreshToken(User user, Duration expired) {
+        final var claims = generateClaims(TokenType.REFRESH_TOKEN, user, null);
+        final var refreshToken = createJwtToken(claims, expired, JWSAlgorithm.HS256);
+        return Pair.of(refreshToken, UUID.fromString((String) claims.get(AppConsts.JWT_JTI)));
+    }
 
-	private boolean validateCommonClaims(Jwt jwt) {
-		return !Collections.disjoint(jwt.getAudience(), tokenAuthConfig.getAudience()) && jwt.getIssuer()
-			.sameFile(tokenAuthConfig.getIssuer());
+    private <T extends BaseJwt> T decoder(NimbusJwtDecoder decoder, String token, Function<Jwt, T> function) {
+        return Optional.of(token)
+                .map(decoder::decode)
+                .map(function)
+                .filter(this::validateCommonClaims)
+                .filter(this::validateSpecificClaims)
+                .orElseThrow(() -> new JwtException("JWT validation failed"));
+    }
 
-	}
+    private boolean validateCommonClaims(Jwt jwt) {
+        return !Collections.disjoint(jwt.getAudience(), tokenAuthConfig.getAudience())
+                && jwt.getIssuer()
+                .sameFile(tokenAuthConfig.getIssuer());
 
-	private boolean validateSpecificClaims(Jwt jwt) {
-		final var userId = UUID.fromString(jwt.getSubject());
-		if (jwt instanceof AccessJwt accessJwt) {
-			return validateJti(accessJwt.getJti(), accessJwt.getType()) ||
-				validateSecurityStamp(accessJwt.getSecurityStamp(), userId);
-		} else if (jwt instanceof RefreshJwt refreshJwt) {
-			return validateJti(refreshJwt.getJti(), refreshJwt.getType());
-		}
-		return false;
-	}
+    }
 
-	private String createJwtToken(Map<String, Object> customClaims, Duration tokenExpiration, JWSAlgorithm algorithm) {
-		final var jwsHeader = new JWSHeader(algorithm);
+    private boolean validateSpecificClaims(Jwt jwt) {
+        final var userId = UUID.fromString(jwt.getSubject());
+        if (jwt instanceof AccessJwt accessJwt) {
+            return validateJti(accessJwt.getJti()) ||
+                    validateSecurityStamp(accessJwt.getSecurityStamp(), userId);
+        } else if (jwt instanceof RefreshJwt refreshJwt) {
+            return validateJti(refreshJwt.getJti());
+        }
+        return false;
+    }
 
-		final var now = new Date(System.currentTimeMillis());
+    private String createJwtToken(Map<String, Object> customClaims, Duration tokenExpiration, JWSAlgorithm algorithm) {
+        final var jwsHeader = new JWSHeader(algorithm);
+        final var now = new Date(System.currentTimeMillis());
 
-		final var jwtClaimsSet = new JWTClaimsSet.Builder().issuer(String.valueOf(tokenAuthConfig.getIssuer()))
-			.audience(tokenAuthConfig.getAudience())
-			.issueTime(now)
-			.notBeforeTime(now)
-			.expirationTime(Date.from(Instant.now()
-				.plus(tokenExpiration)));
+        final var jwtClaimsSet = new JWTClaimsSet.Builder().issuer(String.valueOf(tokenAuthConfig.getIssuer()))
+                .audience(tokenAuthConfig.getAudience())
+                .issueTime(now)
+                .notBeforeTime(now)
+                .expirationTime(Date.from(Instant.now()
+                        .plus(tokenExpiration)));
 
-		customClaims.forEach((key, value) -> {
-			if (value != null) {
-				switch (key) {
-					case AppConsts.JWT_JTI:
-						jwtClaimsSet.jwtID(value.toString());
-						break;
-					case AppConsts.JWT_SUBJECT:
-						jwtClaimsSet.subject(value.toString());
-						break;
-					default:
-						jwtClaimsSet.claim(key, value);
-				}
-			}
-		});
+        customClaims.forEach((key, value) -> {
+            if (value != null) {
+                switch (key) {
+                    case AppConsts.JWT_JTI:
+                        jwtClaimsSet.jwtID(value.toString());
+                        break;
+                    case AppConsts.JWT_SUBJECT:
+                        jwtClaimsSet.subject(value.toString());
+                        break;
+                    default:
+                        jwtClaimsSet.claim(key, value);
+                }
+            }
+        });
 
-		final var signedJWT = new SignedJWT(jwsHeader, jwtClaimsSet.build());
+        final var signedJWT = new SignedJWT(jwsHeader, jwtClaimsSet.build());
 
-		try {
-			final var signer = getSigner(algorithm);
-			signedJWT.sign(signer);
-			return signedJWT.serialize();
-		} catch (JOSEException e) {
-			throw new RuntimeException(e);
-		}
-	}
+        try {
+            final var signer = getSigner(algorithm);
+            signedJWT.sign(signer);
+            return signedJWT.serialize();
+        } catch (JOSEException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	private Map<String, Object> generateClaims(TokenType tokenType, User user, Duration tokenExpiration,
-											   UUID refreshTokenId) {
-		if (user.getId() == null)
-			throw new IllegalArgumentException("User must have an id");
+    private Map<String, Object> generateClaims(TokenType tokenType, User user, UUID refreshTokenId) {
+        Assert.isTrue(tokenType == TokenType.ACCESS_TOKEN || tokenType == TokenType.REFRESH_TOKEN,
+                "Invalid token type");
 
-		final var claims = new HashMap<String, Object>();
-		final var tokenId = UUID.randomUUID();
+        final var claims = new HashMap<String, Object>();
+        final var tokenId = UUID.randomUUID()
+                .toString();
 
-		final var expirationDate = Instant.now()
-			.plus(tokenExpiration)
-			.atZone(ZoneId.systemDefault())
-			.toLocalDateTime();
+        if (tokenType == TokenType.ACCESS_TOKEN) {
+            claims.put(AppConsts.REFRESH_TOKEN_ID, refreshTokenId);
+            claims.put(AppConsts.SECURITY_STAMP, user.getSecurityStamp());
+            claims.put(AppConsts.ACCESS_TOKEN_PROVIDER, user.getProvider());
+            claims.put(AppConsts.ACCESS_TOKEN_USERNAME, user.getUsername());
+            tokenService.addAccessToken(user, tokenId);
+        } else {
+            tokenService.addRefreshToken(user, tokenId);
+        }
 
-		claims.put(AppConsts.TOKEN_TYPE, tokenType.ordinal());
-		claims.put(AppConsts.JWT_JTI, tokenId);
-		claims.put(AppConsts.JWT_SUBJECT, user.getId());
+        claims.put(AppConsts.TOKEN_TYPE, tokenType.ordinal());
+        claims.put(AppConsts.JWT_JTI, tokenId);
+        claims.put(AppConsts.JWT_SUBJECT, user.getId());
 
-		Optional.ofNullable(refreshTokenId) // claims the only access token has
-			.map(id -> {
-				claims.put(AppConsts.REFRESH_TOKEN_ID, id);
-				claims.put(AppConsts.SECURITY_STAMP, user.getSecurityStamp());
-				claims.put(AppConsts.ACCESS_TOKEN_PROVIDER, user.getProvider());
-				claims.put(AppConsts.ACCESS_TOKEN_USERNAME, user.getUsername());
-				setSecurityStampInCache(user.getId(), user.getSecurityStamp());
-				return null;
-			});
+        return claims;
+    }
 
-		tokenService.addToken(tokenType, tokenId.toString(), expirationDate, user);
-		setTokenIdInCache(tokenId, tokenType);
+    private JWSSigner getSigner(JWSAlgorithm algorithm) throws JOSEException {
+        if (JWSAlgorithm.Family.RSA.contains(algorithm)) {
+            return new RSASSASigner(tokenAuthConfig.getRsaPrivateKey());
+        } else if (JWSAlgorithm.Family.HMAC_SHA.contains(algorithm)) {
+            return new MACSigner(tokenAuthConfig.getGetHmacSecret());
+        }
+        throw new IllegalArgumentException("Unsupported algorithm: " + algorithm);
+    }
 
-		return claims;
-	}
+    private boolean validateSecurityStamp(String securityStamp, UUID userId) {
+        return Optional.ofNullable(userId)
+                .map(userService::getUserById)
+                .map(user -> user.getSecurityStamp()
+                        .equals(securityStamp))
+                .orElse(false);
+    }
 
-	private JWSSigner getSigner(JWSAlgorithm algorithm) throws JOSEException {
-		if (JWSAlgorithm.Family.RSA.contains(algorithm)) {
-			return new RSASSASigner(tokenAuthConfig.getRsaPrivateKey());
-		} else if (JWSAlgorithm.Family.HMAC_SHA.contains(algorithm)) {
-			return new MACSigner(tokenAuthConfig.getGetHmacSecret());
-		}
-		throw new IllegalArgumentException("Unsupported algorithm: " + algorithm);
-	}
+    private boolean validateJti(UUID jti) {
+        return Optional.ofNullable(jti.toString())
+                .map(tokenService::checkIfJwtExists)
+                .orElse(false);
+    }
 
-	private boolean validateSecurityStamp(String securityStamp, UUID userId) {
-
-		return Optional.ofNullable(securityStamp)
-			.map(stamp -> validateSecurityStampInCache(userId, stamp) || userService.validateSecurityStampInDatabase(userId, stamp))
-			.orElse(false);
-
-	}
-
-	private boolean validateJti(UUID jti, TokenType tokenType) {
-
-		return Optional.ofNullable(jti)
-			.map(id ->
-					validateTokenIdInCache(jti) ||
-							tokenService.getTokenByTypeAndValue(tokenType, jti.toString()) != null)
-			.orElse(false);
-
-	}
-
-	private void setTokenIdInCache(UUID tokenId, TokenType tokenType) {
-		final var value = tokenType == TokenType.RefreshToken ? AppConsts.REFRESH_TOKEN_ID : AppConsts.ACCESS_TOKEN_ID;
-		final var ttl = tokenType == TokenType.RefreshToken ? tokenAuthConfig.getRefreshTokenExpirationInSeconds() :
-			tokenAuthConfig.getAccessTokenExpirationInSeconds();
-		redisTemplate.opsForValue()
-			.set(tokenId.toString(), value, ttl);
-
-	}
-
-	private void setSecurityStampInCache(UUID userId, String securityStamp) {
-
-		redisTemplate.opsForHash()
-			.put(userId.toString(), AppConsts.SECURITY_STAMP, securityStamp);
-
-	}
-
-	private boolean validateTokenIdInCache(UUID tokenId) {
-		return Boolean.TRUE.equals(redisTemplate.hasKey(tokenId.toString()));
-	}
-
-	private boolean validateSecurityStampInCache(UUID userId, String securityStamp) {
-		final var key = (String) redisTemplate.opsForHash()
-			.get(userId.toString(), AppConsts.SECURITY_STAMP);
-		return Optional.ofNullable(key)
-			.map(keyStamp -> keyStamp.equals(securityStamp))
-			.orElse(false);
-	}
-
-	private void setRefreshTokenOnCookie(HttpServletResponse response, String value, Duration maxAge) {
-		ResponseCookie[] cookies = new ResponseCookie[]{
-			ResponseCookie.from(AppConsts.REFRESH_TOKEN, value)
-				.httpOnly(true)
-				.secure(true)
-				.path("/auth/refresh-token")
-				.maxAge(maxAge)
-				.sameSite("Lax")
-				.build(),
-			ResponseCookie.from(AppConsts.REFRESH_TOKEN, value)
-				.httpOnly(true)
-				.secure(true)
-				.path("/account/profile")
-				.maxAge(maxAge)
-				.sameSite("Lax")
-				.build(),
-			ResponseCookie.from(AppConsts.REFRESH_TOKEN, value)
-				.httpOnly(true)
-				.secure(true)
-				.path("/auth/logout")
-				.maxAge(maxAge)
-				.sameSite("Lax")
-				.build()
-		};
-		for (ResponseCookie cookie : cookies) {
-			response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-		}
-	}
-
-	private void clearTokenIdInCache(UUID tokenId) {
-		redisTemplate.delete(tokenId.toString());
-	}
+    private void setRefreshTokenOnCookie(HttpServletResponse response, String value, Duration maxAge) {
+        ResponseCookie[] cookies = new ResponseCookie[]{
+                ResponseCookie.from(AppConsts.REFRESH_TOKEN, value)
+                        .httpOnly(true)
+                        .secure(true)
+                        .path("/auth/refresh-token")
+                        .maxAge(maxAge)
+                        .sameSite("Lax")
+                        .build(),
+                ResponseCookie.from(AppConsts.REFRESH_TOKEN, value)
+                        .httpOnly(true)
+                        .secure(true)
+                        .path("/account/profile")
+                        .maxAge(maxAge)
+                        .sameSite("Lax")
+                        .build(),
+                ResponseCookie.from(AppConsts.REFRESH_TOKEN, value)
+                        .httpOnly(true)
+                        .secure(true)
+                        .path("/auth/logout")
+                        .maxAge(maxAge)
+                        .sameSite("Lax")
+                        .build()
+        };
+        for (ResponseCookie cookie : cookies) {
+            response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        }
+    }
 
 }

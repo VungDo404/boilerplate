@@ -15,6 +15,9 @@ import com.app.boilerplate.Util.Translator;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,6 +45,7 @@ public class UserService implements Translator {
 		return userRepository.findAll(specification, pageable);
 	}
 
+	@Cacheable(value = "user", key = "#id")
 	@Transactional(readOnly = true)
 	public User getUserById(UUID id) {
 		return Optional.of(id)
@@ -69,6 +73,7 @@ public class UserService implements Translator {
 					"error.user.email.notfound", email));
 	}
 
+	@CachePut(value = "user", key = "#result.id")
 	public User createUser(CreateUserDto request, Boolean shouldSendConfirmationEmail) {
 		Optional.of(request.getEmail())
 			.filter(userRepository::existsByEmailIgnoreCase)
@@ -96,6 +101,7 @@ public class UserService implements Translator {
 		return user;
 	}
 
+	@CachePut(value = "user", key = "#request.id")
 	public User putUser(PutUserDto request) {
 		return Optional.of(request.getId())
 			.map(this::getUserById)
@@ -111,12 +117,12 @@ public class UserService implements Translator {
 				"error.user.id.notfound", request.getId()));
 	}
 
-
-
+	@CacheEvict(value = "user", key = "#id")
 	public void deleteUserById(UUID id) {
 		userRepository.deleteById(id);
 	}
 
+	@CachePut(value = "user", key = "#user.id")
 	public User save(User user) {
 		return userRepository.save(user);
 	}
