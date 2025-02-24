@@ -28,17 +28,6 @@ public class TwoFactorCacheService {
     @Cacheable(value = CacheConsts.TWO_FACTOR, key = "#userId")
     public String getTwoFactorCode(String userId) {return "";}
 
-    @CachePut(value = CacheConsts.GOOGLE_AUTHENTICATOR_SECRET, key = "#userId")
-    public String addGoogleAuthenticatorSecret(String userId) {
-        return randomUtil.generateSecretKey();
-    }
-
-    @Cacheable(value = CacheConsts.GOOGLE_AUTHENTICATOR_SECRET, key = "#userId")
-    public String getGoogleAuthenticatorSecret(String userId) {return "";}
-
-    @CacheEvict(value = CacheConsts.GOOGLE_AUTHENTICATOR_SECRET, key = "#userId")
-    public void deleteGoogleAuthenticatorSecret(String userId) {}
-
     @CachePut(value = CacheConsts.PROVIDER, key = "#userId")
     public TwoFactorProvider addTwoFactorProvider(TwoFactorProvider twoFactorProvider, String userId) {
         return twoFactorProvider;

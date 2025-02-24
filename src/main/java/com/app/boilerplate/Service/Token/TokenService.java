@@ -69,6 +69,20 @@ public class TokenService {
             .set("access_token::" + value, "", ttl.toSeconds(), TimeUnit.SECONDS);
     }
 
+    public void addAuthenticatorToken(User user, String value) {
+        final var expireDate = LocalDateTime.now()
+            .plus(tokenAuthConfig.getAuthenticatorExpirationInSeconds());
+        addToken(TokenType.AUTHENTICATOR_TOKEN, value, expireDate, user);
+    }
+
+    public Token getAuthenticatorToken(User user) {
+        return tokenRepository.findByTypeAndUser(TokenType.AUTHENTICATOR_TOKEN,  user).orElse(null);
+    }
+
+    public void deleteAuthenticatorToken(User user){
+        deleteByTypeAndUser(TokenType.AUTHENTICATOR_TOKEN, user);
+    }
+
     public boolean checkIfJwtExists(String value) {
         boolean retrievedValue = Boolean.TRUE.equals(redisTemplate.hasKey("access_token::" + value));
         if (retrievedValue) return true;

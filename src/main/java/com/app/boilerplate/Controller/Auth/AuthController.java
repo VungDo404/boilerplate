@@ -7,7 +7,6 @@ import com.app.boilerplate.Shared.Authentication.Dto.LoginDto;
 import com.app.boilerplate.Shared.Authentication.Dto.SendTwoFactorCodeDto;
 import com.app.boilerplate.Shared.Authentication.Model.LoginResultModel;
 import com.app.boilerplate.Shared.Authentication.Model.RefreshAccessTokenModel;
-import com.app.boilerplate.Shared.Authentication.Model.SendTwoFactorCodeModel;
 import com.app.boilerplate.Util.AppConsts;
 import com.app.boilerplate.Util.PermissionUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -52,7 +51,7 @@ public class AuthController {
     @PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.READ +
         "')")
     @PostMapping("/send-code")
-    public SendTwoFactorCodeModel sendTwoFactorCode(@RequestBody @Valid SendTwoFactorCodeDto request) {
-        return twoFactorService.sendTwoFactorCode(request);
+    public void sendTwoFactorCode(@RequestBody @Valid SendTwoFactorCodeDto request) {
+        twoFactorService.sendTwoFactorCode(request);
     }
 }

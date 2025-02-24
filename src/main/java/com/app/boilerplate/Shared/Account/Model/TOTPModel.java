@@ -1,6 +1,5 @@
-package com.app.boilerplate.Shared.Authentication.Model;
+package com.app.boilerplate.Shared.Account.Model;
 
-import com.app.boilerplate.Shared.Authentication.TwoFactorProvider;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,8 +9,7 @@ import lombok.Setter;
 @Setter
 @Builder
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class SendTwoFactorCodeModel {
+public class TOTPModel {
     private String secret;
-    private TwoFactorProvider provider;
     private String uri;
 }

@@ -9,7 +9,7 @@ export class ValidateTwoFactorCodeService {
     private baseUrl!: string;
 
     constructor(
-        public loginService: LoginService,
+        private loginService: LoginService,
         private configService: ConfigService,
     ) {
         this.baseUrl = this.configService.baseUrl;

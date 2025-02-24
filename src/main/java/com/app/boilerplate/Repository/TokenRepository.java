@@ -14,6 +14,7 @@ import java.util.Optional;
 public interface TokenRepository extends JpaRepository<Token, Long> {
 	Optional<Token> findByTypeAndValue(TokenType type, String value);
 	List<Token> findAllByTypeAndUser(TokenType type, User user);
+	Optional<Token> findByTypeAndUser(TokenType type, User user);
 
 	boolean existsByValue(String value);
 

@@ -1,7 +1,9 @@
 package com.app.boilerplate.Service.Account;
 
 import com.app.boilerplate.Domain.User.User;
+import com.app.boilerplate.Exception.BadRequestException;
 import com.app.boilerplate.Mapper.IUserMapper;
+import com.app.boilerplate.Service.Authentication.TwoFactorService;
 import com.app.boilerplate.Service.Token.TokenService;
 import com.app.boilerplate.Service.User.UserService;
 import com.app.boilerplate.Shared.Account.Dto.ChangePasswordDto;
@@ -9,6 +11,7 @@ import com.app.boilerplate.Shared.Account.Event.EmailActivationEvent;
 import com.app.boilerplate.Shared.Account.Event.ResetPasswordEvent;
 import com.app.boilerplate.Shared.Account.Event.SendEmailActivationEvent;
 import com.app.boilerplate.Shared.Account.Model.RegisterResultModel;
+import com.app.boilerplate.Shared.Account.Model.TOTPModel;
 import com.app.boilerplate.Shared.Authentication.AccessJwt;
 import com.app.boilerplate.Shared.Authentication.TokenType;
 import com.app.boilerplate.Shared.User.Dto.CreateUserDto;
@@ -21,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Transactional
@@ -31,6 +35,7 @@ public class AccountService {
 	private final PasswordEncoder passwordEncoder;
 	private final ApplicationEventPublisher eventPublisher;
 	private final TokenService tokenService;
+	private final TwoFactorService twoFactorService;
 
 	public void changePassword(ChangePasswordDto request) {
 		Optional.of(request.getId())
@@ -49,6 +54,22 @@ public class AccountService {
 		return RegisterResultModel.builder()
 				.canLogin(user.getEmailSpecify() != null)
 				.build();
+	}
+
+	public TOTPModel enableTwoFactor(UUID userId){
+		final var user = userService.getUserById(userId);
+		if(user.getIsTwoFactorEnabled())
+			throw new BadRequestException("error.account.enable.two-factor");
+		user.setIsTwoFactorEnabled(true);
+		final var totp = twoFactorService.generateSecret(user.getUsername());
+		tokenService.addAuthenticatorToken(user,totp.getSecret());
+		return totp;
+	}
+
+	public void disableTwoFactor(UUID userId){
+		final var user = userService.getUserById(userId);
+		user.setIsTwoFactorEnabled(false);
+		tokenService.deleteAuthenticatorToken(user);
 	}
 
 	@EventListener(EmailActivationEvent.class)

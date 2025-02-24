@@ -6,6 +6,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { NgxSpinnerService } from "ngx-spinner";
 import { SendTwoFactorCodeService } from "./send-two-factor-code.service";
 import { Button } from "primeng/button";
+import { LoginService } from "../login/login.service";
 
 @Component({
     selector: 'app-send-two-factor-code',
@@ -29,11 +30,16 @@ export class SendTwoFactorCodeComponent implements OnInit {
         private router: Router,
         private formBuilder: FormBuilder,
         private spinnerService: NgxSpinnerService,
-        private sendTwoFactorCodeService: SendTwoFactorCodeService
+        private sendTwoFactorCodeService: SendTwoFactorCodeService,
+        private loginService: LoginService
     ) {
         const navigation = this.router.getCurrentNavigation();
         this.loginResult = navigation?.extras.state?.loginResult || null;
         this.selectedOption = this.loginResult.twoFactorProviders.map(p => ({ value: p, label: this.formatLabel(p) }));
+    }
+
+    private get canActive(){
+        return !!(this.loginService.loginForm.get('username') && this.loginService.loginForm.get('password'));
     }
 
     ngOnInit(): void {
@@ -70,9 +76,5 @@ export class SendTwoFactorCodeComponent implements OnInit {
             .toLowerCase()
             .replace(/_/g, ' ')
             .replace(/\b\w/g, char => char.toUpperCase());
-    }
-
-    private get canActive() {
-        return Boolean(this.loginResult)
     }
 }

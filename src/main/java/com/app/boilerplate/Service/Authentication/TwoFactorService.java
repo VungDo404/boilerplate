@@ -1,10 +1,11 @@
 package com.app.boilerplate.Service.Authentication;
 
+import com.app.boilerplate.Service.Token.TokenService;
 import com.app.boilerplate.Service.User.UserService;
 import com.app.boilerplate.Shared.Account.Event.TwoFactorCodeEvent;
-import com.app.boilerplate.Shared.Authentication.TwoFactorProvider;
+import com.app.boilerplate.Shared.Account.Model.TOTPModel;
 import com.app.boilerplate.Shared.Authentication.Dto.SendTwoFactorCodeDto;
-import com.app.boilerplate.Shared.Authentication.Model.SendTwoFactorCodeModel;
+import com.app.boilerplate.Shared.Authentication.TwoFactorProvider;
 import com.app.boilerplate.Util.RandomUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Transactional
@@ -25,49 +27,41 @@ public class TwoFactorService {
     private final RandomUtil randomUtil;
     private final TwoFactorCacheService twoFactorCacheService;
     private final ApplicationEventPublisher eventPublisher;
+    private final TokenService tokenService;
 
     @Value("${spring.application.name}")
     private String APP_NAME;
 
-    public SendTwoFactorCodeModel sendTwoFactorCode(SendTwoFactorCodeDto dto) {
+    public void sendTwoFactorCode(SendTwoFactorCodeDto dto) {
         final var user = userService.getUserById(dto.getUserId());
         final var provider = twoFactorCacheService.addTwoFactorProvider(dto.getProvider(), user.getId()
             .toString());
-        if (provider.equals(TwoFactorProvider.GOOGLE_AUTHENTICATOR)) {
-            final var secret = twoFactorCacheService.addGoogleAuthenticatorSecret(user.getId()
+        if (!provider.equals(TwoFactorProvider.GOOGLE_AUTHENTICATOR)) {
+            final var code = twoFactorCacheService.addTwoFactorCode(dto.getUserId()
                 .toString());
-            final var uri = getQRCodeURI(user.getUsername(), APP_NAME, secret);
-            return SendTwoFactorCodeModel.builder()
-                .provider(provider)
-                .secret(secret)
-                .uri(uri)
-                .build();
+            if (provider
+                .equals(TwoFactorProvider.EMAIL)) {
+                eventPublisher.publishEvent(new TwoFactorCodeEvent(user, code));
+            }
         }
-        final var code = twoFactorCacheService.addTwoFactorCode(dto.getUserId()
-            .toString());
-        if (provider
-            .equals(TwoFactorProvider.EMAIL)) {
-            eventPublisher.publishEvent(new TwoFactorCodeEvent(user, code));
-        }
-        return SendTwoFactorCodeModel.builder()
-            .provider(provider)
-            .build();
     }
 
-    public void validateTwoFactorCode(String userId, String submitCode) {
-        final var provider = twoFactorCacheService.getTwoFactorProvider(userId);
+    public void validateTwoFactorCode(UUID userId, String submitCode) {
+        final var id = userId.toString();
+        final var provider = twoFactorCacheService.getTwoFactorProvider(id);
         if(provider.equals(TwoFactorProvider.GOOGLE_AUTHENTICATOR)) {
-            final var secret = twoFactorCacheService.getGoogleAuthenticatorSecret(userId);
-            if(!validateCode(secret, submitCode))
+            final var user = userService.getUserById(userId);
+            final var token = tokenService.getAuthenticatorToken(user);
+            if(!validateCode(token.getValue(), submitCode))
                 throw new AccessDeniedException("error.auth.two-factor");
         }else{
-            final var code = twoFactorCacheService.getTwoFactorCode(userId);
+            final var code = twoFactorCacheService.getTwoFactorCode(id);
             if (!submitCode.equals(code)) {
                 throw new AccessDeniedException("error.auth.two-factor");
             }
+            twoFactorCacheService.deleteTwoFactorCode(id);
         }
-        twoFactorCacheService.deleteTwoFactorCode(userId);
-        twoFactorCacheService.deleteTwoFactorProvider(userId);
+        twoFactorCacheService.deleteTwoFactorProvider(id);
     }
 
     public boolean validateCode(String secretKey, String inputCode) {
@@ -87,7 +81,16 @@ public class TwoFactorService {
         }
     }
 
-    public String getQRCodeURI(String accountName, String issuer, String secretKey) {
+    public TOTPModel generateSecret(String name){
+        final var secret = randomUtil.generateSecretKey();
+        final var uri = getQRCodeURI(name, APP_NAME, secret);
+        return TOTPModel.builder()
+            .secret(secret)
+            .uri(uri)
+            .build();
+    }
+
+    private String getQRCodeURI(String accountName, String issuer, String secretKey) {
         try {
             return String.format(
                 "otpauth://totp/%s:%s?secret=%s&issuer=%s&algorithm=SHA1&digits=%d&period=30",

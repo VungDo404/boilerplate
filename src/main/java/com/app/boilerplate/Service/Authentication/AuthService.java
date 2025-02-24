@@ -94,8 +94,7 @@ public class AuthService {
                     .userId(user.getId())
                     .build();
             }
-            twoFactorService.validateTwoFactorCode(user.getId()
-                .toString(), request.getTwoFactorCode());
+            twoFactorService.validateTwoFactorCode(user.getId(), request.getTwoFactorCode());
         }
         final var refreshToken = createRefreshToken(user, tokenAuthConfig.getRefreshTokenExpirationInSeconds());
         final var accessToken = createAccessToken(user, refreshToken.getRight());

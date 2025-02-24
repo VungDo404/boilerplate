@@ -1,20 +1,5 @@
 <div class="title-wrapper">
-    <div *ngIf="result.provider == 'GOOGLE_AUTHENTICATOR'" class="qr-wrapper">
-        <qrcode
-                [qrdata]="result.uri"
-                [width]="256"
-                [errorCorrectionLevel]="'M'">
-        </qrcode>
-        <div class="secret-container">
-            <p>{{ result.secret }}</p>
-            <p-button [cdkCopyToClipboard]="result.secret" icon="pi pi-copy" aria-label="Copy" />
-        </div>
-    </div>
-    <div *ngIf="result.provider === 'GOOGLE_AUTHENTICATOR'">
-        <p>{{ 'QrMessage' | translate }}</p>
-        <p>{{ 'GuideQrMessage' | translate }}</p>
-    </div>
-    <p *ngIf="result.provider !== 'GOOGLE_AUTHENTICATOR'">{{ 'VerifyCodeMessage' | translate }}</p>
+    <p>{{ 'VerifyCodeMessage' | translate }}</p>
 </div>
 <form [formGroup]="form" (ngSubmit)="submit()" class="form-wrapper">
     <div class="otp-wrapper">

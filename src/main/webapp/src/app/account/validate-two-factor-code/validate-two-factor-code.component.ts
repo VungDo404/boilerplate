@@ -11,6 +11,7 @@ import { ValidateTwoFactorCodeService } from "./validate-two-factor-code.service
 import { ValidationMessageComponent } from "../../../shared/component/validation-message/validation-message.component";
 import { InputText } from "primeng/inputtext";
 import { NgxSpinnerService } from "ngx-spinner";
+import { LoginService } from "../login/login.service";
 
 @Component({
     selector: 'app-validate-two-factor-code',
@@ -32,18 +33,14 @@ import { NgxSpinnerService } from "ngx-spinner";
 })
 export class ValidateTwoFactorCodeComponent implements OnInit {
     form!: FormGroup;
-    value: any;
-    result!: SendTwoFactorResult;
 
     constructor(
         private router: Router,
         private validateTwoFactorCodeService: ValidateTwoFactorCodeService,
         private formBuilder: FormBuilder,
-        private spinnerService: NgxSpinnerService
-    ) {
-        const navigation = this.router.getCurrentNavigation();
-        this.result = navigation?.extras.state?.result || null;
-    }
+        private spinnerService: NgxSpinnerService,
+        private loginService: LoginService
+    ) {}
 
     submit() {
         if (this.form.invalid) {
@@ -57,8 +54,8 @@ export class ValidateTwoFactorCodeComponent implements OnInit {
         this.validateTwoFactorCodeService.validate(this.form.value.otp, cb);
     }
 
-    private get canActive() {
-        return Boolean(this.result)
+    private get canActive(){
+        return !!(this.loginService.loginForm.get('username') && this.loginService.loginForm.get('password'));
     }
 
     ngOnInit(): void {

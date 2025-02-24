@@ -13,12 +13,10 @@ export class SendTwoFactorCodeService {
         this.baseUrl = this.configService.baseUrl;
     }
     sendTwoFactorCode(model: SendTwoFactorCode,cb: () => void){
-        this.http.post<SendTwoFactorResult>(this.baseUrl + "auth/send-code", model).subscribe({
+        this.http.post(this.baseUrl + "auth/send-code", model).subscribe({
             next: (response) => {
                 cb();
-                this.router.navigate(["account/validate-code"], {
-                    state: {result: response}
-                })
+                this.router.navigate(["account/validate-code"])
             },
             error: cb
         })

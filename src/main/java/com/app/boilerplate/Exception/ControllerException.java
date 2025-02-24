@@ -94,6 +94,19 @@ public class ControllerException extends ResponseEntityExceptionHandler {
 		);
 	}
 
+	@ExceptionHandler(value = {BadRequestException.class})
+	ResponseEntity<Object> handleNotFoundException(BadRequestException exception, NativeWebRequest request) {
+		return handleException(
+			exception,
+			HttpStatus.BAD_REQUEST,
+			exception.getMessage(),
+			HttpStatus.BAD_REQUEST.getReasonPhrase(),
+			null,
+			request,
+			null
+							  );
+	}
+
 	@ExceptionHandler(value = {NotFoundException.class})
 	ResponseEntity<Object> handleNotFoundException(NotFoundException exception, NativeWebRequest request) {
 		return handleException(
