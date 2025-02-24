@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
 
 <head>
     <title th:text="#{email.activation.title}"/>
@@ -106,7 +106,7 @@
                 <tr>
                     <td bgcolor="#ffffff" align="center" valign="top"
                         style="padding: 40px 20px 20px 20px; border-radius: 4px 4px 0 0; color: #111111; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 48px; font-weight: 400; letter-spacing: 4px; line-height: 48px;">
-                        <h1 style="font-size: 48px; font-weight: 400; margin: 2px;" 
+                        <h1 style="font-size: 48px; font-weight: 400; margin: 2px;"
                             th:text="#{email.activation.welcome}">Welcome!</h1>
                     </td>
                 </tr>
@@ -166,7 +166,8 @@
                 <tr>
                     <td bgcolor="#ffffff" align="left"
                         style="padding: 0 30px 40px 30px; border-radius: 0 0 4px 4px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
-                        <p style="margin: 0;"><span th:text="#{email.activation.signature}"></span><br><span th:text="#{email.activation.team.name}"></span></p>
+                        <p style="margin: 0;"><span th:text="#{email.activation.signature}"></span><br><span
+                                th:text="#{email.activation.team.name}"></span></p>
                     </td>
                 </tr>
             </table>

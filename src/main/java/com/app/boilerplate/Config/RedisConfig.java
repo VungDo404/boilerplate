@@ -1,5 +1,6 @@
 package com.app.boilerplate.Config;
 
+import com.app.boilerplate.Util.CacheConsts;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.cache.annotation.CachingConfigurer;
 import org.springframework.cache.annotation.EnableCaching;
@@ -45,9 +46,9 @@ public class RedisConfig implements CachingConfigurer {
     @Bean
     public RedisCacheConfiguration cacheConfiguration() {
         return RedisCacheConfiguration.defaultCacheConfig()
-                .disableCachingNullValues()
-                .disableCachingNullValues()
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
+            .disableCachingNullValues()
+            .disableCachingNullValues()
+            .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
     }
 
     @Bean
@@ -55,12 +56,24 @@ public class RedisConfig implements CachingConfigurer {
         final var redisSerializer = new JdkSerializationRedisSerializer(getClass().getClassLoader());
 
         final var cacheConfig = RedisCacheConfiguration.defaultCacheConfig()
-                .disableCachingNullValues()
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer))
-                .entryTtl(Duration.ofMinutes(30));
-        var build = RedisCacheManager.RedisCacheManagerBuilder.fromConnectionFactory(redisConnectionFactory)
-                .cacheDefaults(cacheConfig)
-                .build();
+            .disableCachingNullValues()
+            .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer))
+            .entryTtl(Duration.ofMinutes(15));
+        final var ttl5MinConfig = RedisCacheConfiguration.defaultCacheConfig()
+            .disableCachingNullValues()
+            .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer))
+            .entryTtl(Duration.ofMinutes(5));
+        final var ttl3MinConfig = RedisCacheConfiguration.defaultCacheConfig()
+            .disableCachingNullValues()
+            .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer))
+            .entryTtl(Duration.ofMinutes(3));
+
+        final var build = RedisCacheManager.RedisCacheManagerBuilder.fromConnectionFactory(redisConnectionFactory)
+            .cacheDefaults(cacheConfig)
+            .withCacheConfiguration(CacheConsts.TWO_FACTOR,ttl5MinConfig)
+            .withCacheConfiguration(CacheConsts.GOOGLE_AUTHENTICATOR_SECRET,ttl3MinConfig)
+            .withCacheConfiguration(CacheConsts.PROVIDER,ttl5MinConfig)
+            .build();
         build.setTransactionAware(true);
 
         return build;

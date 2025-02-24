@@ -1,4 +1,4 @@
-package com.app.boilerplate.Service.Auth;
+package com.app.boilerplate.Service.Authorization;
 
 import com.app.boilerplate.Security.HierarchicalPermission;
 import com.app.boilerplate.Util.SecurityUtil;

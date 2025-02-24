@@ -5,6 +5,7 @@ import com.app.boilerplate.Domain.User.Token;
 import com.app.boilerplate.Domain.User.User;
 import com.app.boilerplate.Repository.TokenRepository;
 import com.app.boilerplate.Shared.Authentication.TokenType;
+import com.app.boilerplate.Util.CacheConsts;
 import com.app.boilerplate.Util.RandomUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.CacheManager;
@@ -34,40 +35,45 @@ public class TokenService {
 
     private Token addToken(TokenType type, String value, LocalDateTime expireDate, User user) {
         final var token = Token.builder()
-                .type(type)
-                .value(value)
-                .expireDate(expireDate)
-                .user(user)
-                .build();
+            .type(type)
+            .value(value)
+            .expireDate(expireDate)
+            .user(user)
+            .build();
         return tokenRepository.save(token);
     }
 
-    @CachePut(value = "token", key = "#result.value")
+    @CachePut(value = CacheConsts.TOKEN, key = "#result.value")
     public Token addToken(TokenType type, User user) {
         final var key = randomUtil.randomToken();
-        final var exp = LocalDateTime.now().plusDays(1);
+        final var exp = LocalDateTime.now()
+            .plusDays(1);
         return addToken(type, key, exp, user);
     }
 
-    public void addRefreshToken(User user, String value){
-        final var expireDate = LocalDateTime.now().plus(tokenAuthConfig.getRefreshTokenExpirationInSeconds());
+    @Async
+    public void addRefreshToken(User user, String value) {
+        final var expireDate = LocalDateTime.now()
+            .plus(tokenAuthConfig.getRefreshTokenExpirationInSeconds());
         addToken(TokenType.REFRESH_TOKEN, value, expireDate, user);
     }
 
-    public void addAccessToken(User user, String value){
-        final var expireDate = LocalDateTime.now().plus(tokenAuthConfig.getAccessTokenExpirationInSeconds());
+    @Async
+    public void addAccessToken(User user, String value) {
+        final var expireDate = LocalDateTime.now()
+            .plus(tokenAuthConfig.getAccessTokenExpirationInSeconds());
         addToken(TokenType.ACCESS_TOKEN, value, expireDate, user);
-        final var ttl = tokenAuthConfig.getAccessTokenExpirationInSeconds().dividedBy(2);
-        redisTemplate.opsForValue().set("access_token::"+value, "", ttl.toSeconds(), TimeUnit.SECONDS);
+        final var ttl = tokenAuthConfig.getAccessTokenExpirationInSeconds()
+            .dividedBy(2);
+        redisTemplate.opsForValue()
+            .set("access_token::" + value, "", ttl.toSeconds(), TimeUnit.SECONDS);
     }
 
-    public boolean checkIfJwtExists(String value){
+    public boolean checkIfJwtExists(String value) {
         boolean retrievedValue = Boolean.TRUE.equals(redisTemplate.hasKey("access_token::" + value));
         if (retrievedValue) return true;
         return tokenRepository.existsByValue(value);
     }
-
-
 
     public void deleteExpiredTokens(LocalDateTime dateTime) {
         tokenRepository.deleteByExpireDateBefore(dateTime);
@@ -78,25 +84,23 @@ public class TokenService {
         deleteExpiredTokens(LocalDateTime.now());
     }
 
-    @Cacheable(value = "token", key = "#value")
+    @Cacheable(value = CacheConsts.TOKEN, key = "#value")
     public Token getTokenByTypeAndValue(TokenType type, String value) {
         return tokenRepository.findByTypeAndValue(type, value)
-                .filter(token -> !LocalDateTime.now()
-                        .isAfter(token.getExpireDate()))
-                .orElse(null);
+            .filter(token -> !LocalDateTime.now()
+                .isAfter(token.getExpireDate()))
+            .orElse(null);
     }
 
     @Async
-    @CacheEvict(value = "token", key = "#value")
-    public void deleteByValue(String value) {
-        tokenRepository.deleteByValue(value);
-    }
+    @CacheEvict(value = CacheConsts.TOKEN, key = "#value")
+    public void deleteByValue(String value) {tokenRepository.deleteByValue(value);}
 
     public void deleteByTypeAndUser(TokenType type, User user) {
         final var tokens = findByTypeAndUser(type, user);
         for (Token token : tokens) {
             Objects.requireNonNull(cacheManager.getCache("token"))
-                    .evict(token.getValue());
+                .evict(token.getValue());
         }
         tokenRepository.deleteTokenByTypeAndUser(type, user);
     }

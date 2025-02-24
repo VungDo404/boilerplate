@@ -127,9 +127,4 @@ public class UserService implements Translator {
 		return userRepository.save(user);
 	}
 
-	public boolean validateSecurityStampInDatabase(UUID id, String securityStamp) {
-		return userRepository.existsByIdAndSecurityStamp(id, securityStamp);
-	}
-
-
 }

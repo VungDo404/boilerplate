@@ -1,0 +1,42 @@
+<div class="title-wrapper">
+    <div *ngIf="result.provider == 'GOOGLE_AUTHENTICATOR'" class="qr-wrapper">
+        <qrcode
+                [qrdata]="result.uri"
+                [width]="256"
+                [errorCorrectionLevel]="'M'">
+        </qrcode>
+        <div class="secret-container">
+            <p>{{ result.secret }}</p>
+            <p-button [cdkCopyToClipboard]="result.secret" icon="pi pi-copy" aria-label="Copy" />
+        </div>
+    </div>
+    <div *ngIf="result.provider === 'GOOGLE_AUTHENTICATOR'">
+        <p>{{ 'QrMessage' | translate }}</p>
+        <p>{{ 'GuideQrMessage' | translate }}</p>
+    </div>
+    <p *ngIf="result.provider !== 'GOOGLE_AUTHENTICATOR'">{{ 'VerifyCodeMessage' | translate }}</p>
+</div>
+<form [formGroup]="form" (ngSubmit)="submit()" class="form-wrapper">
+    <div class="otp-wrapper">
+        <p-inputotp formControlName="otp" [length]="6" [integerOnly]="true">
+            <ng-template #input let-token let-events="events" let-index="index">
+                <input
+                        pInputText
+                        autocomplete="one-time-code"
+                        type="text"
+                        [maxLength]="1"
+                        (input)="events.input($event)"
+                        (keydown)="events.keydown($event)"
+                        [attr.value]="token"
+                        class="custom-otp-input "
+                />
+                <div *ngIf="index === 3" class="px-4">
+                    <i class="pi pi-minus"></i>
+                </div>
+            </ng-template>
+        </p-inputotp>
+        <validation-message [formCtrl]="form.get('otp')!"></validation-message>
+    </div>
+
+    <p-button label="{{'Submit' | translate}}" styleClass="primary-btn" type="submit" fluid/>
+</form>

@@ -14,17 +14,43 @@ declare interface RegisterFormWithConfirmedPassword extends RegisterForm {
     confirmedPassword: string;
 }
 
-declare type AuthenticationResult = AuthenticationTokenResult | RequireEmailVerificationResult | ShouldChangePasswordOnNextLoginResult;
+declare type AuthenticationResult = AuthenticationTokenResult
+    | RequireEmailVerificationResult
+    | ShouldChangePasswordOnNextLoginResult
+    | RequireTwoFactorAuthenticationResult;
 
 declare interface AuthenticationTokenResult {
     accessToken: string;
     encryptedAccessToken: string;
     expiresInSeconds: number;
-    isTwoFactorEnabled: boolean;
-    requiresTwoFactorVerification: boolean;
 }
 
-declare interface ShouldChangePasswordOnNextLoginResult{
+declare interface RequireTwoFactorAuthenticationResult {
+    isTwoFactorEnabled: boolean;
+    userId: string;
+    twoFactorProviders: TwoFactorProvider[]
+}
+
+declare type TwoFactorProvider = "EMAIL" | "SMS" | "GOOGLE_AUTHENTICATOR";
+
+declare interface SendTwoFactorCode {
+    userId: string;
+    provider: TwoFactorProvider;
+}
+
+declare type SendTwoFactorResult = EmailProviderResult | GoogleAuthenticatorProviderResult;
+
+declare interface EmailProviderResult {
+    provider: "EMAIL"
+}
+
+declare interface GoogleAuthenticatorProviderResult {
+    provider: "GOOGLE_AUTHENTICATOR",
+    uri: string;
+    secret: string;
+}
+
+declare interface ShouldChangePasswordOnNextLoginResult {
     passwordResetCode: string;
     shouldChangePasswordOnNextLogin: boolean;
 }

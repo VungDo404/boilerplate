@@ -33,6 +33,15 @@ export const  ACCOUNT_ROUTE: Routes = [
 			{
 				path: "send-email",
 				loadComponent: () => import("./send-email/send-email.component").then(m => m.SendEmailComponent)
+			},
+			{
+				path: "send-code",
+				loadComponent: () => import("./send-two-factor-code/send-two-factor-code.component").then(m => m.SendTwoFactorCodeComponent)
+
+			},
+			{
+				path: "validate-code",
+				loadComponent: () => import("./validate-two-factor-code/validate-two-factor-code.component").then(m => m.ValidateTwoFactorCodeComponent)
 			}
 		]
 	},

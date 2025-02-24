@@ -6,6 +6,7 @@ import { NotifyService } from "../../../shared/service/notify.service";
 import { TranslateService } from "@ngx-translate/core";
 import { Subject, takeUntil } from "rxjs";
 import Swal, { SweetAlertResult } from "sweetalert2";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 
 @Injectable({
     providedIn: 'root'
@@ -13,8 +14,10 @@ import Swal, { SweetAlertResult } from "sweetalert2";
 export class LoginService {
     private baseUrl!: string;
     private destroy$ = new Subject<void>();
+    loginForm!: FormGroup;
 
     constructor(
+        private formBuilder: FormBuilder,
         private configService: ConfigService,
         private http: HttpClient,
         private router: Router,
@@ -24,13 +27,39 @@ export class LoginService {
         this.baseUrl = this.configService.baseUrl;
     }
 
-    authenticate(loginForm: LoginForm, cb: () => void) {
-        this.http.post<AuthenticationResult>(this.baseUrl + "auth/authenticate", loginForm).subscribe({
+    authenticate(cb: () => void) {
+        this.http.post<AuthenticationResult>(this.baseUrl + "auth/authenticate", this.loginForm.value).subscribe({
             next: (response) => {
                 this.processAuthenticationResult(response);
                 cb();
             },
             error: cb
+        });
+    }
+
+    initForm() {
+        this.loginForm = this.formBuilder.group({
+            username: [
+                '',
+                [
+                    Validators.required,
+                    Validators.minLength(3),
+                    Validators.maxLength(50),
+                    Validators.pattern(/^[\w!@#$%^&*()\-=+<>?,.;:'"{}\[\]\\\/|`~]+$/)
+                ]
+            ],
+            password: [
+                '',
+                [
+                    Validators.required,
+                    Validators.minLength(6),
+                    Validators.maxLength(60),
+                    Validators.pattern(/^[\w!@#$%^&*()\-=+<>?,.;:'"{}\[\]\\\/|`~]+$/)
+                ]
+            ],
+            twoFactorCode: [
+                ''
+            ]
         });
     }
 
@@ -62,11 +91,18 @@ export class LoginService {
                     }
                     this.notifyService.info(message, title, option, cb);
                 });
+        } else if ("isTwoFactorEnabled" in result && result.isTwoFactorEnabled) {
+            this.router.navigate(['/account/send-code'], {
+                state: { loginResult: result }
+            });
+        }else if("accessToken" in result){
+            this.login(result)
+        }else {
+            this.router.navigate(['/account/login'])
         }
     }
 
-    ngOnDestroy(): void {
-        this.destroy$.next();
-        this.destroy$.complete();
+    private login(result: AuthenticationTokenResult){
+        this.router.navigate(["/main"])
     }
 }

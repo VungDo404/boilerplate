@@ -1,6 +1,6 @@
 package com.app.boilerplate.Security;
 
-import com.app.boilerplate.Service.Auth.AuthorizeService;
+import com.app.boilerplate.Service.Authorization.AuthorizeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;

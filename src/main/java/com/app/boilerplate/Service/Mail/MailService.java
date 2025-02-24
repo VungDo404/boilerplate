@@ -1,8 +1,9 @@
 package com.app.boilerplate.Service.Mail;
 
 import com.app.boilerplate.Domain.User.User;
-import com.app.boilerplate.Shared.Account.Event.SendEmailActivationEvent;
 import com.app.boilerplate.Shared.Account.Event.ResetPasswordEvent;
+import com.app.boilerplate.Shared.Account.Event.SendEmailActivationEvent;
+import com.app.boilerplate.Shared.Account.Event.TwoFactorCodeEvent;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -98,7 +99,8 @@ public class MailService {
         final Map<String, Object> properties = Map.of(
                 "returnUrl", fullUrl,
                 "helpLink", "",
-                "unsubscribeUrl", ""
+                "unsubscribeUrl", "",
+                "locale", locale
         );
         sendEmailWithTemplateSync(event.getUser(), "mail/reset-password", "email.reset.title",
                 locale, properties);
@@ -112,11 +114,25 @@ public class MailService {
         final Map<String, Object> properties = Map.of(
                 "returnUrl", fullUrl,
                 "helpLink", "",
-                "unsubscribeUrl", ""
+                "unsubscribeUrl", "",
+                "locale", locale
         );
 
         sendEmailWithTemplateSync(event.getUser(), "mail/email-activation", "email.activation.title",
-                locale, properties );
+                locale, properties);
+    }
+
+    @EventListener(TwoFactorCodeEvent.class)
+    @Async
+    public void sendTwoFactorCode(TwoFactorCodeEvent event) {
+        final var locale = LocaleContextHolder.getLocale();
+        final Map<String, Object> properties = Map.of(
+                "helpLink", "",
+                "locale", locale,
+                "key", event.getKey()
+        );
+        sendEmailWithTemplateSync(event.getUser(), "mail/two-factor-code", "email.two-factor.title",
+                locale, properties);
     }
 
 }

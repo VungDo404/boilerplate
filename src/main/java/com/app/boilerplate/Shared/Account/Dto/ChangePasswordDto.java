@@ -6,9 +6,9 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.hibernate.validator.constraints.UUID;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 /**
  * DTO for {@link com.app.boilerplate.Domain.User.User}
@@ -18,8 +18,7 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ChangePasswordDto implements Serializable {
 	@NotNull(message = "{validation.id.required}")
-	@UUID(message = "{validation.id.invalid}")
-	private java.util.UUID id;
+	private UUID id;
 	@NotNull(message = "{validation.password.required}")
 	@Size(min = 6, max = 60, message = "{validation.password.size}")
 	@Pattern(regexp = "^[\\w!@#$%^&*()\\-+=<>?,.;:'\"{}\\[\\]\\\\/|`~]+$",

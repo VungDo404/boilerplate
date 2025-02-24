@@ -1,10 +1,13 @@
 package com.app.boilerplate.Controller.Auth;
 
-import com.app.boilerplate.Service.Auth.AuthService;
+import com.app.boilerplate.Service.Authentication.AuthService;
+import com.app.boilerplate.Service.Authentication.TwoFactorService;
 import com.app.boilerplate.Shared.Authentication.AccessJwt;
 import com.app.boilerplate.Shared.Authentication.Dto.LoginDto;
+import com.app.boilerplate.Shared.Authentication.Dto.SendTwoFactorCodeDto;
 import com.app.boilerplate.Shared.Authentication.Model.LoginResultModel;
 import com.app.boilerplate.Shared.Authentication.Model.RefreshAccessTokenModel;
+import com.app.boilerplate.Shared.Authentication.Model.SendTwoFactorCodeModel;
 import com.app.boilerplate.Util.AppConsts;
 import com.app.boilerplate.Util.PermissionUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,28 +23,36 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth")
 @RestController
 public class AuthController {
-	private final AuthService authService;
+    private final AuthService authService;
+    private final TwoFactorService twoFactorService;
 
-	@PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.READ +
-		"')")
-	@PostMapping("/authenticate")
-	public LoginResultModel authenticate(@RequestBody @Valid LoginDto request, HttpServletResponse response) {
-		return authService.authenticate(request, response);
-	}
+    @PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.READ +
+        "')")
+    @PostMapping("/authenticate")
+    public LoginResultModel authenticate(@RequestBody @Valid LoginDto request, HttpServletResponse response) {
+        return authService.authenticate(request, response);
+    }
 
-	@PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.READ +
-		"')")
-	@PostMapping("/refresh-token")
-	public RefreshAccessTokenModel refreshToken(@CookieValue(AppConsts.REFRESH_TOKEN) String refreshToken,
-												HttpServletResponse response) {
-		return authService.refreshAccessToken(refreshToken, response);
-	}
+    @PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.READ +
+        "')")
+    @PostMapping("/refresh-token")
+    public RefreshAccessTokenModel refreshToken(@CookieValue(AppConsts.REFRESH_TOKEN) String refreshToken,
+                                                HttpServletResponse response) {
+        return authService.refreshAccessToken(refreshToken, response);
+    }
 
-	@PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.READ +
-		"')")
-	@PostMapping("/logout")
-	public void logout(@AuthenticationPrincipal AccessJwt jwt, HttpServletResponse response,
-					   @CookieValue(AppConsts.REFRESH_TOKEN) String refreshToken) {
-		authService.logout(jwt, response, refreshToken);
-	}
+    @PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.READ +
+        "')")
+    @PostMapping("/logout")
+    public void logout(@AuthenticationPrincipal AccessJwt jwt, HttpServletResponse response,
+                       @CookieValue(AppConsts.REFRESH_TOKEN) String refreshToken) {
+        authService.logout(jwt, response, refreshToken);
+    }
+
+    @PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.READ +
+        "')")
+    @PostMapping("/send-code")
+    public SendTwoFactorCodeModel sendTwoFactorCode(@RequestBody @Valid SendTwoFactorCodeDto request) {
+        return twoFactorService.sendTwoFactorCode(request);
+    }
 }

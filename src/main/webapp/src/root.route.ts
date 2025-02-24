@@ -9,5 +9,9 @@ export const ROUTE: Routes = [
 		path: "account",
 		loadChildren: () => import("./app/account/account.route").then(m  => m.ACCOUNT_ROUTE)
 	},
-	{ path: "**", redirectTo: "admin/user"}
+	{
+		path: "main",
+		loadChildren: () => import("./app/main/main.route").then(m => m.MAIN_ROUTE)
+	},
+	{ path: "**", redirectTo: "main"}
 ]

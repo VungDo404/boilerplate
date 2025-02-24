@@ -15,15 +15,15 @@ import java.util.List;
 @RequiredArgsConstructor
 @Component
 public class TokenAuthConfig {
-	@Value("${rsa.public-key}")
+	@Value("${security-key.rsa.public-key}")
 	private RSAPublicKey rsaPublicKey;
-	@Value("${rsa.private-key}")
+	@Value("${security-key.rsa.private-key}")
 	private RSAPrivateKey rsaPrivateKey;
 	@Value("${server.base-url}")
 	private List<String> audience;
 	@Value("${server.base-url}")
 	private URL issuer;
-	@Value("${symmetric.security-key}")
+	@Value("${security-key.refresh-token}")
 	private String getHmacSecret;
 	private final Duration accessTokenExpirationInSeconds = Duration.ofHours(1);
 	private final Duration refreshTokenExpirationInSeconds = Duration.ofHours(31);

@@ -1,7 +1,7 @@
 package com.app.boilerplate.Security;
 
 import com.app.boilerplate.Domain.User.User;
-import com.app.boilerplate.Service.Auth.AuthService;
+import com.app.boilerplate.Service.Authentication.AuthService;
 import com.app.boilerplate.Util.AppConsts;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

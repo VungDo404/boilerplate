@@ -1,10 +1,11 @@
-package com.app.boilerplate.Service.Auth;
+package com.app.boilerplate.Service.Authentication;
 
 import com.app.boilerplate.Config.TokenAuthConfig;
 import com.app.boilerplate.Domain.User.User;
 import com.app.boilerplate.Service.Account.AccountService;
 import com.app.boilerplate.Service.Token.TokenService;
 import com.app.boilerplate.Service.User.UserService;
+import com.app.boilerplate.Shared.Authentication.TwoFactorProvider;
 import com.app.boilerplate.Shared.Authentication.AccessJwt;
 import com.app.boilerplate.Shared.Authentication.BaseJwt;
 import com.app.boilerplate.Shared.Authentication.Dto.LoginDto;
@@ -27,7 +28,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -59,49 +59,57 @@ public class AuthService {
     private final TokenAuthConfig tokenAuthConfig;
     private final TokenService tokenService;
     private final UserService userService;
-    private final RedisTemplate<String, Object> redisTemplate;
     private final ObjectMapper objectMapper;
     private final AccountService accountService;
+    private final TwoFactorService twoFactorService;
 
     public LoginResultModel authenticate(LoginDto request, HttpServletResponse response) {
         final var authenticationToken = new UsernamePasswordAuthenticationToken(request.getUsername(),
-                request.getPassword());
+            request.getPassword());
         final var authentication = authenticationManagerBuilder.getObject()
-                .authenticate(authenticationToken);
+            .authenticate(authenticationToken);
         SecurityContextHolder.getContext()
-                .setAuthentication(authentication);
+            .setAuthentication(authentication);
         final var user = (User) authentication.getPrincipal();
         if (user.getEmailSpecify() == null) {
             accountService.emailActivation(user);
             return LoginResultModel.builder()
-                    .email(user.getEmail())
-                    .requiresEmailVerification(true)
-                    .build();
+                .email(user.getEmail())
+                .requiresEmailVerification(true)
+                .build();
         }
         if (!user.getCredentialsNonExpired()) {
             final var token = tokenService.addToken(TokenType.RESET_PASSWORD_TOKEN, user);
             return LoginResultModel.builder()
-                    .shouldChangePasswordOnNextLogin(true)
-                    .passwordResetCode(token.getValue())
-                    .build();
+                .shouldChangePasswordOnNextLogin(true)
+                .passwordResetCode(token.getValue())
+                .build();
         }
         if (user.getIsTwoFactorEnabled()) {
-
+            if (request.getTwoFactorCode() == null || request.getTwoFactorCode()
+                .isBlank()) {
+                return LoginResultModel.builder()
+                    .isTwoFactorEnabled(true)
+                    .twoFactorProviders(List.of(TwoFactorProvider.EMAIL, TwoFactorProvider.GOOGLE_AUTHENTICATOR))
+                    .userId(user.getId())
+                    .build();
+            }
+            twoFactorService.validateTwoFactorCode(user.getId()
+                .toString(), request.getTwoFactorCode());
         }
         final var refreshToken = createRefreshToken(user, tokenAuthConfig.getRefreshTokenExpirationInSeconds());
         final var accessToken = createAccessToken(user, refreshToken.getRight());
 
         setRefreshTokenOnCookie(response, refreshToken.getRight()
-                        .toString(),
-                tokenAuthConfig.getRefreshTokenExpirationInSeconds());
+                .toString(),
+            tokenAuthConfig.getRefreshTokenExpirationInSeconds());
 
         return LoginResultModel.builder()
-                .accessToken(accessToken)
-                .encryptedAccessToken("")
-                .expiresInSeconds((int) tokenAuthConfig.getAccessTokenExpirationInSeconds()
-                        .toSeconds())
-                .isTwoFactorEnabled(false)
-                .build();
+            .accessToken(accessToken)
+            .encryptedAccessToken("")
+            .expiresInSeconds((int) tokenAuthConfig.getAccessTokenExpirationInSeconds()
+                .toSeconds())
+            .build();
     }
 
     public RefreshAccessTokenModel refreshAccessToken(String refreshToken, HttpServletResponse response) {
@@ -114,40 +122,40 @@ public class AuthService {
         final var accessToken = createAccessToken(user, rotateRefreshToken.getRight());
 
         setRefreshTokenOnCookie(response, rotateRefreshToken.getRight()
-                .toString(), remainingDuration);
+            .toString(), remainingDuration);
 
         return RefreshAccessTokenModel.builder()
-                .accessToken(accessToken)
-                .expiresInSeconds((int) tokenAuthConfig.getAccessTokenExpirationInSeconds()
-                        .toSeconds())
-                .build();
+            .accessToken(accessToken)
+            .expiresInSeconds((int) tokenAuthConfig.getAccessTokenExpirationInSeconds()
+                .toSeconds())
+            .build();
     }
 
     public void logout(AccessJwt accessJwt, HttpServletResponse response, String refreshToken) {
         final var refreshJwt = refreshJwtDecoder(refreshToken);
 
         ResponseCookie[] cookies = new ResponseCookie[]{
-                ResponseCookie.from(AppConsts.REFRESH_TOKEN, "")
-                        .httpOnly(true)
-                        .secure(true)
-                        .path("/auth/refresh-token")
-                        .maxAge(Duration.ZERO)
-                        .sameSite("Lax")
-                        .build(),
-                ResponseCookie.from(AppConsts.REFRESH_TOKEN, "")
-                        .httpOnly(true)
-                        .secure(true)
-                        .path("/account/profile")
-                        .maxAge(Duration.ZERO)
-                        .sameSite("Lax")
-                        .build(),
-                ResponseCookie.from(AppConsts.REFRESH_TOKEN, "")
-                        .httpOnly(true)
-                        .secure(true)
-                        .path("/auth/logout")
-                        .maxAge(Duration.ZERO)
-                        .sameSite("Lax")
-                        .build()
+            ResponseCookie.from(AppConsts.REFRESH_TOKEN, "")
+                .httpOnly(true)
+                .secure(true)
+                .path("/auth/refresh-token")
+                .maxAge(Duration.ZERO)
+                .sameSite("Lax")
+                .build(),
+            ResponseCookie.from(AppConsts.REFRESH_TOKEN, "")
+                .httpOnly(true)
+                .secure(true)
+                .path("/account/profile")
+                .maxAge(Duration.ZERO)
+                .sameSite("Lax")
+                .build(),
+            ResponseCookie.from(AppConsts.REFRESH_TOKEN, "")
+                .httpOnly(true)
+                .secure(true)
+                .path("/auth/logout")
+                .maxAge(Duration.ZERO)
+                .sameSite("Lax")
+                .build()
         };
 
         for (ResponseCookie cookie : cookies) {
@@ -162,20 +170,20 @@ public class AuthService {
     @Bean
     public JwtDecoder jwtDecoder() {
         final var jwtDecoder = NimbusJwtDecoder.withPublicKey(tokenAuthConfig.getRsaPublicKey())
-                .signatureAlgorithm(SignatureAlgorithm.RS256)
-                .build();
+            .signatureAlgorithm(SignatureAlgorithm.RS256)
+            .build();
 
         return token -> decoder(jwtDecoder, token, AccessJwt::new);
     }
 
     public RefreshJwt refreshJwtDecoder(String token) {
         final var keySpec = new SecretKeySpec(tokenAuthConfig.getGetHmacSecret()
-                .getBytes(StandardCharsets.UTF_8),
-                AppConsts.HMAC_SHA_256);
+            .getBytes(StandardCharsets.UTF_8),
+            AppConsts.HMAC_SHA_256);
         final var jwtDecoder =
-                NimbusJwtDecoder.withSecretKey(keySpec)
-                        .macAlgorithm(MacAlgorithm.HS512)
-                        .build();
+            NimbusJwtDecoder.withSecretKey(keySpec)
+                .macAlgorithm(MacAlgorithm.HS512)
+                .build();
 
         return decoder(jwtDecoder, token, RefreshJwt::new);
 
@@ -194,17 +202,17 @@ public class AuthService {
 
     private <T extends BaseJwt> T decoder(NimbusJwtDecoder decoder, String token, Function<Jwt, T> function) {
         return Optional.of(token)
-                .map(decoder::decode)
-                .map(function)
-                .filter(this::validateCommonClaims)
-                .filter(this::validateSpecificClaims)
-                .orElseThrow(() -> new JwtException("JWT validation failed"));
+            .map(decoder::decode)
+            .map(function)
+            .filter(this::validateCommonClaims)
+            .filter(this::validateSpecificClaims)
+            .orElseThrow(() -> new JwtException("JWT validation failed"));
     }
 
     private boolean validateCommonClaims(Jwt jwt) {
         return !Collections.disjoint(jwt.getAudience(), tokenAuthConfig.getAudience())
-                && jwt.getIssuer()
-                .sameFile(tokenAuthConfig.getIssuer());
+            && jwt.getIssuer()
+            .sameFile(tokenAuthConfig.getIssuer());
 
     }
 
@@ -212,7 +220,7 @@ public class AuthService {
         final var userId = UUID.fromString(jwt.getSubject());
         if (jwt instanceof AccessJwt accessJwt) {
             return validateJti(accessJwt.getJti()) ||
-                    validateSecurityStamp(accessJwt.getSecurityStamp(), userId);
+                validateSecurityStamp(accessJwt.getSecurityStamp(), userId);
         } else if (jwt instanceof RefreshJwt refreshJwt) {
             return validateJti(refreshJwt.getJti());
         }
@@ -224,11 +232,11 @@ public class AuthService {
         final var now = new Date(System.currentTimeMillis());
 
         final var jwtClaimsSet = new JWTClaimsSet.Builder().issuer(String.valueOf(tokenAuthConfig.getIssuer()))
-                .audience(tokenAuthConfig.getAudience())
-                .issueTime(now)
-                .notBeforeTime(now)
-                .expirationTime(Date.from(Instant.now()
-                        .plus(tokenExpiration)));
+            .audience(tokenAuthConfig.getAudience())
+            .issueTime(now)
+            .notBeforeTime(now)
+            .expirationTime(Date.from(Instant.now()
+                .plus(tokenExpiration)));
 
         customClaims.forEach((key, value) -> {
             if (value != null) {
@@ -258,11 +266,11 @@ public class AuthService {
 
     private Map<String, Object> generateClaims(TokenType tokenType, User user, UUID refreshTokenId) {
         Assert.isTrue(tokenType == TokenType.ACCESS_TOKEN || tokenType == TokenType.REFRESH_TOKEN,
-                "Invalid token type");
+            "Invalid token type");
 
         final var claims = new HashMap<String, Object>();
         final var tokenId = UUID.randomUUID()
-                .toString();
+            .toString();
 
         if (tokenType == TokenType.ACCESS_TOKEN) {
             claims.put(AppConsts.REFRESH_TOKEN_ID, refreshTokenId);
@@ -292,41 +300,41 @@ public class AuthService {
 
     private boolean validateSecurityStamp(String securityStamp, UUID userId) {
         return Optional.ofNullable(userId)
-                .map(userService::getUserById)
-                .map(user -> user.getSecurityStamp()
-                        .equals(securityStamp))
-                .orElse(false);
+            .map(userService::getUserById)
+            .map(user -> user.getSecurityStamp()
+                .equals(securityStamp))
+            .orElse(false);
     }
 
     private boolean validateJti(UUID jti) {
         return Optional.ofNullable(jti.toString())
-                .map(tokenService::checkIfJwtExists)
-                .orElse(false);
+            .map(tokenService::checkIfJwtExists)
+            .orElse(false);
     }
 
     private void setRefreshTokenOnCookie(HttpServletResponse response, String value, Duration maxAge) {
         ResponseCookie[] cookies = new ResponseCookie[]{
-                ResponseCookie.from(AppConsts.REFRESH_TOKEN, value)
-                        .httpOnly(true)
-                        .secure(true)
-                        .path("/auth/refresh-token")
-                        .maxAge(maxAge)
-                        .sameSite("Lax")
-                        .build(),
-                ResponseCookie.from(AppConsts.REFRESH_TOKEN, value)
-                        .httpOnly(true)
-                        .secure(true)
-                        .path("/account/profile")
-                        .maxAge(maxAge)
-                        .sameSite("Lax")
-                        .build(),
-                ResponseCookie.from(AppConsts.REFRESH_TOKEN, value)
-                        .httpOnly(true)
-                        .secure(true)
-                        .path("/auth/logout")
-                        .maxAge(maxAge)
-                        .sameSite("Lax")
-                        .build()
+            ResponseCookie.from(AppConsts.REFRESH_TOKEN, value)
+                .httpOnly(true)
+                .secure(true)
+                .path("/auth/refresh-token")
+                .maxAge(maxAge)
+                .sameSite("Lax")
+                .build(),
+            ResponseCookie.from(AppConsts.REFRESH_TOKEN, value)
+                .httpOnly(true)
+                .secure(true)
+                .path("/account/profile")
+                .maxAge(maxAge)
+                .sameSite("Lax")
+                .build(),
+            ResponseCookie.from(AppConsts.REFRESH_TOKEN, value)
+                .httpOnly(true)
+                .secure(true)
+                .path("/auth/logout")
+                .maxAge(maxAge)
+                .sameSite("Lax")
+                .build()
         };
         for (ResponseCookie cookie : cookies) {
             response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());

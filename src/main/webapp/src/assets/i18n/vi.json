@@ -38,6 +38,13 @@
   "SecurityPolicy": "Chính sách bảo mật",
   "ShouldChangePasswordMessage": "Vì lý do bảo mật, bạn cần cập nhật mật khẩu trước khi tiếp tục.",
   "OK": "OK",
+  "Submit": "Gửi",
+  "SendCodeTitle": "Gửi Mã Xác Thực Hai Yếu Tố",
+  "SendCodeMessage": "Để đăng nhập, bạn cần xác minh danh tính của mình. Vui lòng chọn loại xác minh. Mã sẽ được gửi dựa trên loại xác minh đã chọn.",
+  "VerifyCodeTitle": "Xác Thực Mã Xác Thực Hai Yếu Tố",
+  "VerifyCodeMessage": "Vui lòng nhập mã xác thực đã được gửi cho bạn.",
+  "QrMessage": "Nhập mã từ ứng dụng xác thực của bạn",
+  "GuideQrMessage": "Sau khi bạn quét mã QR, ứng dụng sẽ tạo mã sáu chữ số mà bạn có thể nhập bên dưới.",
 
   "ThisFieldIsRequired": "Trường này là bắt buộc",
   "PleaseEnterAtLeastNCharacter": "Vui lòng nhập ít nhất {{value}} ký tự",

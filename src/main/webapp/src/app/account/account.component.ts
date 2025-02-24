@@ -100,7 +100,27 @@ export class AccountComponent implements OnDestroy {
                     this.linkText = translations['SignUp'];
                     this.linkRoute = '/account/register';
                 });
+        }else if (url.includes('/account/send-code')){
+            this.translate.get(['SendCodeTitle', 'DontHaveAccount', 'SignUp'])
+                .pipe(takeUntil(this.destroy$))
+                .subscribe(translations => {
+                    this.title = translations['SendCodeTitle'];
+                    this.message = translations['DontHaveAccount'];
+                    this.linkText = translations['SignUp'];
+                    this.linkRoute = '/account/register';
+                });
+        }else if (url.includes('/account/validate-code')){
+            this.translate.get(['VerifyCodeTitle', 'DontHaveAccount', 'SignUp'])
+                .pipe(takeUntil(this.destroy$))
+                .subscribe(translations => {
+                    this.title = translations['VerifyCodeTitle'];
+                    this.message = translations['DontHaveAccount'];
+                    this.linkText = translations['SignUp'];
+                    this.linkRoute = '/account/register';
+                });
         }
+
+
     }
 
 

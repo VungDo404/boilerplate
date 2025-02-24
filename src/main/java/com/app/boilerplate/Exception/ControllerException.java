@@ -6,6 +6,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.*;
 import org.springframework.lang.NonNull;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.acls.model.AlreadyExistsException;
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -59,6 +60,21 @@ public class ControllerException extends ResponseEntityExceptionHandler {
 			null,
 			request,
 			null
+		);
+	}
+
+	@ExceptionHandler(value = {AccessDeniedException.class})
+	ResponseEntity<Object> handleAuthenticationException(
+			AccessDeniedException exception,
+			NativeWebRequest request) {
+		return handleException(
+				exception,
+				HttpStatus.UNAUTHORIZED,
+				exception.getMessage(),
+				HttpStatus.UNAUTHORIZED.getReasonPhrase(),
+				null,
+				request,
+				null
 		);
 	}
 

@@ -120,3 +120,36 @@
   color: red;
   bottom: -1.4rem;
 }
+
+.custom-otp-input {
+  width: 58px;
+  height: 58px;
+  font-size: 24px;
+  appearance: none;
+  text-align: center;
+  border-radius: 0;
+  border: 1px solid var(--p-slate-300);
+  background: transparent;
+  outline-offset: -2px;
+  outline-color: transparent;
+  border-right: none;
+  transition: outline-color 0.3s;
+  color: var(--p-slate-700);
+
+  &:focus {
+    outline: 2px solid var(--p-slate-950);
+  }
+
+  &:first-child,
+  &:nth-child(5) {
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+  }
+
+  &:nth-child(3),
+  &:last-child {
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border-right: 1px solid var(--p-slate-300);
+  }
+}

@@ -2,7 +2,7 @@ package com.app.boilerplate.Config;
 
 import com.app.boilerplate.Security.HierarchicalPermission;
 import com.app.boilerplate.Security.HierarchicalPermissionGrantingStrategy;
-import com.app.boilerplate.Service.Auth.AccessControlListService;
+import com.app.boilerplate.Service.Authorization.AccessControlListService;
 import com.app.boilerplate.Shared.Authentication.AccessJwt;
 import com.app.boilerplate.Util.SecurityUtil;
 import org.springframework.cache.Cache;

@@ -38,6 +38,13 @@
   "SecurityPolicy": "Security Policy",
   "ShouldChangePasswordMessage": "For security reasons, you are required to update your password before proceeding.",
   "OK": "OK",
+  "Submit": "Submit",
+  "SendCodeTitle": "Send Two-Factor Code",
+  "SendCodeMessage": "You should verify yourself to login. Please select a verification type. A code will be sent based on selected verification type.",
+  "VerifyCodeTitle": "Verify Two-Factor Code",
+  "VerifyCodeMessage": "Please enter the verification code sent to you.",
+  "QrMessage": "Enter the code from  your authenticator app",
+  "GuideQrMessage": "After you scanned the QR code, the app will generate a six-digit code that you can enter below.",
 
   "ThisFieldIsRequired": "This field is required",
   "PleaseEnterAtLeastNCharacter": "Please enter at least {{value}} characters",

@@ -1,8 +1,8 @@
 package com.app.boilerplate.Controller.Auth;
 
 import com.app.boilerplate.Domain.Authorization.*;
-import com.app.boilerplate.Service.Auth.AccessControlListService;
-import com.app.boilerplate.Service.Auth.AuthorizeService;
+import com.app.boilerplate.Service.Authorization.AccessControlListService;
+import com.app.boilerplate.Service.Authorization.AuthorizeService;
 import com.app.boilerplate.Shared.Authorization.Dto.*;
 import com.app.boilerplate.Util.PermissionUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;

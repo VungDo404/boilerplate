@@ -1,0 +1,13 @@
+<div class="message ">
+    <p>{{ 'SendCodeMessage' | translate }}</p>
+</div>
+<form [formGroup]="form" (ngSubmit)="submit()" class="card form">
+    <p-select [options]="selectedOption"
+              formControlName="provider"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Select a Two-Factor Provider"
+              class="w-full"
+    />
+    <p-button label="{{'Submit' | translate}}" styleClass="primary-btn" type="submit" fluid/>
+</form>
