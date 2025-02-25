@@ -66,15 +66,19 @@ public class AccountController {
         accountService.resetPassword(key, request.getPassword());
     }
 
-    @PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.WRITE +
-        "')")
+    @PreAuthorize("hasPermission(#id.toString(), '" + PermissionUtil.USER + "', '" + PermissionUtil.WRITE + "')")
     @PutMapping("/code/user/{id}")
     public TOTPModel enableTwoFactor(@PathVariable @NotNull UUID id) {
         return accountService.enableTwoFactor(id);
     }
 
-    @PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.WRITE +
-        "')")
+    @PreAuthorize("hasPermission(#id.toString(), '" + PermissionUtil.USER + "', '" + PermissionUtil.WRITE + "')")
+    @GetMapping("/code/user/{id}")
+    public TOTPModel getTwoFactorIfEnable(@PathVariable @NotNull UUID id) {
+        return accountService.getTwoFactor(id);
+    }
+
+    @PreAuthorize("hasPermission(#id.toString(), '" + PermissionUtil.USER + "', '" + PermissionUtil.WRITE + "')")
     @DeleteMapping("/code/user/{id}")
     public void disableTwoFactor(@PathVariable @NotNull UUID id) {
         accountService.disableTwoFactor(id);

@@ -72,6 +72,12 @@ public class AccountService {
 		tokenService.deleteAuthenticatorToken(user);
 	}
 
+	public TOTPModel getTwoFactor(UUID userId){
+		final var user = userService.getUserById(userId);
+		final var token = tokenService.getAuthenticatorToken(user);
+		return twoFactorService.getUri(token.getValue());
+	}
+
 	@EventListener(EmailActivationEvent.class)
 	public void emailActivationEvent(EmailActivationEvent event) {
 		emailActivation(event.getUser());

@@ -29,33 +29,38 @@ import java.util.UUID;
 public class UserController {
 	private final UserService userService;
 
-	@PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.USER + "', '" + PermissionUtil.READ + "')")
+	@PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.APPLICATION + "', '" + PermissionUtil.READ +
+		"')")
 	@GetMapping("/")
 	public Page<User> getUsers(Optional<UserCriteriaDto> userCriteriaDto, @ParameterObject Pageable pageable) {
 		return userService.getAllUsers(userCriteriaDto, pageable);
 	}
 
-	@PreAuthorize("hasPermission(#id.toString(), '" + PermissionUtil.USER + "', '" + PermissionUtil.READ + "')")
+	@PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.APPLICATION + "', '" + PermissionUtil.READ +
+		"')")
 	@GetMapping("/{id}")
 	public User getUserById(@PathVariable @NotNull UUID id) {
 		return userService.getUserById(id);
 	}
 
-	@PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.USER + "', '" + PermissionUtil.CREATE + "')")
+	@PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.APPLICATION + "', '" + PermissionUtil.CREATE +
+		"')")
 	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping
 	public User createUser(@RequestBody @Validated(Default.class) PostUserDto request) {
 		return userService.createUser(request, request.getShouldSendConfirmationEmail());
 	}
 
-	@PreAuthorize("hasPermission(#request.id.toString(), '" + PermissionUtil.USER + "', '" + PermissionUtil.WRITE + "')")
+	@PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.APPLICATION + "', '" + PermissionUtil.WRITE +
+		"')")
 	@ResponseStatus(HttpStatus.CREATED)
 	@PutMapping
 	public User putUser(@RequestBody @Valid PutUserDto request) {
 		return userService.putUser(request);
 	}
 
-	@PreAuthorize("hasPermission(#id.toString(), '" + PermissionUtil.USER + "', '" + PermissionUtil.DELETE + "')")
+	@PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.APPLICATION + "', '" + PermissionUtil.DELETE +
+		"')")
 	@DeleteMapping("/{id}")
 	public void deleteUser(@PathVariable @NotNull UUID id) {
 		userService.deleteUserById(id);

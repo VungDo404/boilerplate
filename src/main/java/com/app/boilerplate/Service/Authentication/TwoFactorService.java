@@ -90,6 +90,14 @@ public class TwoFactorService {
             .build();
     }
 
+    public TOTPModel getUri(String secret){
+        final var uri = getQRCodeURI(secret, APP_NAME, secret);
+        return TOTPModel.builder()
+            .uri(uri)
+            .secret(secret)
+            .build();
+    }
+
     private String getQRCodeURI(String accountName, String issuer, String secretKey) {
         try {
             return String.format(

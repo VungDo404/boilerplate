@@ -9,7 +9,6 @@ import java.net.URL;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Getter
@@ -28,6 +27,6 @@ public class TokenAuthConfig {
 	private String getHmacSecret;
 	private final Duration accessTokenExpirationInSeconds = Duration.ofHours(1);
 	private final Duration refreshTokenExpirationInSeconds = Duration.ofHours(31);
-	private final Duration authenticatorExpirationInSeconds = Duration.of(50, ChronoUnit.YEARS);
+	private final Duration authenticatorExpirationInSeconds = Duration.ofDays(50 * 365 + 12);
 
 }
