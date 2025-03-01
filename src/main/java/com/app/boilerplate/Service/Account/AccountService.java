@@ -19,10 +19,12 @@ import com.app.boilerplate.Shared.User.Dto.CreateUserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -37,6 +39,9 @@ public class AccountService {
 	private final ApplicationEventPublisher eventPublisher;
 	private final TokenService tokenService;
 	private final TwoFactorService twoFactorService;
+
+	private final Duration LOCK_OUT_TIME = Duration.ofDays(1);
+	private final Integer ACCESS_FAILED_ATTEMPTS = 10;
 
 	public void changePassword(ChangePasswordDto request) {
 		Optional.of(request.getId())
@@ -108,6 +113,33 @@ public class AccountService {
 		tokenService.deleteByValue(key);
 	}
 
+	@Async
+	public void processLockoutFailed(String username){
+		final var user = userService.getUserByUsernameAndProvider(username, LoginProvider.LOCAL);
+		if(!user.getIsLockoutEnabled())return;
+		if(user.getAccessFailedCount() > 0){
+			user.setAccessFailedCount(user.getAccessFailedCount() - 1);
+			if(user.getAccessFailedCount() == 0){
+				user.setLockoutEndDate(LocalDateTime.now().plus(LOCK_OUT_TIME));
+				user.setAccountNonLocked(false);
+			}
+		}else{
+			user.setAccessFailedCount(ACCESS_FAILED_ATTEMPTS - 1);
+			user.setAccountNonLocked(true);
+			user.setLockoutEndDate(null);
+		}
+		userService.save(user);
+	}
+
+	@Async
+	public void resetLockout(String username){
+		final var user = userService.getUserByUsernameAndProvider(username, LoginProvider.LOCAL);
+		if(user.getAccessFailedCount() != ACCESS_FAILED_ATTEMPTS){
+			user.setAccessFailedCount(ACCESS_FAILED_ATTEMPTS);
+			userService.save(user);
+		}
+	}
+
 	public void emailVerification(String key) {
 		final var token = tokenService.getTokenByTypeAndValue(TokenType.EMAIL_CONFIRMATION_TOKEN, key);
 		final var user = token.getUser();
@@ -115,6 +147,8 @@ public class AccountService {
 		userService.save(user);
 		tokenService.deleteByValue(key);
 	}
+
+
 
 	public String profile(AccessJwt jwt) {
 		return jwt.getSecurityStamp();

@@ -96,6 +96,7 @@ public class AuthService {
             }
             twoFactorService.validateTwoFactorCode(user.getId(), request.getTwoFactorCode());
         }
+        accountService.resetLockout(user.getUsername());
         return processLoginResult(user, response);
     }
 

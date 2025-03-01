@@ -2,7 +2,6 @@ package com.app.boilerplate.Exception;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.MessageSource;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.*;
 import org.springframework.lang.NonNull;
@@ -11,7 +10,6 @@ import org.springframework.security.acls.model.AlreadyExistsException;
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -29,20 +27,17 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @RestControllerAdvice
 public class ControllerException extends ResponseEntityExceptionHandler {
-	private final MessageSource messageSource;
-	private static final String FIELD_ERRORS = "fieldErrors";
-	private static final String TIME_STAMP = "timestamp";
 
-	@ExceptionHandler(value = {LockedException.class})
+    @ExceptionHandler(value = {LockedException.class})
 	ResponseEntity<Object> handleLockedException(
 		LockedException exception,
 		NativeWebRequest request) {
 		return handleException(
 			exception,
 			HttpStatus.LOCKED,
-			exception.getMessage(),
+			exception.getDetailMessageCode(),
 			HttpStatus.LOCKED.getReasonPhrase(),
-			null,
+			exception.getDetailMessageArguments(),
 			request,
 			null
 		);
@@ -152,7 +147,8 @@ public class ControllerException extends ResponseEntityExceptionHandler {
 				.build())
 			.toList();
 
-		return handleException(
+		final var FIELD_ERRORS = "fieldErrors";
+        return handleException(
 			exception,
 			HttpStatus.valueOf(status.value()),
 			"",
@@ -160,7 +156,7 @@ public class ControllerException extends ResponseEntityExceptionHandler {
 			exception.getDetailMessageArguments(),
 			request,
 			Map.of(FIELD_ERRORS, fieldErrors)
-		);
+                              );
 	}
 
 	@ExceptionHandler(value = {RuntimeException.class, Exception.class})
@@ -194,7 +190,8 @@ public class ControllerException extends ResponseEntityExceptionHandler {
 			args,
 			request
 		);
-		problemDetail.setProperty(TIME_STAMP, LocalDateTime.now());
+        final var TIME_STAMP = "timestamp";
+        problemDetail.setProperty(TIME_STAMP, LocalDateTime.now());
 		Optional.ofNullable(properties)
 			.ifPresent(problemDetail::setProperties);
 		return problemDetail;
