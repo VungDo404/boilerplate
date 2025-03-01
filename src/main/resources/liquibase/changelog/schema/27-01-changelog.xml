@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.27.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="1740668283551-3" author="Admin (generated)">
+        <addUniqueConstraint columnNames="username, provider" constraintName="uq_user_username_provider"
+                             tableName="user"/>
+
+        <dropIndex indexName="idx_user_username" tableName="user"/>
+    </changeSet>
+    <changeSet id="1740668283551-4" author="Admin (generated)">
+        <createIndex indexName="idx_user_username_provider" tableName="user">
+            <column name="username"/>
+            <column name="provider"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

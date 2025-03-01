@@ -1,6 +1,7 @@
 package com.app.boilerplate.Security;
 
 import com.app.boilerplate.Service.User.UserService;
+import com.app.boilerplate.Shared.Authentication.LoginProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,6 +17,6 @@ public class AuthenticationUserDetailsService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException, DisabledException,
 		LockedException, AccountExpiredException, CredentialsExpiredException, BadCredentialsException {
-		return userService.getUserByUsername(username);
+		return userService.getUserByUsernameAndProvider(username, LoginProvider.LOCAL);
 	}
 }

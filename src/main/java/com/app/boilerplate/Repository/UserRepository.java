@@ -1,6 +1,7 @@
 package com.app.boilerplate.Repository;
 
 import com.app.boilerplate.Domain.User.User;
+import com.app.boilerplate.Shared.Authentication.LoginProvider;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -16,13 +17,10 @@ import java.util.UUID;
 public interface UserRepository extends JpaRepository<User, UUID>, RevisionRepository<User, UUID, Integer> {
     Optional<User> findOneByEmailIgnoreCase(String email);
 
-	Optional<User> findOneByUsername(String username);
+	Optional<User> findOneByUsernameAndProvider(String username, LoginProvider provider);
 
-	boolean existsByEmailIgnoreCase(String email);
+	boolean existsByEmailIgnoreCaseAndProvider(String email, LoginProvider provider);
 
     Page<User> findAll(@NonNull Specification<User> specification, @NonNull Pageable page);
-
-	boolean existsByIdAndSecurityStamp(UUID id, String securityStamp);
-
 
 }

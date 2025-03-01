@@ -7,6 +7,7 @@ import { merge, Subject, Subscription, takeUntil } from "rxjs";
 import { Toast } from "primeng/toast";
 import { MessageService, ToastMessageOptions } from "primeng/api";
 import { ToastService } from "../../shared/service/toast.service";
+import { ConfigService } from "../../shared/service/config.service";
 
 @Component({
     selector: 'app-account',
@@ -29,7 +30,8 @@ export class AccountComponent implements OnDestroy {
         private router: Router,
         private translate: TranslateService,
         private messageService: MessageService,
-        private toastService: ToastService
+        private toastService: ToastService,
+        private configService: ConfigService
     ) {
         this.router.events
             .pipe(takeUntil(this.destroy$))
@@ -91,7 +93,7 @@ export class AccountComponent implements OnDestroy {
                     this.linkText = translations['SignUp'];
                     this.linkRoute = '/account/register';
                 });
-        }else if (url.includes('/account/reset-password')){
+        } else if (url.includes('/account/reset-password')) {
             this.translate.get(['NewPassword', 'DontHaveAccount', 'SignUp'])
                 .pipe(takeUntil(this.destroy$))
                 .subscribe(translations => {
@@ -100,7 +102,7 @@ export class AccountComponent implements OnDestroy {
                     this.linkText = translations['SignUp'];
                     this.linkRoute = '/account/register';
                 });
-        }else if (url.includes('/account/send-code')){
+        } else if (url.includes('/account/send-code')) {
             this.translate.get(['SendCodeTitle', 'DontHaveAccount', 'SignUp'])
                 .pipe(takeUntil(this.destroy$))
                 .subscribe(translations => {
@@ -109,7 +111,7 @@ export class AccountComponent implements OnDestroy {
                     this.linkText = translations['SignUp'];
                     this.linkRoute = '/account/register';
                 });
-        }else if (url.includes('/account/validate-code')){
+        } else if (url.includes('/account/validate-code')) {
             this.translate.get(['VerifyCodeTitle', 'DontHaveAccount', 'SignUp'])
                 .pipe(takeUntil(this.destroy$))
                 .subscribe(translations => {
@@ -121,6 +123,10 @@ export class AccountComponent implements OnDestroy {
         }
 
 
+    }
+
+    externalLogin(provider: string) {
+        window.location.href = this.configService.oauthLoginUrl + provider;
     }
 
 

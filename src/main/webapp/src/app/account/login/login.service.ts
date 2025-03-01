@@ -95,14 +95,15 @@ export class LoginService {
             this.router.navigate(['/account/send-code'], {
                 state: { loginResult: result }
             });
-        }else if("accessToken" in result){
-            this.login(result)
-        }else {
+        } else if ("accessToken" in result) {
+            this.login(result, () => null)
+        } else {
             this.router.navigate(['/account/login'])
         }
     }
 
-    private login(result: AuthenticationTokenResult){
+    login(result: AuthenticationTokenResult, cb: () => void) {
         this.router.navigate(["/main"])
+        cb();
     }
 }

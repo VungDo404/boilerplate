@@ -4,6 +4,7 @@ import com.app.boilerplate.Domain.User.User;
 import com.app.boilerplate.Exception.NotFoundException;
 import com.app.boilerplate.Mapper.IUserMapper;
 import com.app.boilerplate.Repository.UserRepository;
+import com.app.boilerplate.Security.OAuth2UserInfo;
 import com.app.boilerplate.Shared.Account.Event.EmailActivationEvent;
 import com.app.boilerplate.Shared.Authentication.LoginProvider;
 import com.app.boilerplate.Shared.User.Dto.CreateUserDto;
@@ -33,98 +34,109 @@ import java.util.UUID;
 @Transactional
 @Service
 public class UserService implements Translator {
-	private final Logger log = LoggerFactory.getLogger(UserService.class);
-	private final RandomUtil randomUtil;
-	private final IUserMapper userMapper;
-	private final UserRepository userRepository;
-	private final ApplicationEventPublisher eventPublisher;
+    private final Logger log = LoggerFactory.getLogger(UserService.class);
+    private final RandomUtil randomUtil;
+    private final IUserMapper userMapper;
+    private final UserRepository userRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
-	@Transactional(readOnly = true)
-	public Page<User> getAllUsers(Optional<UserCriteriaDto> userCriteriaDto, Pageable pageable) {
-		final var specification = UserSpecification.specification(userCriteriaDto);
-		return userRepository.findAll(specification, pageable);
-	}
+    @Transactional(readOnly = true)
+    public Page<User> getAllUsers(Optional<UserCriteriaDto> userCriteriaDto, Pageable pageable) {
+        final var specification = UserSpecification.specification(userCriteriaDto);
+        return userRepository.findAll(specification, pageable);
+    }
 
-	@Cacheable(value = "user", key = "#id")
-	@Transactional(readOnly = true)
-	public User getUserById(UUID id) {
-		return Optional.of(id)
-			.flatMap(userRepository::findById)
-			.orElseThrow(() -> new NotFoundException(
-				translateEnglish("error.user.id.notfound", id),
-				"error.user.id.notfound", id));
-	}
+    @Cacheable(value = "user", key = "#id")
+    @Transactional(readOnly = true)
+    public User getUserById(UUID id) {
+        return Optional.of(id)
+            .flatMap(userRepository::findById)
+            .orElseThrow(() -> new NotFoundException(
+                translateEnglish("error.user.id.notfound", id),
+                "error.user.id.notfound", id));
+    }
 
-	@Transactional(readOnly = true)
-	public User getUserByUsername(String username) {
-		return Optional.of(username)
-			.flatMap(userRepository::findOneByUsername)
-			.orElseThrow(() -> new UsernameNotFoundException(
-				translateEnglish("error.user.login.notfound", username)));
-	}
+    @Transactional(readOnly = true)
+    public User getUserByUsernameAndProvider(String username, LoginProvider loginProvider) {
+        return Optional.of(username)
+            .flatMap(un -> userRepository.findOneByUsernameAndProvider(username, loginProvider))
+            .orElseThrow(() -> new UsernameNotFoundException(
+                translateEnglish("error.user.login.notfound", username)));
+    }
 
-	@Transactional(readOnly = true)
-	public User getUserByEmail(String email) {
-		return Optional.of(email)
-			.flatMap(userRepository::findOneByEmailIgnoreCase)
-			.orElseThrow(
-				() -> new NotFoundException(
-					translateEnglish("error.user.email.notfound", email),
-					"error.user.email.notfound", email));
-	}
+    public User getOrCreateExternalUserIfNotExists(OAuth2UserInfo info, LoginProvider loginProvider) {
+        try {
+            return getUserByUsernameAndProvider(info.getId(), loginProvider);
+        } catch (UsernameNotFoundException e) {
+            final var dto = userMapper.toPostUserDto(info);
 
-	@CachePut(value = "user", key = "#result.id")
-	public User createUser(CreateUserDto request, Boolean shouldSendConfirmationEmail) {
-		Optional.of(request.getEmail())
-			.filter(userRepository::existsByEmailIgnoreCase)
-			.ifPresent(email -> {
-				throw new AlreadyExistsException("error.email.exist");
-			});
-		final var u = Optional.of(request)
-			.filter(PostUserDto.class::isInstance)
-			.map(PostUserDto.class::cast)
-			.map(userMapper::toUser)
-			.orElseGet(() -> userMapper.toUser(request));
-		final var user = Optional.of(u)
-			.map(req -> {
-				req.setPassword(Optional.ofNullable(req.getPassword())
-					.orElseGet(randomUtil::randomPassword));
-				req.setSecurityStamp(UUID.randomUUID()
-					.toString());
-				req.setProvider(LoginProvider.LOCAL);
-				return req;
-			})
-			.map(this::save)
-			.orElseThrow();
-		if (shouldSendConfirmationEmail)
-			eventPublisher.publishEvent(new EmailActivationEvent(user));
-		return user;
-	}
+            return createUser(dto, false, loginProvider);
+        }
+    }
 
-	@CachePut(value = "user", key = "#request.id")
-	public User putUser(PutUserDto request) {
-		return Optional.of(request.getId())
-			.map(this::getUserById)
-			.map(user -> {
-				userMapper.update(user, request);
-				user.setSecurityStamp(UUID.randomUUID()
-					.toString());
-				log.debug("Updated Information for User: {}", user);
-				return save(user);
-			})
-			.orElseThrow(() -> new NotFoundException(
-				translateEnglish("error.user.email.notfound", request.getId()),
-				"error.user.id.notfound", request.getId()));
-	}
+    @Transactional(readOnly = true)
+    public User getUserByEmail(String email) {
+        return Optional.of(email)
+            .flatMap(userRepository::findOneByEmailIgnoreCase)
+            .orElseThrow(
+                () -> new NotFoundException(
+                    translateEnglish("error.user.email.notfound", email),
+                    "error.user.email.notfound", email));
+    }
 
-	@CacheEvict(value = "user", key = "#id")
-	public void deleteUserById(UUID id) {
-		userRepository.deleteById(id);
-	}
+    @CachePut(value = "user", key = "#result.id")
+    public User createUser(CreateUserDto request, Boolean shouldSendConfirmationEmail, LoginProvider loginProvider) {
+        if (loginProvider.equals(LoginProvider.LOCAL))
+            Optional.of(request.getEmail())
+                .filter(mail -> userRepository.existsByEmailIgnoreCaseAndProvider(mail, loginProvider))
+                .ifPresent(email -> {
+                    throw new AlreadyExistsException("error.email.exist");
+                });
+        final var u = Optional.of(request)
+            .filter(PostUserDto.class::isInstance)
+            .map(PostUserDto.class::cast)
+            .map(userMapper::toUser)
+            .orElseGet(() -> userMapper.toUser(request));
+        final var user = Optional.of(u)
+            .map(req -> {
+                req.setPassword(Optional.ofNullable(req.getPassword())
+                    .orElseGet(randomUtil::randomPassword));
+                req.setSecurityStamp(UUID.randomUUID()
+                    .toString());
+                req.setProvider(loginProvider);
+                return req;
+            })
+            .map(this::save)
+            .orElseThrow();
+        if (shouldSendConfirmationEmail)
+            eventPublisher.publishEvent(new EmailActivationEvent(user));
+        return user;
+    }
 
-	@CachePut(value = "user", key = "#user.id")
-	public User save(User user) {
-		return userRepository.save(user);
-	}
+    @CachePut(value = "user", key = "#request.id")
+    public User putUser(PutUserDto request) {
+        return Optional.of(request.getId())
+            .map(this::getUserById)
+            .map(user -> {
+                userMapper.update(user, request);
+                user.setSecurityStamp(UUID.randomUUID()
+                    .toString());
+                log.debug("Updated Information for User: {}", user);
+                return save(user);
+            })
+            .orElseThrow(() -> new NotFoundException(
+                translateEnglish("error.user.email.notfound", request.getId()),
+                "error.user.id.notfound", request.getId()));
+    }
+
+    @CacheEvict(value = "user", key = "#id")
+    public void deleteUserById(UUID id) {
+        userRepository.deleteById(id);
+    }
+
+    @CachePut(value = "user", key = "#user.id")
+    public User save(User user) {
+        return userRepository.save(user);
+    }
 
 }

@@ -6,11 +6,15 @@ import { environment } from "../../environments/environment";
 })
 export class ConfigService {
     private readonly config;
+
     constructor() {
         this.config = environment;
     }
 
     get baseUrl(){
         return this.config.apiUrl;
+    }
+    get oauthLoginUrl(){
+        return this.baseUrl + this.config.oauthUrlEndpoint;
     }
 }

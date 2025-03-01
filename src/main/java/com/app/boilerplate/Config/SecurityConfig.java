@@ -1,8 +1,7 @@
 package com.app.boilerplate.Config;
 
-import com.app.boilerplate.Security.AuthenticationUserDetailsService;
-import com.app.boilerplate.Security.JwtAuthenticationConverter;
-import com.app.boilerplate.Security.PreAuthenticationChecker;
+import com.app.boilerplate.Security.*;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +14,10 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -24,51 +27,56 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
-
     @Bean
     @Order(1)
     public SecurityFilterChain swaggerSecurityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .securityMatcher("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/swagger/login")
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/swagger/login")
-                        .permitAll()
-                        .anyRequest()
-                        .authenticated())
-                .formLogin(form -> form
-                        .loginPage("/swagger/login")
-                        .failureUrl("/swagger/login?error=true")
-                        .permitAll())
-                .logout(logout -> logout
-                        .logoutUrl("/swagger/logout")
-                        .logoutSuccessUrl("/swagger/login?logout=true"))
-                .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
+        http.securityMatcher("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/swagger/login")
+            .authorizeHttpRequests(auth -> auth.requestMatchers("/swagger/login")
+                .permitAll()
+                .anyRequest()
+                .authenticated())
+            .formLogin(form -> form.loginPage("/swagger/login")
+                .failureUrl("/swagger/login?error=true")
+                .permitAll())
+            .logout(logout -> logout.logoutUrl("/swagger/logout")
+                .logoutSuccessUrl("/swagger/login?logout=true"))
+            .csrf(AbstractHttpConfigurer::disable)
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
         return http.build();
     }
 
     @Bean
     @Order(2)
-    public SecurityFilterChain restApiSecurityFilterChain(HttpSecurity http, JwtDecoder jwtDecoder,
-                                                          JwtAuthenticationConverter authenticationConverter) throws Exception {
-        http
-                .anonymous(anonymous -> anonymous
-                        .principal("anonymousUser")
-                        .authorities("ROLE_AUTHENTICATION_ANONYMOUS")
-                )
-                .authorizeHttpRequests(auth -> auth
-                        .anyRequest()
-                        .permitAll())
-                .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwt -> jwt
-                                .decoder(jwtDecoder)
-                                .jwtAuthenticationConverter(authenticationConverter)
-                        )
-                );
+    public SecurityFilterChain restApiSecurityFilterChain(HttpSecurity http,
+                                                          JwtDecoder jwtDecoder,
+                                                          JwtAuthenticationConverter authenticationConverter,
+                                                          OAuth2AuthenticationSuccessHandler successHandler,
+                                                          OAuth2UserService oAuth2UserService,
+                                                          ClientRegistrationRepository repository
+                                                         ) throws Exception {
+        http.anonymous(anonymous -> anonymous.principal("anonymousUser")
+                .authorities("ROLE_AUTHENTICATION_ANONYMOUS"))
+            .authorizeHttpRequests(auth -> auth.anyRequest()
+                .permitAll())
+            .csrf(AbstractHttpConfigurer::disable)
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.decoder(jwtDecoder)
+                .jwtAuthenticationConverter(authenticationConverter)))
+            .oauth2Login(oauth -> oauth
+                .userInfoEndpoint(info -> info.userService(oAuth2UserService))
+                .authorizationEndpoint(aep -> aep.authorizationRequestResolver(authorizationRequestResolver(repository)))
+                .successHandler(successHandler))
+            .exceptionHandling(exception -> exception
+                    .authenticationEntryPoint((request, response, authException) -> {
+                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                        response.getWriter()
+                            .write("Unauthorized access");
+                    })
+                    .accessDeniedHandler((request, response, accessDeniedException) -> {
+                        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                        response.getWriter()
+                            .write("Access denied");
+                    }));
         return http.build();
     }
 
@@ -86,6 +94,14 @@ public class SecurityConfig {
         authProvider.setPasswordEncoder(passwordEncoder);
         authProvider.setUserDetailsService(userDetailsService);
         return authProvider;
+    }
+
+    @Bean
+    public OAuth2AuthorizationRequestResolver authorizationRequestResolver(ClientRegistrationRepository clientRegistrationRepository)
+    {
+        OAuth2AuthorizationRequestResolver defaultAuthorizationRequestResolver = new DefaultOAuth2AuthorizationRequestResolver(
+            clientRegistrationRepository, OAuth2AuthorizationRequestRedirectFilter.DEFAULT_AUTHORIZATION_REQUEST_BASE_URI);
+        return new AuthorizationRequestResolver(defaultAuthorizationRequestResolver);
     }
 
 }

@@ -2,6 +2,7 @@ package com.app.boilerplate.Controller.User;
 
 import com.app.boilerplate.Domain.User.User;
 import com.app.boilerplate.Service.User.UserService;
+import com.app.boilerplate.Shared.Authentication.LoginProvider;
 import com.app.boilerplate.Shared.User.Dto.PostUserDto;
 import com.app.boilerplate.Shared.User.Dto.PutUserDto;
 import com.app.boilerplate.Shared.User.Dto.UserCriteriaDto;
@@ -48,7 +49,7 @@ public class UserController {
 	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping
 	public User createUser(@RequestBody @Validated(Default.class) PostUserDto request) {
-		return userService.createUser(request, request.getShouldSendConfirmationEmail());
+		return userService.createUser(request, request.getShouldSendConfirmationEmail(), LoginProvider.LOCAL);
 	}
 
 	@PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.APPLICATION + "', '" + PermissionUtil.WRITE +

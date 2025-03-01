@@ -16,7 +16,6 @@ import { TranslateLoader, TranslateModule } from "@ngx-translate/core";
 import { TranslateHttpLoader } from "@ngx-translate/http-loader";
 import { LanguageHeaderInterceptor } from "./shared/interceptor/language-header.interceptor";
 import { LanguageService } from "./shared/service/language.service";
-import { ToastService } from "./shared/service/toast.service";
 import { HttpErrorInterceptor } from "./shared/interceptor/http-error.interceptor";
 
 export function HttpLoaderFactory(http: HttpClient) {
@@ -57,7 +56,7 @@ export const config: ApplicationConfig = {
         provideAppInitializer(() =>{
             const languageService = inject(LanguageService);
             return languageService.initializeLanguage();
-        })
+        }),
 
     ]
 };

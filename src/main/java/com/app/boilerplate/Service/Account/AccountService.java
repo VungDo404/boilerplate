@@ -13,6 +13,7 @@ import com.app.boilerplate.Shared.Account.Event.SendEmailActivationEvent;
 import com.app.boilerplate.Shared.Account.Model.RegisterResultModel;
 import com.app.boilerplate.Shared.Account.Model.TOTPModel;
 import com.app.boilerplate.Shared.Authentication.AccessJwt;
+import com.app.boilerplate.Shared.Authentication.LoginProvider;
 import com.app.boilerplate.Shared.Authentication.TokenType;
 import com.app.boilerplate.Shared.User.Dto.CreateUserDto;
 import lombok.RequiredArgsConstructor;
@@ -50,7 +51,7 @@ public class AccountService {
 	}
 
 	public RegisterResultModel register(CreateUserDto dto){
-		final var user = userService.createUser(dto, true);
+		final var user = userService.createUser(dto, true, LoginProvider.LOCAL);
 		return RegisterResultModel.builder()
 				.canLogin(user.getEmailSpecify() != null)
 				.build();

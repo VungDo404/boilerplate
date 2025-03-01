@@ -96,19 +96,7 @@ public class AuthService {
             }
             twoFactorService.validateTwoFactorCode(user.getId(), request.getTwoFactorCode());
         }
-        final var refreshToken = createRefreshToken(user, tokenAuthConfig.getRefreshTokenExpirationInSeconds());
-        final var accessToken = createAccessToken(user, refreshToken.getRight());
-
-        setRefreshTokenOnCookie(response, refreshToken.getRight()
-                .toString(),
-            tokenAuthConfig.getRefreshTokenExpirationInSeconds());
-
-        return LoginResultModel.builder()
-            .accessToken(accessToken)
-            .encryptedAccessToken("")
-            .expiresInSeconds((int) tokenAuthConfig.getAccessTokenExpirationInSeconds()
-                .toSeconds())
-            .build();
+        return processLoginResult(user, response);
     }
 
     public RefreshAccessTokenModel refreshAccessToken(String refreshToken, HttpServletResponse response) {
@@ -338,6 +326,22 @@ public class AuthService {
         for (ResponseCookie cookie : cookies) {
             response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         }
+    }
+
+    public LoginResultModel processLoginResult(User user, HttpServletResponse response) {
+        final var refreshToken = createRefreshToken(user, tokenAuthConfig.getRefreshTokenExpirationInSeconds());
+        final var accessToken = createAccessToken(user, refreshToken.getRight());
+
+        setRefreshTokenOnCookie(response, refreshToken.getRight()
+                .toString(),
+            tokenAuthConfig.getRefreshTokenExpirationInSeconds());
+
+        return LoginResultModel.builder()
+            .accessToken(accessToken)
+            .encryptedAccessToken("")
+            .expiresInSeconds((int) tokenAuthConfig.getAccessTokenExpirationInSeconds()
+                .toSeconds())
+            .build();
     }
 
 }

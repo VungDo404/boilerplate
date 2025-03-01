@@ -19,10 +19,10 @@
             <router-outlet></router-outlet>
             <p-divider align="center" type="solid">{{ "Or" | translate }}</p-divider>
             <div class="auth2 body-2">
-                <div class="auth2-button">
+                <div class="auth2-button" (click)="externalLogin('google')">
                     <p-image src="src/assets/logos/brand/01.svg" alt="Google Logo" width="30" height="30"/>
                 </div>
-                <div class="auth2-button">
+                <div class="auth2-button" (click)="externalLogin('github')">
                     <p-image src="src/assets/logos/brand/02.svg" alt="Github Logo" width="30" height="30"/>
                 </div>
             </div>

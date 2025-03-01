@@ -42,7 +42,12 @@ export const  ACCOUNT_ROUTE: Routes = [
 			{
 				path: "validate-code",
 				loadComponent: () => import("./validate-two-factor-code/validate-two-factor-code.component").then(m => m.ValidateTwoFactorCodeComponent)
+			},
+			{
+				path: "oauth-callback",
+				loadComponent: () => import("./oauth2-callback/oauth2-callback.component").then(m => m.Oauth2CallbackComponent)
 			}
+
 		]
 	},
 ]

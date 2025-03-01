@@ -4,9 +4,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { InputOtp } from "primeng/inputotp";
 import { NgIf } from "@angular/common";
 import { Button } from "primeng/button";
-import { QRCodeComponent } from "angularx-qrcode";
 import { Router } from "@angular/router";
-import { CdkCopyToClipboard } from "@angular/cdk/clipboard";
 import { ValidateTwoFactorCodeService } from "./validate-two-factor-code.service";
 import { ValidationMessageComponent } from "../../../shared/component/validation-message/validation-message.component";
 import { InputText } from "primeng/inputtext";
@@ -21,8 +19,6 @@ import { LoginService } from "../login/login.service";
         InputOtp,
         NgIf,
         Button,
-        QRCodeComponent,
-        CdkCopyToClipboard,
         ReactiveFormsModule,
         ValidationMessageComponent,
         InputText
