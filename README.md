@@ -45,6 +45,9 @@ to speed up development by providing these features out of the box, allowing dev
 Two-Factor Authentication (support multiple providers like Email and Google Authenticator), External Login with 
 Github and Google, Account Lockout.
 
+⚙️ **Rate Limiter with Bucket4j:** Protect APIs with Bucket4j's rate limiting, powered by the efficient token bucket 
+algorithm.
+
 🌐 **Internationalization (i18n):**  Reach a global audience with built-in support for multiple languages. Easily adapt
 your application for different locales, with initial support for Vietnamese and English.
 

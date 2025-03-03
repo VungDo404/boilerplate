@@ -24,8 +24,9 @@ import java.time.Duration;
 public class RedisConfig implements CachingConfigurer {
 
     @Bean
-    RedisConnectionFactory redisConnectionFactory(RedisProperties props) {
+    LettuceConnectionFactory redisConnectionFactory(RedisProperties props) {
         RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
+        config.setDatabase(props.getDatabase());
         config.setPassword(props.getPassword());
         config.setHostName(props.getHost());
         config.setPort(props.getPort());

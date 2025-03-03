@@ -69,7 +69,6 @@ public class UserService implements Translator {
             return getUserByUsernameAndProvider(info.getId(), loginProvider);
         } catch (UsernameNotFoundException e) {
             final var dto = userMapper.toPostUserDto(info);
-
             return createUser(dto, false, loginProvider);
         }
     }

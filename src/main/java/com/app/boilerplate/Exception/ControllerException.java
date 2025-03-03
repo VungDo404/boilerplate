@@ -43,6 +43,20 @@ public class ControllerException extends ResponseEntityExceptionHandler {
 		);
 	}
 
+	@ExceptionHandler(value = {RateLimitExceededException.class})
+	ResponseEntity<Object> handleRateLimitExceededException(
+		RateLimitExceededException exception,
+		NativeWebRequest request) {
+        return handleException(
+            exception,
+            HttpStatus.TOO_MANY_REQUESTS,
+			exception.getDetailMessageCode(),
+            HttpStatus.TOO_MANY_REQUESTS.getReasonPhrase(),
+            null,
+            request,
+            null);
+	}
+
 	@ExceptionHandler(value = {DisabledException.class, AccountExpiredException.class})
 	ResponseEntity<Object> handleLockedException(
 		Exception exception,

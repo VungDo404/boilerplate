@@ -1,5 +1,6 @@
 package com.app.boilerplate.Controller.Dev;
 
+import com.app.boilerplate.Decorator.RateLimit.RateLimit;
 import com.app.boilerplate.Domain.Dev.Document;
 import com.app.boilerplate.Service.Dev.DocumentService;
 import com.app.boilerplate.Shared.Dev.Document.Dto.CreateDocumentDto;
@@ -16,8 +17,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.temporal.ChronoUnit;
+
 import static org.springframework.http.HttpStatus.CREATED;
 
+@RateLimit(capacity = 10, tokens = 1, duration = 10, timeUnit = ChronoUnit.SECONDS, key = "'document-' + #ip")
 @Profile("!prod")
 @Tag(name = "Document")
 @RequiredArgsConstructor
@@ -26,15 +30,15 @@ import static org.springframework.http.HttpStatus.CREATED;
 public class DocumentController {
 	private final DocumentService documentService;
 
+	@GetMapping("/")
+	public Page<Document> getAll(@ParameterObject Pageable pageable) {
+		return documentService.findAll(pageable);
+	}
+
 	@PreAuthorize("hasPermission(#id, 'com.app.boilerplate.Domain.Dev.Document', 'READ')")
 	@GetMapping("/{id}")
 	public Document getById(@PathVariable @NotNull Integer id) {
 		return documentService.getDocumentById(id);
-	}
-
-	@GetMapping("/")
-	public Page<Document> getAll(@ParameterObject Pageable pageable) {
-		return documentService.findAll(pageable);
 	}
 
 	@PreAuthorize("hasPermission(0, 'com.app.boilerplate.Domain.Dev.Document', 'CREATE')")

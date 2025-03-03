@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.HttpStatus.CREATED;
 
+
 @Profile("!prod")
 @Tag(name = "Organization")
 @RequiredArgsConstructor
