@@ -1,6 +1,5 @@
 package com.app.boilerplate.Aop.Logging;
 
-import com.app.boilerplate.Util.Translator;
 import org.slf4j.Logger;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -8,7 +7,7 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 
 @Component
-public class AsyncLogger implements Translator, AsyncLogging {
+public class AsyncLogger implements AsyncLogging {
 	@Async
 	public void logMethodEntry(Logger logger, String className, String methodName, Object[] args) {
 		logger.info("→ {}.{}() with argument[s]: {}",
@@ -31,10 +30,10 @@ public class AsyncLogger implements Translator, AsyncLogging {
 	public void logExceptionSync(Logger logger, String className, String methodName, Throwable throwable,
 								 long executionTime) {
 		String executionTimeStr = executionTime >= 0 ? String.format(" (execution time: %d ms)", executionTime) : "";
-		logger.error("× Exception in {}.{}(). Exception: {} with cause: {}{}",
+		logger.error("× Exception in {}.{}(). {}: with cause: {}{}",
 			className,
 			methodName,
-			translateEnglish(throwable.getMessage()) ,
+			throwable.getClass().getSimpleName(),
 			throwable.getCause() != null ? throwable.getCause().toString() : "NULL",
 			executionTimeStr
 		);

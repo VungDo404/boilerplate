@@ -6,7 +6,6 @@ import com.app.boilerplate.Mapper.IDevMapper;
 import com.app.boilerplate.Repository.DocumentRepository;
 import com.app.boilerplate.Shared.Dev.Document.Dto.CreateDocumentDto;
 import com.app.boilerplate.Shared.Dev.Document.Dto.PutDocumentDto;
-import com.app.boilerplate.Util.Translator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
@@ -20,7 +19,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Transactional
 @Service
-public class DocumentService implements Translator {
+public class DocumentService {
 	private final DocumentRepository documentRepository;
 	private final IDevMapper devMapper;
 

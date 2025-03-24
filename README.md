@@ -42,10 +42,10 @@ to speed up development by providing these features out of the box, allowing dev
 ## <a name="features">🔋 Features</a>
 
 🛡️ **Secure Authentication:** Signup, Login, Logout, Spring Security, JWT sessions, Verify Email, Reset Password,
-Two-Factor Authentication (support multiple providers like Email and Google Authenticator), External Login with 
+Two-Factor Authentication (support multiple providers like Email and Google Authenticator), External Login with
 Github and Google, Account Lockout.
 
-⚙️ **Rate Limiter with Bucket4j:** Protect APIs with Bucket4j's rate limiting, powered by the efficient token bucket 
+⚙️ **Rate Limiter with Bucket4j:** Protect APIs with Bucket4j's rate limiting, powered by the efficient token bucket
 algorithm.
 
 🌐 **Internationalization (i18n):**  Reach a global audience with built-in support for multiple languages. Easily adapt
@@ -53,6 +53,9 @@ your application for different locales, with initial support for Vietnamese and 
 
 🎨 **Modern & Responsive UI:**  Enjoy a clean and minimalist user interface designed for optimal usability across all
 devices.
+
+📦 Object Storage for File Uploads (MinIO): The API uses MinIO with S3 compatibility, allowing seamless integration with
+Amazon S3 or any S3-compatible storage.
 
 📚 **API Documentation with Swagger:**  Generate interactive and up-to-date API documentation automatically with
 Swagger. Simplify API exploration and integration for both frontend developers and external consumers.

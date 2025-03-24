@@ -12,7 +12,6 @@ import com.app.boilerplate.Shared.User.Dto.PostUserDto;
 import com.app.boilerplate.Shared.User.Dto.PutUserDto;
 import com.app.boilerplate.Shared.User.Dto.UserCriteriaDto;
 import com.app.boilerplate.Util.RandomUtil;
-import com.app.boilerplate.Util.Translator;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +32,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Transactional
 @Service
-public class UserService implements Translator {
+public class UserService {
     private final Logger log = LoggerFactory.getLogger(UserService.class);
     private final RandomUtil randomUtil;
     private final IUserMapper userMapper;
@@ -51,17 +50,14 @@ public class UserService implements Translator {
     public User getUserById(UUID id) {
         return Optional.of(id)
             .flatMap(userRepository::findById)
-            .orElseThrow(() -> new NotFoundException(
-                translateEnglish("error.user.id.notfound", id),
-                "error.user.id.notfound", id));
+            .orElseThrow(() -> new NotFoundException("", "error.user.id.notfound", id));
     }
 
     @Transactional(readOnly = true)
     public User getUserByUsernameAndProvider(String username, LoginProvider loginProvider) {
         return Optional.of(username)
             .flatMap(un -> userRepository.findOneByUsernameAndProvider(username, loginProvider))
-            .orElseThrow(() -> new UsernameNotFoundException(
-                translateEnglish("error.user.login.notfound", username)));
+            .orElseThrow(() -> new UsernameNotFoundException("error.user.login.notfound"));
     }
 
     public User getOrCreateExternalUserIfNotExists(OAuth2UserInfo info, LoginProvider loginProvider) {
@@ -78,9 +74,7 @@ public class UserService implements Translator {
         return Optional.of(email)
             .flatMap(userRepository::findOneByEmailIgnoreCase)
             .orElseThrow(
-                () -> new NotFoundException(
-                    translateEnglish("error.user.email.notfound", email),
-                    "error.user.email.notfound", email));
+                () -> new NotFoundException("", "error.user.email.notfound", email));
     }
 
     @CachePut(value = "user", key = "#result.id")
@@ -123,9 +117,7 @@ public class UserService implements Translator {
                 log.debug("Updated Information for User: {}", user);
                 return save(user);
             })
-            .orElseThrow(() -> new NotFoundException(
-                translateEnglish("error.user.email.notfound", request.getId()),
-                "error.user.id.notfound", request.getId()));
+            .orElseThrow(() -> new NotFoundException("", "error.user.id.notfound", request.getId()));
     }
 
     @CacheEvict(value = "user", key = "#id")

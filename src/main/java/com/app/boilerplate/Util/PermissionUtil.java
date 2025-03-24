@@ -9,6 +9,7 @@ public final class PermissionUtil {
 	public static final String AUTHENTICATION = "com.app.boilerplate.Domain.Authentication";
 	public static final String AUTHORIZATION = "com.app.boilerplate.Domain.Authorization";
 	public static final String DOMAIN = "com.app.boilerplate.Domain";
+	public static final String FILE = "com.app.boilerplate.File";
 
 	public static final String READ = "READ";
 	public static final String WRITE = "WRITE";

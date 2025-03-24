@@ -22,9 +22,30 @@ services:
         command: ["redis-server", "--requirepass", "your_secure_password"]
         networks:
             - backend
+    minio:
+        image: minio/minio:latest
+        ports:
+            - "9000:9000"  # API port
+            - "9001:9001"  # Console port
+        environment:
+            - MINIO_ROOT_USER=minioadmin
+            - MINIO_ROOT_PASSWORD=minioadmin
+        volumes:
+            - minio-data:/data
+            - ./script/minio.sh:/usr/local/bin/minio-init.sh
+        entrypoint: ["/bin/sh", "-c", "minio server /data --console-address ':9001' & /usr/local/bin/minio-init.sh & wait"]
+        command: server /data --console-address ":9001"
+        healthcheck:
+            test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
+            interval: 30s
+            timeout: 20s
+            retries: 3
+        networks:
+            - backend
 networks:
     backend:
         driver: bridge
 
 volumes:
     mysqlboilerplate:
+    minio-data:

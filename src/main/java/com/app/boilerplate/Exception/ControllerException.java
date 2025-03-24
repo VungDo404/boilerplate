@@ -17,12 +17,15 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.server.UnsupportedMediaTypeStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.time.LocalDateTime;
+import java.io.IOException;
+import java.time.Instant;
 import java.util.Map;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestControllerAdvice
@@ -87,7 +90,6 @@ public class ControllerException extends ResponseEntityExceptionHandler {
 		);
 	}
 
-
 	@ExceptionHandler(value = {BadCredentialsException.class, UsernameNotFoundException.class})
 	ResponseEntity<Object> handleUsernameNotFoundException(
 		Exception exception,
@@ -112,8 +114,7 @@ public class ControllerException extends ResponseEntityExceptionHandler {
 			HttpStatus.BAD_REQUEST.getReasonPhrase(),
 			null,
 			request,
-			null
-							  );
+			null);
 	}
 
 	@ExceptionHandler(value = {NotFoundException.class})
@@ -132,16 +133,14 @@ public class ControllerException extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(value = {AlreadyExistsException.class})
 	ResponseEntity<Object> handleNotFoundException(AlreadyExistsException exception, NativeWebRequest request) {
 		return handleException(
-				exception,
-				HttpStatus.CONFLICT,
-				exception.getMessage(),
-				HttpStatus.CONFLICT.getReasonPhrase(),
-				null,
-				request,
-				null
-		);
+			exception,
+			HttpStatus.CONFLICT,
+			exception.getMessage(),
+			HttpStatus.CONFLICT.getReasonPhrase(),
+			null,
+			request,
+			null);
 	}
-
 
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(
@@ -161,7 +160,6 @@ public class ControllerException extends ResponseEntityExceptionHandler {
 				.build())
 			.toList();
 
-		final var FIELD_ERRORS = "fieldErrors";
         return handleException(
 			exception,
 			HttpStatus.valueOf(status.value()),
@@ -169,8 +167,60 @@ public class ControllerException extends ResponseEntityExceptionHandler {
 			"Validation failed",
 			exception.getDetailMessageArguments(),
 			request,
-			Map.of(FIELD_ERRORS, fieldErrors)
-                              );
+			Map.of("fieldErrors", fieldErrors));
+	}
+
+	@ExceptionHandler(value = {IOException.class})
+	ResponseEntity<Object> handleIOException(IOException exception, NativeWebRequest request) {
+		return handleException(
+			exception,
+			resolveResponseStatus(exception),
+			exception.getMessage(),
+			exception.getMessage(),
+			null,
+			request,
+			null);
+	}
+
+	@Override
+	protected ResponseEntity<Object> handleMaxUploadSizeExceededException(
+		@NonNull MaxUploadSizeExceededException exception,
+		@NonNull HttpHeaders headers,
+		HttpStatusCode status,
+		@NonNull WebRequest request) {
+		final var statusCode = HttpStatus.valueOf(status.value());
+		return handleException(
+			exception,
+			statusCode,
+			"error.file.exceed",
+			exception.getMessage(),
+			new Object[]{exception.getMaxUploadSize()},
+			request,
+			Map.of("maxSizeInBytes", exception.getMaxUploadSize()));
+	}
+
+	@ExceptionHandler(value = {UnsupportedMediaTypeStatusException.class})
+	protected ResponseEntity<Object> handleUnsupportedMediaTypeStatusException(UnsupportedMediaTypeStatusException exception, NativeWebRequest request) {
+		final var statusCode = HttpStatus.valueOf(exception.getStatusCode().value());
+		final var arg = exception.getSupportedMediaTypes()
+			.stream()
+			.map(MediaType::toString)
+			.collect(Collectors.joining(", "));
+		final var supportedMediaType = exception.getSupportedMediaTypes()
+			.stream()
+			.map(mediaType ->
+				Map.of("type", mediaType.getType(),
+					"subtype", mediaType.getSubtype())
+				)
+			.toList();
+		return handleException(
+			exception,
+			statusCode,
+			"error.file.unsupported",
+			exception.getMessage(),
+			new Object[]{arg},
+			request,
+			Map.of("supportedMediaType", supportedMediaType));
 	}
 
 	@ExceptionHandler(value = {RuntimeException.class, Exception.class})
@@ -186,8 +236,7 @@ public class ControllerException extends ResponseEntityExceptionHandler {
 		);
 	}
 
-
-	private ProblemDetail createProblemDetailWithTimestamp(
+	private ResponseEntity<Object> handleException(
 		Exception ex,
 		HttpStatus status,
 		String detailMessageCode,
@@ -202,33 +251,12 @@ public class ControllerException extends ResponseEntityExceptionHandler {
 			defaultMessage,
 			detailMessageCode,
 			args,
-			request
-		);
-        final var TIME_STAMP = "timestamp";
-        problemDetail.setProperty(TIME_STAMP, LocalDateTime.now());
-		Optional.ofNullable(properties)
-			.ifPresent(problemDetail::setProperties);
-		return problemDetail;
-	}
+			request);
 
-	private ResponseEntity<Object> handleException(
-		Exception ex,
-		HttpStatus status,
-		String detailMessageCode,
-		String defaultMessage,
-		Object[] args,
-		WebRequest request,
-		Map<String, Object> properties) {
-
-		final var problemDetail = createProblemDetailWithTimestamp(
-			ex,
-			status,
-			detailMessageCode,
-			defaultMessage,
-			args,
-			request,
-			properties
-		);
+		if(properties != null) {
+			properties.forEach(problemDetail::setProperty);
+		}
+		problemDetail.setProperty("timestamp", Instant.now());
 
 		return ResponseEntity
 			.status(problemDetail.getStatus())

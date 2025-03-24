@@ -32,9 +32,4 @@ public class RateLimiterService {
         return bucket.tryConsumeAndReturnRemaining(1);
     }
 
-    public long getAvailableTokens(String key, long capacity, long tokens, Duration refillTime) {
-        Bucket bucket = resolveBucket(key, capacity,tokens, refillTime);
-        return bucket.getAvailableTokens();
-    }
-
 }

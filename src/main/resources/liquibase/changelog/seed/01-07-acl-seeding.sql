@@ -4,6 +4,7 @@ VALUES
 	('com.app.boilerplate.Domain.Application'),
 	('com.app.boilerplate.Domain.Authentication'),
 	('com.app.boilerplate.Domain.Authorization'),
+    ('com.app.boilerplate.File'),
 	('com.app.boilerplate.Domain');
 -- ROLE_RESOURCE_PERMISSION
 INSERT INTO acl_sid(principal, sid)
