@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.URL;
 
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
@@ -30,6 +31,13 @@ public class StorageController {
         MultipartFile file,
         @RequestHeader("X-Bucket-Name") String bucketName) throws IOException {
         return storageService.uploadFile(file, bucketName);
+    }
+
+    @PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.FILE + "', '" + PermissionUtil.READ +
+        "')")
+    @GetMapping("/url/{key}")
+    public URL getSignUrl(@RequestHeader("X-Bucket-Name") String bucketName, @PathVariable String key){
+        return storageService.getPresignedUrl(key, bucketName);
     }
 
     @PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.FILE + "', '" + PermissionUtil.DELETE +

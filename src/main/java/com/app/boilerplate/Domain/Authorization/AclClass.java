@@ -19,4 +19,6 @@ public class AclClass {
 	@Column(name = "class", nullable = false, length = 100)
 	private String clazz;
 
+	@Column(name = "class_id_type", length = 100)
+	private String classIdType;
 }

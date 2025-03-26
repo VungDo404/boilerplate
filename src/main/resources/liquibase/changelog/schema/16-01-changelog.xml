@@ -28,6 +28,7 @@
 			<column name="class" type="VARCHAR(100)">
 				<constraints nullable="false"/>
 			</column>
+			<column name="class_id_type" type="VARCHAR(100)"/>
 		</createTable>
 		<addUniqueConstraint tableName="acl_class" columnNames="class" constraintName="uk_acl_class"/>
 	</changeSet>

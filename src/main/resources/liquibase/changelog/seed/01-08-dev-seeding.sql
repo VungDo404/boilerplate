@@ -66,9 +66,9 @@ FROM organization
 WHERE display_name = 'Alpha Security';
 
 
-INSERT INTO acl_class(class)
-VALUES ('com.app.boilerplate.Domain.Dev.Document'),
-	   ('com.app.boilerplate.Domain.Dev.Organization');
+INSERT INTO acl_class(class, class_id_type)
+VALUES ('com.app.boilerplate.Domain.Dev.Document', 'java.lang.Long'),
+	   ('com.app.boilerplate.Domain.Dev.Organization', 'java.lang.Long');
 
 SELECT id
 INTO @acl_doc_id
@@ -97,16 +97,17 @@ VALUES (@acl_doc_id, @doc1_id, NULL, @bob_id, 1),  -- john is able to read and g
 
 UPDATE acl_object_identity child
 	JOIN acl_object_identity parent
-	ON child.object_id_class = parent.object_id_class AND parent.object_id_identity = 0
+	ON child.object_id_class = parent.object_id_class AND parent.object_id_identity = '0'
 SET child.parent_object = parent.id
-WHERE child.object_id_identity <> 0
+WHERE child.object_id_identity <> '0' AND child.parent_object IS NULL
   AND child.entries_inheriting = 1;
 
 INSERT INTO acl_entry(acl_object_identity, ace_order, sid, mask, granting, audit_success, audit_failure)
 SELECT aoi.id, 1, @role_admin_id, @admin, 1, 1, 1
 FROM acl_object_identity aoi
-WHERE aoi.object_id_identity = 0 AND NOT EXISTS( SELECT 1 FROM acl_entry WHERE ace_order = 1 AND acl_object_identity
-                                                                                                     = aoi.id);
+WHERE aoi.object_id_identity = '0' AND NOT EXISTS( SELECT 1 FROM acl_entry WHERE ace_order = 1 AND acl_object_identity
+                                                                                                     = CAST(aoi.id AS CHAR));
+
 
 INSERT INTO acl_entry(acl_object_identity, ace_order, sid, mask, granting, audit_success, audit_failure)
 SELECT aoi.id, 1, @bob_id, @admin, 1, 1, 1

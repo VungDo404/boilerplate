@@ -29,7 +29,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 @RestController
 public class DocumentController {
 	private final DocumentService documentService;
-
+	@PreAuthorize("hasPermission(0, 'com.app.boilerplate.Domain.Dev.Document', 'READ')")
 	@GetMapping("/")
 	public Page<Document> getAll(@ParameterObject Pageable pageable) {
 		return documentService.findAll(pageable);

@@ -4,6 +4,7 @@ import com.app.boilerplate.Domain.User.User;
 import com.app.boilerplate.Exception.BadRequestException;
 import com.app.boilerplate.Mapper.IUserMapper;
 import com.app.boilerplate.Service.Authentication.TwoFactorService;
+import com.app.boilerplate.Service.StorageService;
 import com.app.boilerplate.Service.Token.TokenService;
 import com.app.boilerplate.Service.User.UserService;
 import com.app.boilerplate.Shared.Account.Dto.ChangePasswordDto;
@@ -16,6 +17,7 @@ import com.app.boilerplate.Shared.Authentication.AccessJwt;
 import com.app.boilerplate.Shared.Authentication.LoginProvider;
 import com.app.boilerplate.Shared.Authentication.TokenType;
 import com.app.boilerplate.Shared.User.Dto.CreateUserDto;
+import com.app.boilerplate.Util.StorageConsts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
@@ -23,7 +25,10 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.net.URL;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -39,6 +44,7 @@ public class AccountService {
 	private final ApplicationEventPublisher eventPublisher;
 	private final TokenService tokenService;
 	private final TwoFactorService twoFactorService;
+	private final StorageService storageService;
 
 	private final Duration LOCK_OUT_TIME = Duration.ofDays(1);
 	private final Integer ACCESS_FAILED_ATTEMPTS = 10;
@@ -148,7 +154,18 @@ public class AccountService {
 		tokenService.deleteByValue(key);
 	}
 
-
+	public URL avatar(UUID userId, MultipartFile file) throws IOException {
+		final var user = userService.getUserById(userId);
+		if(user.getImage() != null && storageService.isS3Url(user.getImage())){
+			final var oldKey = storageService.extractObjectKey(user.getImage(), StorageConsts.PUBLIC);
+			storageService.delete(oldKey, StorageConsts.PUBLIC);
+		}
+		final var key = storageService.uploadFile(file, StorageConsts.PUBLIC, "/user/");
+		final var url = storageService.getPublicUrl(key);
+		user.setImage(url.toString());
+		userService.save(user);
+		return url;
+	}
 
 	public String profile(AccessJwt jwt) {
 		return jwt.getSecurityStamp();

@@ -15,7 +15,6 @@ import org.springframework.security.acls.AclPermissionEvaluator;
 import org.springframework.security.acls.domain.*;
 import org.springframework.security.acls.jdbc.BasicLookupStrategy;
 import org.springframework.security.acls.jdbc.JdbcMutableAclService;
-import org.springframework.security.acls.model.PermissionGrantingStrategy;
 import org.springframework.security.acls.model.Sid;
 import org.springframework.security.acls.model.SidRetrievalStrategy;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -27,104 +26,106 @@ import java.util.List;
 @Configuration
 public class AclConfig {
 
-	@Bean
-	public JdbcMutableAclService aclService(
-		SpringCacheBasedAclCache aclCache,
-		BasicLookupStrategy lookupStrategy,
-		DataSource dataSource,
-		SecurityUtil securityUtil
-	) {
-		final var mutableAclService = new AccessControlListService(
-			dataSource,
-			lookupStrategy,
-			aclCache,
-			securityUtil
-		);
-		mutableAclService.setSidIdentityQuery("SELECT LAST_INSERT_ID()");
-		mutableAclService.setClassIdentityQuery("SELECT LAST_INSERT_ID()");
-		mutableAclService.setAclClassIdSupported(true);
+    @Bean
+    public JdbcMutableAclService aclService(
+        SpringCacheBasedAclCache aclCache,
+        BasicLookupStrategy lookupStrategy,
+        DataSource dataSource,
+        SecurityUtil securityUtil
+                                           ) {
+        final var mutableAclService = new AccessControlListService(
+            dataSource,
+            lookupStrategy,
+            aclCache,
+            securityUtil
+        );
+        mutableAclService.setSidIdentityQuery("SELECT LAST_INSERT_ID()");
+        mutableAclService.setClassIdentityQuery("SELECT LAST_INSERT_ID()");
+        mutableAclService.setAclClassIdSupported(true);
 
-		return mutableAclService;
-	}
+        return mutableAclService;
+    }
 
+    @Bean
+    public AclAuthorizationStrategy aclAuthorizationStrategy() {
+        return new AclAuthorizationStrategyImpl(new SimpleGrantedAuthority("ROLE_APPLICATION_ADMINISTRATOR"));
+    }
 
-	@Bean
-	public AclAuthorizationStrategy aclAuthorizationStrategy() {
-		return new AclAuthorizationStrategyImpl(new SimpleGrantedAuthority("ROLE_APPLICATION_ADMINISTRATOR"));
-	}
+    @Bean
+    public HierarchicalPermissionGrantingStrategy permissionGrantingStrategy(AuditLogger auditLogger) {
+        return new HierarchicalPermissionGrantingStrategy(auditLogger);
+    }
 
-	@Bean
-	public PermissionGrantingStrategy permissionGrantingStrategy(AuditLogger auditLogger) {
-		return new HierarchicalPermissionGrantingStrategy(auditLogger);
-	}
+    @Bean
+    public SpringCacheBasedAclCache aclCache(
+        CacheManager cacheManager,
+        HierarchicalPermissionGrantingStrategy permissionGrantingStrategy,
+        AclAuthorizationStrategy aclAuthorizationStrategy) {
+        Cache redisCache = cacheManager.getCache("acl_cache");
+        if (redisCache == null) {
+            throw new IllegalStateException("Cache named 'acl_cache' must be configured in RedisCacheManager.");
+        }
+        return new SpringCacheBasedAclCache(redisCache, permissionGrantingStrategy, aclAuthorizationStrategy);
+    }
 
-	@Bean
-	public SpringCacheBasedAclCache aclCache(CacheManager cacheManager,
-											 PermissionGrantingStrategy permissionGrantingStrategy,
-											 AclAuthorizationStrategy aclAuthorizationStrategy) {
-		Cache redisCache = cacheManager.getCache("acl_cache");
-		if (redisCache == null) {
-			throw new IllegalStateException("Cache named 'acl_cache' must be configured in RedisCacheManager.");
-		}
-		return new SpringCacheBasedAclCache(redisCache, permissionGrantingStrategy, aclAuthorizationStrategy);
-	}
+    @Bean
+    public PermissionFactory aclPermissionFactory() {
+        return new DefaultPermissionFactory(HierarchicalPermission.class);
+    }
 
-	@Bean
-	public PermissionFactory aclPermissionFactory() {
-		return new DefaultPermissionFactory(HierarchicalPermission.class);
-	}
+    @Bean
+    public AuditLogger auditLogger() {
+        return new ConsoleAuditLogger();
+    }
 
-	@Bean
-	public AuditLogger auditLogger() {
-		return new ConsoleAuditLogger();
-	}
+    @Bean
+    public BasicLookupStrategy lookupStrategy(
+        SpringCacheBasedAclCache aclCache, DataSource dataSource,
+        AuditLogger auditLogger, PermissionFactory permissionFactory) {
+        var basicLookupStrategy = new BasicLookupStrategy(
+            dataSource,
+            aclCache,
+            aclAuthorizationStrategy(),
+            auditLogger
+        );
+        basicLookupStrategy.setPermissionFactory(permissionFactory);
+        basicLookupStrategy.setAclClassIdSupported(true);
+        return basicLookupStrategy;
+    }
 
-	@Bean
-	public BasicLookupStrategy lookupStrategy(SpringCacheBasedAclCache aclCache, DataSource dataSource,
-										 AuditLogger auditLogger, PermissionFactory permissionFactory) {
-		var basicLookupStrategy = new BasicLookupStrategy(
-			dataSource,
-			aclCache,
-			aclAuthorizationStrategy(),
-			auditLogger
-		);
-		basicLookupStrategy.setPermissionFactory(permissionFactory);
-		return basicLookupStrategy;
-	}
+    @Bean
+    public MethodSecurityExpressionHandler defaultMethodSecurityExpressionHandler(JdbcMutableAclService aclService) {
+        DefaultMethodSecurityExpressionHandler expressionHandler = new DefaultMethodSecurityExpressionHandler();
+        AclPermissionEvaluator permissionEvaluator = new AclPermissionEvaluator(aclService);
+        permissionEvaluator.setSidRetrievalStrategy(sidRetrievalStrategy());
+        permissionEvaluator.setPermissionFactory(aclPermissionFactory());
+        expressionHandler.setPermissionEvaluator(permissionEvaluator);
+        return expressionHandler;
+    }
 
-	@Bean
-	public MethodSecurityExpressionHandler defaultMethodSecurityExpressionHandler(JdbcMutableAclService aclService) {
-		DefaultMethodSecurityExpressionHandler expressionHandler = new DefaultMethodSecurityExpressionHandler();
-		AclPermissionEvaluator permissionEvaluator = new AclPermissionEvaluator(aclService);
-		permissionEvaluator.setSidRetrievalStrategy(sidRetrievalStrategy());
-		permissionEvaluator.setPermissionFactory(aclPermissionFactory());
-		expressionHandler.setPermissionEvaluator(permissionEvaluator);
-		return expressionHandler;
-	}
+    @Bean
+    public SidRetrievalStrategy sidRetrievalStrategy() {
+        return authentication -> {
+            List<Sid> sids = new ArrayList<>();
+            if (authentication == null) {
+                return sids;
+            }
 
-	@Bean
-	public SidRetrievalStrategy sidRetrievalStrategy() {
-		return authentication -> {
-			List<Sid> sids = new ArrayList<>();
-			if (authentication == null) {
-				return sids;
-			}
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof AccessJwt jwt) {
+                String sidValue = String.format("%s:%s",
+                    jwt.getProvider()
+                        .name(),
+                    jwt.getUsername());
+                sids.add(new PrincipalSid(sidValue));
+            }
 
-			Object principal = authentication.getPrincipal();
-			if (principal instanceof AccessJwt jwt) {
-				String sidValue = String.format("%s:%s",
-					jwt.getProvider()
-						.name(),
-					jwt.getUsername());
-				sids.add(new PrincipalSid(sidValue));
-			}
+            authentication.getAuthorities()
+                .forEach(authority ->
+                        sids.add(new GrantedAuthoritySid(authority.getAuthority()))
+                        );
 
-			authentication.getAuthorities()
-				.forEach(authority ->
-					sids.add(new GrantedAuthoritySid(authority.getAuthority()))
-				);
-
-			return sids;
-		};
-	}
+            return sids;
+        };
+    }
 }

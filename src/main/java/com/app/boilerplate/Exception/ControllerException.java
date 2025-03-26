@@ -119,11 +119,12 @@ public class ControllerException extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(value = {NotFoundException.class})
 	ResponseEntity<Object> handleNotFoundException(NotFoundException exception, NativeWebRequest request) {
+		final var statusCode = HttpStatus.valueOf(exception.getStatusCode().value());
 		return handleException(
 			exception,
-			resolveResponseStatus(exception),
+			statusCode,
 			exception.getDetailMessageCode(),
-			HttpStatus.NOT_FOUND.getReasonPhrase(),
+			statusCode.getReasonPhrase(),
 			exception.getDetailMessageArguments(),
 			request,
 			null
