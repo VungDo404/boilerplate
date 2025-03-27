@@ -5,14 +5,10 @@ import com.app.boilerplate.Domain.User.User;
 import com.app.boilerplate.Service.Account.AccountService;
 import com.app.boilerplate.Service.Token.TokenService;
 import com.app.boilerplate.Service.User.UserService;
-import com.app.boilerplate.Shared.Authentication.TwoFactorProvider;
-import com.app.boilerplate.Shared.Authentication.AccessJwt;
-import com.app.boilerplate.Shared.Authentication.BaseJwt;
+import com.app.boilerplate.Shared.Authentication.*;
 import com.app.boilerplate.Shared.Authentication.Dto.LoginDto;
 import com.app.boilerplate.Shared.Authentication.Model.LoginResultModel;
 import com.app.boilerplate.Shared.Authentication.Model.RefreshAccessTokenModel;
-import com.app.boilerplate.Shared.Authentication.RefreshJwt;
-import com.app.boilerplate.Shared.Authentication.TokenType;
 import com.app.boilerplate.Util.AppConsts;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.JOSEException;
@@ -35,10 +31,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
-import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.JwtException;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -109,8 +102,7 @@ public class AuthService {
         final var rotateRefreshToken = createRefreshToken(user, remainingDuration);
         final var accessToken = createAccessToken(user, rotateRefreshToken.getRight());
 
-        setRefreshTokenOnCookie(response, rotateRefreshToken.getRight()
-            .toString(), remainingDuration);
+        setRefreshTokenOnCookie(response, rotateRefreshToken.getLeft(), remainingDuration);
 
         return RefreshAccessTokenModel.builder()
             .accessToken(accessToken)
@@ -126,21 +118,21 @@ public class AuthService {
             ResponseCookie.from(AppConsts.REFRESH_TOKEN, "")
                 .httpOnly(true)
                 .secure(true)
-                .path("/auth/refresh-token")
+                .path("/api/auth/refresh-token")
                 .maxAge(Duration.ZERO)
                 .sameSite("Lax")
                 .build(),
             ResponseCookie.from(AppConsts.REFRESH_TOKEN, "")
                 .httpOnly(true)
                 .secure(true)
-                .path("/account/profile")
+                .path("/api/account/profile")
                 .maxAge(Duration.ZERO)
                 .sameSite("Lax")
                 .build(),
             ResponseCookie.from(AppConsts.REFRESH_TOKEN, "")
                 .httpOnly(true)
                 .secure(true)
-                .path("/auth/logout")
+                .path("/api/auth/logout")
                 .maxAge(Duration.ZERO)
                 .sameSite("Lax")
                 .build()
@@ -170,7 +162,7 @@ public class AuthService {
             AppConsts.HMAC_SHA_256);
         final var jwtDecoder =
             NimbusJwtDecoder.withSecretKey(keySpec)
-                .macAlgorithm(MacAlgorithm.HS512)
+                .macAlgorithm(MacAlgorithm.HS256)
                 .build();
 
         return decoder(jwtDecoder, token, RefreshJwt::new);
@@ -194,7 +186,7 @@ public class AuthService {
             .map(function)
             .filter(this::validateCommonClaims)
             .filter(this::validateSpecificClaims)
-            .orElseThrow(() -> new JwtException("JWT validation failed"));
+            .orElseThrow(() -> new BadJwtException("JWT validation failed"));
     }
 
     private boolean validateCommonClaims(Jwt jwt) {
@@ -305,21 +297,21 @@ public class AuthService {
             ResponseCookie.from(AppConsts.REFRESH_TOKEN, value)
                 .httpOnly(true)
                 .secure(true)
-                .path("/auth/refresh-token")
+                .path("/api/auth/refresh-token")
                 .maxAge(maxAge)
                 .sameSite("Lax")
                 .build(),
             ResponseCookie.from(AppConsts.REFRESH_TOKEN, value)
                 .httpOnly(true)
                 .secure(true)
-                .path("/account/profile")
+                .path("/api/account/profile")
                 .maxAge(maxAge)
                 .sameSite("Lax")
                 .build(),
             ResponseCookie.from(AppConsts.REFRESH_TOKEN, value)
                 .httpOnly(true)
                 .secure(true)
-                .path("/auth/logout")
+                .path("/api/auth/logout")
                 .maxAge(maxAge)
                 .sameSite("Lax")
                 .build()
@@ -333,8 +325,7 @@ public class AuthService {
         final var refreshToken = createRefreshToken(user, tokenAuthConfig.getRefreshTokenExpirationInSeconds());
         final var accessToken = createAccessToken(user, refreshToken.getRight());
 
-        setRefreshTokenOnCookie(response, refreshToken.getRight()
-                .toString(),
+        setRefreshTokenOnCookie(response, refreshToken.getLeft(),
             tokenAuthConfig.getRefreshTokenExpirationInSeconds());
 
         return LoginResultModel.builder()

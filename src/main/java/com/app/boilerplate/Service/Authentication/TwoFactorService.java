@@ -1,5 +1,6 @@
 package com.app.boilerplate.Service.Authentication;
 
+import com.app.boilerplate.Exception.InvalidVerificationCodeException;
 import com.app.boilerplate.Service.Token.TokenService;
 import com.app.boilerplate.Service.User.UserService;
 import com.app.boilerplate.Shared.Account.Event.TwoFactorCodeEvent;
@@ -10,7 +11,6 @@ import com.app.boilerplate.Util.RandomUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,11 +53,11 @@ public class TwoFactorService {
             final var user = userService.getUserById(userId);
             final var token = tokenService.getAuthenticatorToken(user);
             if(!validateCode(token.getValue(), submitCode))
-                throw new AccessDeniedException("error.auth.two-factor");
+                throw new InvalidVerificationCodeException("error.auth.two-factor");
         }else{
             final var code = twoFactorCacheService.getTwoFactorCode(id);
             if (!submitCode.equals(code)) {
-                throw new AccessDeniedException("error.auth.two-factor");
+                throw new InvalidVerificationCodeException("error.auth.two-factor");
             }
             twoFactorCacheService.deleteTwoFactorCode(id);
         }

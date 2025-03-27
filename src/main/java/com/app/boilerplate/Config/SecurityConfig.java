@@ -1,7 +1,6 @@
 package com.app.boilerplate.Config;
 
 import com.app.boilerplate.Security.*;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -47,36 +46,27 @@ public class SecurityConfig {
 
     @Bean
     @Order(2)
-    public SecurityFilterChain restApiSecurityFilterChain(HttpSecurity http,
-                                                          JwtDecoder jwtDecoder,
-                                                          JwtAuthenticationConverter authenticationConverter,
-                                                          OAuth2AuthenticationSuccessHandler successHandler,
-                                                          OAuth2UserService oAuth2UserService,
-                                                          ClientRegistrationRepository repository
-                                                         ) throws Exception {
+    public SecurityFilterChain restApiSecurityFilterChain(
+        HttpSecurity http,
+        JwtDecoder jwtDecoder,
+        JwtAuthenticationConverter authenticationConverter,
+        OAuth2AuthenticationSuccessHandler successHandler,
+        OAuth2UserService oAuth2UserService,
+        ClientRegistrationRepository repository) throws Exception {
         http.anonymous(anonymous -> anonymous.principal("anonymousUser")
                 .authorities("ROLE_AUTHENTICATION_ANONYMOUS"))
             .authorizeHttpRequests(auth -> auth.anyRequest()
                 .permitAll())
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.decoder(jwtDecoder)
-                .jwtAuthenticationConverter(authenticationConverter)))
+            .oauth2ResourceServer(oauth2 -> oauth2
+                    .jwt(jwt -> jwt.decoder(jwtDecoder)
+                        .jwtAuthenticationConverter(authenticationConverter))
+                    .authenticationEntryPoint(new JwtAuthenticationEntryPoint()))
             .oauth2Login(oauth -> oauth
                 .userInfoEndpoint(info -> info.userService(oAuth2UserService))
                 .authorizationEndpoint(aep -> aep.authorizationRequestResolver(authorizationRequestResolver(repository)))
-                .successHandler(successHandler))
-            .exceptionHandling(exception -> exception
-                    .authenticationEntryPoint((request, response, authException) -> {
-                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                        response.getWriter()
-                            .write("Unauthorized access");
-                    })
-                    .accessDeniedHandler((request, response, accessDeniedException) -> {
-                        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                        response.getWriter()
-                            .write("Access denied");
-                    }));
+                .successHandler(successHandler));
         return http.build();
     }
 
@@ -86,9 +76,10 @@ public class SecurityConfig {
     }
 
     @Bean
-    public DaoAuthenticationProvider authenticationProvider(AuthenticationUserDetailsService userDetailsService,
-                                                            PasswordEncoder passwordEncoder,
-                                                            PreAuthenticationChecker preAuthenticationChecker) {
+    public DaoAuthenticationProvider authenticationProvider(
+        AuthenticationUserDetailsService userDetailsService,
+        PasswordEncoder passwordEncoder,
+        PreAuthenticationChecker preAuthenticationChecker) {
         final var authProvider = new DaoAuthenticationProvider();
         authProvider.setPreAuthenticationChecks(preAuthenticationChecker);
         authProvider.setPasswordEncoder(passwordEncoder);
@@ -97,10 +88,12 @@ public class SecurityConfig {
     }
 
     @Bean
-    public OAuth2AuthorizationRequestResolver authorizationRequestResolver(ClientRegistrationRepository clientRegistrationRepository)
-    {
-        OAuth2AuthorizationRequestResolver defaultAuthorizationRequestResolver = new DefaultOAuth2AuthorizationRequestResolver(
-            clientRegistrationRepository, OAuth2AuthorizationRequestRedirectFilter.DEFAULT_AUTHORIZATION_REQUEST_BASE_URI);
+    public OAuth2AuthorizationRequestResolver authorizationRequestResolver(
+        ClientRegistrationRepository clientRegistrationRepository) {
+        OAuth2AuthorizationRequestResolver defaultAuthorizationRequestResolver =
+            new DefaultOAuth2AuthorizationRequestResolver(
+                clientRegistrationRepository,
+                OAuth2AuthorizationRequestRedirectFilter.DEFAULT_AUTHORIZATION_REQUEST_BASE_URI);
         return new AuthorizationRequestResolver(defaultAuthorizationRequestResolver);
     }
 

@@ -26,7 +26,7 @@ public class TokenAuthConfig {
 	@Value("${security-key.refresh-token}")
 	private String getHmacSecret;
 	private final Duration accessTokenExpirationInSeconds = Duration.ofHours(1);
-	private final Duration refreshTokenExpirationInSeconds = Duration.ofHours(31);
+	private final Duration refreshTokenExpirationInSeconds = Duration.ofDays(7);
 	private final Duration authenticatorExpirationInSeconds = Duration.ofDays(50 * 365 + 12);
 
 }

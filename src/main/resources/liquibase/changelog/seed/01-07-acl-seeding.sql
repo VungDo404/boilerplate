@@ -30,6 +30,12 @@ SET
 					  WHERE sid = 'ROLE_USER_ADMINISTRATOR'
 						AND principal = 0);
 SET
+@role_authen_id = (SELECT id
+					  FROM acl_sid
+					  WHERE sid = 'ROLE_AUTHENTICATE'
+						AND principal = 0);
+
+SET
 @role_authen_app_id = (SELECT id
 					  FROM acl_sid
 					  WHERE sid = 'ROLE_AUTHENTICATION_ADMINISTRATOR'
@@ -152,5 +158,7 @@ VALUES (@application_obj_id, 1, @role_admin_app_id, @admin, 1, 1, 1),
        (@authentication_obj_id, 2, @role_anonymous, @read, 1, 1, 1),
        (@authentication_obj_id, 3, @role_anonymous, @create, 1, 1, 1),
        (@authentication_obj_id, 4, @role_anonymous, @write, 1, 1, 1),
+       (@authentication_obj_id, 5, @role_anonymous, @delete, 1, 1, 1),
+       (@authentication_obj_id, 6, @role_authen_id, @delete, 1, 1, 1),
        (@authorization_obj_id, 1, @role_author_app_id, @admin, 1, 1, 1),
        (@domain_obj_id, 1, @role_domain_app_id, @admin, 1, 1, 1);

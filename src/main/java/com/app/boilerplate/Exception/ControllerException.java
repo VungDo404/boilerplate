@@ -10,7 +10,10 @@ import org.springframework.security.acls.model.AlreadyExistsException;
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.oauth2.jwt.BadJwtException;
+import org.springframework.security.oauth2.server.resource.InvalidBearerTokenException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -75,19 +78,61 @@ public class ControllerException extends ResponseEntityExceptionHandler {
 		);
 	}
 
+	@ExceptionHandler(value = {InvalidBearerTokenException.class})
+	ResponseEntity<Object> handleInvalidBearerTokenException(
+		InvalidBearerTokenException exception,
+		NativeWebRequest request) {
+		return handleException(
+			exception,
+			HttpStatus.UNAUTHORIZED,
+			"error.auth.permission.denied",
+			HttpStatus.UNAUTHORIZED.getReasonPhrase(),
+			null,
+			request,
+			null);
+	}
+
+	@ExceptionHandler(value = {AuthorizationDeniedException.class})
+	ResponseEntity<Object> handleAuthorizationDeniedException(
+		AuthorizationDeniedException exception,
+		NativeWebRequest request) {
+		return handleException(
+			exception,
+			HttpStatus.FORBIDDEN,
+			"error.auth.permission.denied",
+			HttpStatus.FORBIDDEN.getReasonPhrase(),
+			null,
+			request,
+			null);
+	}
+
 	@ExceptionHandler(value = {AccessDeniedException.class})
-	ResponseEntity<Object> handleAuthenticationException(
+	ResponseEntity<Object> handleAccessDeniedException(
 			AccessDeniedException exception,
 			NativeWebRequest request) {
 		return handleException(
 				exception,
-				HttpStatus.UNAUTHORIZED,
+				HttpStatus.FORBIDDEN,
 				exception.getMessage(),
-				HttpStatus.UNAUTHORIZED.getReasonPhrase(),
+				HttpStatus.FORBIDDEN.getReasonPhrase(),
 				null,
 				request,
 				null
 		);
+	}
+
+	@ExceptionHandler(value = {InvalidVerificationCodeException.class})
+	ResponseEntity<Object> handleInvalidVerificationCodeException(
+		InvalidVerificationCodeException exception,
+		NativeWebRequest request) {
+		return handleException(
+			exception,
+			HttpStatus.UNAUTHORIZED,
+			exception.getMessage(),
+			HttpStatus.UNAUTHORIZED.getReasonPhrase(),
+			null,
+			request,
+			null);
 	}
 
 	@ExceptionHandler(value = {BadCredentialsException.class, UsernameNotFoundException.class})
@@ -103,6 +148,20 @@ public class ControllerException extends ResponseEntityExceptionHandler {
 			request,
 			null
 		);
+	}
+
+	@ExceptionHandler(value = {BadJwtException.class})
+	ResponseEntity<Object> handleBadJwtException(
+		BadJwtException exception,
+		NativeWebRequest request) {
+		return handleException(
+			exception,
+			HttpStatus.UNAUTHORIZED,
+			"error.auth.token.invalid",
+			HttpStatus.UNAUTHORIZED.getReasonPhrase(),
+			null,
+			request,
+			null);
 	}
 
 	@ExceptionHandler(value = {BadRequestException.class})
@@ -229,7 +288,7 @@ public class ControllerException extends ResponseEntityExceptionHandler {
 		return handleException(
 			exception,
 			resolveResponseStatus(exception),
-				exception.getMessage(),
+			exception.getMessage(),
 			exception.getMessage(),
 			null,
 			request,

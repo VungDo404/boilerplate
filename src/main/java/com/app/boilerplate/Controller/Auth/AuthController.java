@@ -32,7 +32,7 @@ public class AuthController {
         return authService.authenticate(request, response);
     }
 
-    @PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.READ +
+    @PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.DELETE +
         "')")
     @PostMapping("/refresh-token")
     public RefreshAccessTokenModel refreshToken(@CookieValue(AppConsts.REFRESH_TOKEN) String refreshToken,
@@ -40,7 +40,7 @@ public class AuthController {
         return authService.refreshAccessToken(refreshToken, response);
     }
 
-    @PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.READ +
+    @PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.DELETE +
         "')")
     @PostMapping("/logout")
     public void logout(@AuthenticationPrincipal AccessJwt jwt, HttpServletResponse response,
@@ -48,7 +48,7 @@ public class AuthController {
         authService.logout(jwt, response, refreshToken);
     }
 
-    @PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.READ +
+    @PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.WRITE +
         "')")
     @PostMapping("/send-code")
     public void sendTwoFactorCode(@RequestBody @Valid SendTwoFactorCodeDto request) {
