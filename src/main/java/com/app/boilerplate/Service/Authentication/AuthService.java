@@ -330,7 +330,6 @@ public class AuthService {
 
         return LoginResultModel.builder()
             .accessToken(accessToken)
-            .encryptedAccessToken("")
             .expiresInSeconds((int) tokenAuthConfig.getAccessTokenExpirationInSeconds()
                 .toSeconds())
             .build();

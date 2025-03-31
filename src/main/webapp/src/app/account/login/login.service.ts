@@ -1,34 +1,31 @@
 import { Injectable } from '@angular/core';
-import { ConfigService } from "../../../shared/service/config.service";
-import { HttpClient } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { NotifyService } from "../../../shared/service/notify.service";
 import { TranslateService } from "@ngx-translate/core";
 import { Subject, takeUntil } from "rxjs";
 import Swal, { SweetAlertResult } from "sweetalert2";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { LocalStorageService } from "../../../shared/service/local-storage.service";
+import { AuthenticationService } from "../../../shared/service/http/authentication.service";
 
 @Injectable({
     providedIn: 'root'
 })
 export class LoginService {
-    private baseUrl!: string;
     private destroy$ = new Subject<void>();
     loginForm!: FormGroup;
 
     constructor(
         private formBuilder: FormBuilder,
-        private configService: ConfigService,
-        private http: HttpClient,
         private router: Router,
         private notifyService: NotifyService,
-        private translate: TranslateService
-    ) {
-        this.baseUrl = this.configService.baseUrl;
-    }
+        private translate: TranslateService,
+        private localStorageService: LocalStorageService,
+        private authenticationService: AuthenticationService
+    ) {}
 
     authenticate(cb: () => void) {
-        this.http.post<AuthenticationResult>(this.baseUrl + "auth/authenticate", this.loginForm.value).subscribe({
+        this.authenticationService.authenticate(this.loginForm.value).subscribe({
             next: (response) => {
                 this.processAuthenticationResult(response);
                 cb();
@@ -58,7 +55,10 @@ export class LoginService {
                 ]
             ],
             twoFactorCode: [
-                ''
+                '',
+                [
+                    Validators.maxLength(6)
+                ]
             ]
         });
     }
@@ -74,36 +74,32 @@ export class LoginService {
                 .subscribe(translations => {
                     const title = translations['SecurityPolicy'];
                     const message = translations['ShouldChangePasswordMessage'];
-                    const option = {
-                        icon: 'info',
-                        showConfirmButton: true,
-                        confirmButtonText: translations['OK'],
-                        allowOutsideClick: false,
-                        confirmButtonColor: '#EA6365',
-                        timer: 4000,
-                        timerProgressBar: true,
-                    }
-                    const cb = (alertResult: SweetAlertResult<any>) => {
-                        if (alertResult.isConfirmed || alertResult.dismiss === Swal.DismissReason.timer)
+
+                    this.notifyService.info(
+                        message,
+                        title,
+                        this.notifyService.option1(translations['OK']),
+                        () => {
                             this.router.navigate(['/account/reset-password'], {
                                 queryParams: { key: result.passwordResetCode }
                             });
-                    }
-                    this.notifyService.info(message, title, option, cb);
+                        }
+                    );
                 });
         } else if ("isTwoFactorEnabled" in result && result.isTwoFactorEnabled) {
             this.router.navigate(['/account/send-code'], {
                 state: { loginResult: result }
             });
         } else if ("accessToken" in result) {
-            this.login(result, () => null)
+            this.login(result, () => {this.router.navigate(["/main"])})
         } else {
             this.router.navigate(['/account/login'])
         }
     }
 
     login(result: AuthenticationTokenResult, cb: () => void) {
-        this.router.navigate(["/main"])
+        const tokenExpireDate = new Date(new Date().getTime() + 1000 * result.expiresInSeconds);
+        this.localStorageService.setAccessToken(result.accessToken, tokenExpireDate);
         cb();
     }
 }

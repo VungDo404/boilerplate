@@ -1,20 +1,17 @@
 import { Injectable } from '@angular/core';
-import { ConfigService } from "../../../shared/service/config.service";
-import { HttpClient } from "@angular/common/http";
 import { Router } from "@angular/router";
+import { AuthenticationService } from "../../../shared/service/http/authentication.service";
+import { AccountService } from "../../../shared/service/http/account.service";
 
 @Injectable({
     providedIn: 'root'
 })
 export class ForgotPasswordService {
-    private baseUrl!: string;
 
-    constructor(private configService: ConfigService, private http: HttpClient, private router: Router) {
-        this.baseUrl = this.configService.baseUrl;
-    }
+    constructor(private router: Router, private accountService: AccountService) {}
 
     forgotPassword(email: string, cb: () => void) {
-        this.http.post(this.baseUrl + "account/forgot-password", { email }).subscribe({
+        this.accountService.forgotPassword(email).subscribe({
             next: (response) => {
                 cb();
                 this.router.navigate(['/account/send-email'], {

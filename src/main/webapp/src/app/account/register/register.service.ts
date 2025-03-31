@@ -1,20 +1,17 @@
 import { Injectable } from '@angular/core';
-import { ConfigService } from "../../../shared/service/config.service";
-import { HttpClient } from "@angular/common/http";
 import { Router } from "@angular/router";
+import { AuthenticationService } from "../../../shared/service/http/authentication.service";
+import { AccountService } from "../../../shared/service/http/account.service";
 
 @Injectable({
     providedIn: 'root'
 })
 export class RegisterService {
-    private baseUrl!: string;
 
-    constructor(private configService: ConfigService, private http: HttpClient, private router: Router) {
-        this.baseUrl = this.configService.baseUrl;
-    }
+    constructor(private router: Router, private accountService: AccountService) {}
 
     register(registerForm: RegisterForm, cb: () => void) {
-        this.http.post<RegisterResult>(this.baseUrl + "account/register", registerForm).subscribe({
+        this.accountService.register(registerForm).subscribe({
             next: (response) => {
                 cb();
                 if (!response.canLogin) {
@@ -24,9 +21,7 @@ export class RegisterService {
                 }
 
             },
-            error: (error) => {
-                cb();
-            }
+            error: cb
         });
     }
 }

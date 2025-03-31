@@ -232,9 +232,10 @@ public class ControllerException extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(value = {IOException.class})
 	ResponseEntity<Object> handleIOException(IOException exception, NativeWebRequest request) {
+
 		return handleException(
 			exception,
-			resolveResponseStatus(exception),
+			HttpStatus.INTERNAL_SERVER_ERROR,
 			exception.getMessage(),
 			exception.getMessage(),
 			null,

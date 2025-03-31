@@ -1,6 +1,7 @@
 declare interface LoginForm {
     username: string;
     password: string;
+    twoFactorCode: string;
 }
 
 declare interface RegisterForm {
@@ -21,7 +22,6 @@ declare type AuthenticationResult = AuthenticationTokenResult
 
 declare interface AuthenticationTokenResult {
     accessToken: string;
-    encryptedAccessToken: string;
     expiresInSeconds: number;
 }
 
@@ -62,4 +62,9 @@ declare interface RequireEmailVerificationResult {
 
 declare interface RegisterResult {
     canLogin: boolean;
+}
+
+declare interface AccessTokenModel {
+    accessToken: string,
+    expiredDate: Date
 }

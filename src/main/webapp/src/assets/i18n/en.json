@@ -45,6 +45,8 @@
   "VerifyCodeMessage": "Please enter the verification code sent to you.",
   "QrMessage": "Enter the code from  your authenticator app",
   "GuideQrMessage": "After you scanned the QR code, the app will generate a six-digit code that you can enter below.",
+  "SessionExpired": "Session Expired",
+  "SessionExpiredMessage": "Your session has expired. Please log in again to continue.",
 
   "ThisFieldIsRequired": "This field is required",
   "PleaseEnterAtLeastNCharacter": "Please enter at least {{value}} characters",

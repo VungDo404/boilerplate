@@ -15,7 +15,6 @@ import java.util.UUID;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class LoginResultModel {
     private String accessToken;
-    private String encryptedAccessToken;
     private Integer expiresInSeconds;
     private Boolean shouldChangePasswordOnNextLogin;
     private String passwordResetCode;

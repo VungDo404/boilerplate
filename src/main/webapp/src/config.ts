@@ -17,6 +17,7 @@ import { TranslateHttpLoader } from "@ngx-translate/http-loader";
 import { LanguageHeaderInterceptor } from "./shared/interceptor/language-header.interceptor";
 import { LanguageService } from "./shared/service/language.service";
 import { HttpErrorInterceptor } from "./shared/interceptor/http-error.interceptor";
+import { BearerTokenInterceptor } from "./shared/interceptor/bearer-token.interceptor";
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -46,6 +47,11 @@ export const config: ApplicationConfig = {
         {
             provide: HTTP_INTERCEPTORS,
             useClass: LanguageHeaderInterceptor,
+            multi: true
+        },
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: BearerTokenInterceptor,
             multi: true
         },
         {
