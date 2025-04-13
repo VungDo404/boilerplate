@@ -28,7 +28,6 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class TokenService {
     private final TokenRepository tokenRepository;
-    private final RandomUtil randomUtil;
     private final TokenAuthConfig tokenAuthConfig;
     private final RedisTemplate<String, Object> redisTemplate;
     private final CacheManager cacheManager;
@@ -45,7 +44,7 @@ public class TokenService {
 
     @CachePut(value = CacheConsts.TOKEN, key = "#result.value")
     public Token addToken(TokenType type, User user) {
-        final var key = randomUtil.randomToken();
+        final var key = RandomUtil.randomToken();
         final var exp = LocalDateTime.now()
             .plusDays(1);
         return addToken(type, key, exp, user);

@@ -3,7 +3,6 @@ package com.app.boilerplate.Config;
 import com.app.boilerplate.Security.HierarchicalPermission;
 import com.app.boilerplate.Security.HierarchicalPermissionGrantingStrategy;
 import com.app.boilerplate.Service.Authorization.AccessControlListService;
-import com.app.boilerplate.Shared.Authentication.AccessJwt;
 import com.app.boilerplate.Util.SecurityUtil;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -30,14 +29,11 @@ public class AclConfig {
     public JdbcMutableAclService aclService(
         SpringCacheBasedAclCache aclCache,
         BasicLookupStrategy lookupStrategy,
-        DataSource dataSource,
-        SecurityUtil securityUtil
-                                           ) {
+        DataSource dataSource) {
         final var mutableAclService = new AccessControlListService(
             dataSource,
             lookupStrategy,
-            aclCache,
-            securityUtil
+            aclCache
         );
         mutableAclService.setSidIdentityQuery("SELECT LAST_INSERT_ID()");
         mutableAclService.setClassIdentityQuery("SELECT LAST_INSERT_ID()");
@@ -107,23 +103,14 @@ public class AclConfig {
     public SidRetrievalStrategy sidRetrievalStrategy() {
         return authentication -> {
             List<Sid> sids = new ArrayList<>();
-            if (authentication == null) {
-                return sids;
-            }
-
-            Object principal = authentication.getPrincipal();
-            if (principal instanceof AccessJwt jwt) {
-                String sidValue = String.format("%s:%s",
-                    jwt.getProvider()
-                        .name(),
-                    jwt.getUsername());
-                sids.add(new PrincipalSid(sidValue));
+            if (authentication == null) return sids;
+            if (!SecurityUtil.isAnonymous()) {
+                sids.add(SecurityUtil.getPrincipalSid());
             }
 
             authentication.getAuthorities()
                 .forEach(authority ->
-                        sids.add(new GrantedAuthoritySid(authority.getAuthority()))
-                        );
+                    sids.add(new GrantedAuthoritySid(authority.getAuthority())));
 
             return sids;
         };

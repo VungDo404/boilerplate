@@ -3,7 +3,6 @@ import { Router } from "@angular/router";
 import { NotifyService } from "../../../shared/service/notify.service";
 import { TranslateService } from "@ngx-translate/core";
 import { Subject, takeUntil } from "rxjs";
-import Swal, { SweetAlertResult } from "sweetalert2";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { LocalStorageService } from "../../../shared/service/local-storage.service";
 import { AuthenticationService } from "../../../shared/service/http/authentication.service";

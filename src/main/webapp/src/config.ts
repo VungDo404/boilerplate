@@ -1,7 +1,7 @@
 import {
-    APP_INITIALIZER,
     ApplicationConfig,
-    importProvidersFrom, inject,
+    importProvidersFrom,
+    inject,
     provideAppInitializer,
     provideZoneChangeDetection
 } from '@angular/core';
@@ -18,6 +18,7 @@ import { LanguageHeaderInterceptor } from "./shared/interceptor/language-header.
 import { LanguageService } from "./shared/service/language.service";
 import { HttpErrorInterceptor } from "./shared/interceptor/http-error.interceptor";
 import { BearerTokenInterceptor } from "./shared/interceptor/bearer-token.interceptor";
+import { SessionService } from "./shared/service/session.service";
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -26,7 +27,7 @@ export function HttpLoaderFactory(http: HttpClient) {
 export const config: ApplicationConfig = {
     providers: [
         provideRouter(ROUTE),
-        provideZoneChangeDetection({eventCoalescing: true}),
+        provideZoneChangeDetection({ eventCoalescing: true }),
         provideAnimationsAsync(),
         providePrimeNG({
             theme: {
@@ -59,10 +60,13 @@ export const config: ApplicationConfig = {
             useClass: HttpErrorInterceptor,
             multi: true
         },
-        provideAppInitializer(() =>{
+        provideAppInitializer(() => {
             const languageService = inject(LanguageService);
             return languageService.initializeLanguage();
         }),
-
+        provideAppInitializer(() => {
+            const sessionService = inject(SessionService);
+            return sessionService.profile();
+        })
     ]
 };

@@ -95,7 +95,7 @@ public class AuthorizeController {
 	@PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.APPLICATION + "', '" + PermissionUtil.ADMIN + "')")
 	@GetMapping("/authority/user/{id}")
 	public Collection<GrantedAuthority> getGrantedAuthorities(@PathVariable String id) {
-		return authorizeService.getGrantedAuthorities(id);
+		return authorizeService.getSidGrantedAuthorities(id);
 	}
 
 	@PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.APPLICATION + "', '" + PermissionUtil.ADMIN + "')")

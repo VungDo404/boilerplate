@@ -65,6 +65,45 @@ declare interface RegisterResult {
 }
 
 declare interface AccessTokenModel {
-    accessToken: string,
-    expiredDate: Date
+    accessToken: string;
+    expiredDate: Date;
+}
+
+declare type ResourceType =
+    | "Application"
+    | "Authentication"
+    | "Authorization"
+    | "User"
+    | "File"
+    | "Domain";
+
+
+
+declare type Mask =
+    | 1
+    | 2
+    | 4
+    | 8
+    | 16
+    | 32;
+
+declare interface BaseAuthority {
+    mask: Mask;
+    type: ResourceType;
+    id: string;
+}
+
+declare interface Authority extends BaseAuthority {
+    granting: boolean;
+}
+
+declare interface ProfileResult {
+    userId?: string;
+    authorities: Authority[];
+}
+
+declare interface ObjectHierarchy {
+    type: ResourceType;
+    id: string | number;
+    parent: ObjectHierarchy | null;
 }

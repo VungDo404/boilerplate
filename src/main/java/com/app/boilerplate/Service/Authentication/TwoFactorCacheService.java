@@ -14,12 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @Service
 public class TwoFactorCacheService {
-    private final RandomUtil randomUtil;
 
     @CachePut(value = CacheConsts.TWO_FACTOR, key = "#userId")
     public String addTwoFactorCode(String userId) {
-        final var secret = randomUtil.generateSecretKey();
-        return randomUtil.getTOTPCode(secret);
+        final var secret = RandomUtil.generateSecretKey();
+        return RandomUtil.getTOTPCode(secret);
     }
 
     @CacheEvict(value = CacheConsts.TWO_FACTOR, key = "#userId")

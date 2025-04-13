@@ -2,7 +2,6 @@ package com.app.boilerplate.Exception;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.*;
 import org.springframework.lang.NonNull;
 import org.springframework.security.access.AccessDeniedException;
@@ -16,12 +15,10 @@ import org.springframework.security.oauth2.jwt.BadJwtException;
 import org.springframework.security.oauth2.server.resource.InvalidBearerTokenException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.UnsupportedMediaTypeStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -288,7 +285,7 @@ public class ControllerException extends ResponseEntityExceptionHandler {
 	ResponseEntity<Object> handleRuntimeException(Exception exception, NativeWebRequest request) {
 		return handleException(
 			exception,
-			resolveResponseStatus(exception),
+			HttpStatus.INTERNAL_SERVER_ERROR,
 			exception.getMessage(),
 			exception.getMessage(),
 			null,
@@ -322,23 +319,6 @@ public class ControllerException extends ResponseEntityExceptionHandler {
 		return ResponseEntity
 			.status(problemDetail.getStatus())
 			.body(problemDetail);
-	}
-
-	private HttpStatus resolveResponseStatus(Exception exception) {
-		if (exception instanceof ResponseStatusException responseStatusException) {
-			return responseStatusException.getStatusCode()
-				.is5xxServerError()
-				? HttpStatus.INTERNAL_SERVER_ERROR
-				: HttpStatus.valueOf(responseStatusException.getStatusCode()
-				.value());
-		}
-
-		ResponseStatus responseStatus = AnnotationUtils.findAnnotation(
-			exception.getClass(),
-			ResponseStatus.class
-		);
-
-		return responseStatus != null ? responseStatus.value() : HttpStatus.INTERNAL_SERVER_ERROR;
 	}
 
 }

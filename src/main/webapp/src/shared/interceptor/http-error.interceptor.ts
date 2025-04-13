@@ -98,7 +98,6 @@ export class HttpErrorInterceptor implements HttpInterceptor {
                 })
             );
         }
-
     }
 
     private updateRequestWithNewToken(request: HttpRequest<unknown>, newToken: string) {

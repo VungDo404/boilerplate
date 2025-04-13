@@ -7,22 +7,18 @@ import org.hibernate.envers.RevisionType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
-
 @RequiredArgsConstructor
 @Component
 public class ApplicationRevisionListener implements EntityTrackingRevisionListener {
-	private final SecurityUtil securityUtil;
-	private static final UUID SYSTEM_USER_ID = UUID.fromString("00000000-0000-0000-0000-000000000000");
 	@Override
 	public void newRevision(final Object revisionEntity) {
 		final var revision = (AuditEnversRevision) revisionEntity;
 		final var authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (authentication != null && authentication.isAuthenticated()
-				&& !"anonymousUser".equals(authentication.getPrincipal())){
-			revision.setUserId(securityUtil.getUserId());
+				&& !AppConsts.ANONYMOUS_USER.equals(authentication.getPrincipal())){
+			revision.setUserId(SecurityUtil.getAccessJwt().getSub());
 		}else{
-			revision.setUserId(SYSTEM_USER_ID);
+			revision.setUserId(AppConsts.SYSTEM_USER_ID);
 		}
 
 	}

@@ -1,5 +1,6 @@
 package com.app.boilerplate.Util;
 
+import java.util.UUID;
 
 public final class AppConsts {
 
@@ -15,4 +16,10 @@ public final class AppConsts {
 	public static final String ACCESS_TOKEN_ID = "access_token_id";
 
 	public static final String HMAC_SHA_256 = "HmacSHA256";
+	public static final String HMAC_SHA_1 = "HmacSHA1";
+
+	public static final UUID SYSTEM_USER_ID = UUID.fromString("00000000-0000-0000-0000-000000000000");
+
+	public static final String ANONYMOUS_USER = "anonymousUser";
+
 }

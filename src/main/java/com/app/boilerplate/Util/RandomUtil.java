@@ -2,7 +2,6 @@ package com.app.boilerplate.Util;
 
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.springframework.stereotype.Component;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -12,14 +11,13 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
 
-@Component
 public final class RandomUtil {
     public static final int CODE_DIGITS = 6;
-    public String randomPassword(){
+    public static String randomPassword(){
         return RandomStringUtils.randomAlphanumeric(10);
     }
 
-    public String randomToken() {
+    public static String randomToken() {
         final var secureRandom = new SecureRandom();
         final var randomBytes = new byte[26];
         secureRandom.nextBytes(randomBytes);
@@ -33,7 +31,7 @@ public final class RandomUtil {
         return Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
     }
 
-    public  String generateSecretKey() {
+    public static String generateSecretKey() {
         final var random = new SecureRandom();
         final var bytes = new byte[20];
         random.nextBytes(bytes);
@@ -42,13 +40,12 @@ public final class RandomUtil {
         return base32.encodeToString(bytes).replace("=", "");
     }
 
-    public String getTOTPCode(String secretKey) {
+    public static String getTOTPCode(String secretKey) {
         final var timeIndex = System.currentTimeMillis() / 30000;
         return generateTOTP(secretKey, timeIndex);
     }
 
-    public String generateTOTP(String secret, long timeIndex) {
-        final var HASH_ALGORITHM = "HmacSHA1";
+    public static String generateTOTP(String secret, long timeIndex) {
         try {
             final var base32 = new Base32();
             final var bytes = base32.decode(secret);
@@ -59,8 +56,8 @@ public final class RandomUtil {
                 data[i] = (byte) value;
             }
 
-            final var signKey = new SecretKeySpec(bytes, HASH_ALGORITHM);
-            final var mac = Mac.getInstance(HASH_ALGORITHM);
+            final var signKey = new SecretKeySpec(bytes, AppConsts.HMAC_SHA_1);
+            final var mac = Mac.getInstance(AppConsts.HMAC_SHA_1);
             mac.init(signKey);
             final var hash = mac.doFinal(data);
 

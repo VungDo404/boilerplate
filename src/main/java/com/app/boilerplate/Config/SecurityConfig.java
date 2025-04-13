@@ -1,6 +1,7 @@
 package com.app.boilerplate.Config;
 
 import com.app.boilerplate.Security.*;
+import com.app.boilerplate.Util.AppConsts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -53,7 +54,8 @@ public class SecurityConfig {
         OAuth2AuthenticationSuccessHandler successHandler,
         OAuth2UserService oAuth2UserService,
         ClientRegistrationRepository repository) throws Exception {
-        http.anonymous(anonymous -> anonymous.principal("anonymousUser")
+        http.anonymous(anonymous -> anonymous
+                .principal(AppConsts.ANONYMOUS_USER)
                 .authorities("ROLE_AUTHENTICATION_ANONYMOUS"))
             .authorizeHttpRequests(auth -> auth.anyRequest()
                 .permitAll())

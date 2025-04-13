@@ -21,7 +21,10 @@ public class HierarchicalPermissionGrantingStrategy extends DefaultPermissionGra
 
     @Override
     public boolean isGranted(
-        Acl acl, List<Permission> permissions, List<Sid> sids, boolean administrativeMode) throws NotFoundException {
+        Acl acl,
+        List<Permission> permissions,
+        List<Sid> sids,
+        boolean administrativeMode) throws NotFoundException {
         Assert.isTrue(permissions.size() == 1, "The permissions list must have exactly one element.");
         Permission permission = permissions.get(0);
         List<AccessControlEntry> aces = Optional.ofNullable(acl.getEntries())

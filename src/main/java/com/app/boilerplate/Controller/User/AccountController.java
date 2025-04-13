@@ -6,9 +6,9 @@ import com.app.boilerplate.Shared.Account.Dto.ChangePasswordDto;
 import com.app.boilerplate.Shared.Account.Dto.EmailDto;
 import com.app.boilerplate.Shared.Account.Dto.ResetPasswordDto;
 import com.app.boilerplate.Shared.Account.Group.RegisterUser;
+import com.app.boilerplate.Shared.Account.Model.ProfileModel;
 import com.app.boilerplate.Shared.Account.Model.RegisterResultModel;
 import com.app.boilerplate.Shared.Account.Model.TOTPModel;
-import com.app.boilerplate.Shared.Authentication.AccessJwt;
 import com.app.boilerplate.Shared.User.Dto.CreateUserDto;
 import com.app.boilerplate.Util.PermissionUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -95,8 +94,8 @@ public class AccountController {
     @PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.WRITE +
         "')")
     @GetMapping("/profile")
-    public String profile(@AuthenticationPrincipal AccessJwt jwt) {
-        return accountService.profile(jwt);
+    public ProfileModel profile() {
+        return accountService.profile();
     }
 
     @PreAuthorize("hasPermission(#id.toString(), '" + PermissionUtil.USER + "', '" + PermissionUtil.WRITE + "')")

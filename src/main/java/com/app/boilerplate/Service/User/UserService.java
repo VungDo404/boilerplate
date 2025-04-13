@@ -34,7 +34,6 @@ import java.util.UUID;
 @Service
 public class UserService {
     private final Logger log = LoggerFactory.getLogger(UserService.class);
-    private final RandomUtil randomUtil;
     private final IUserMapper userMapper;
     private final UserRepository userRepository;
     private final ApplicationEventPublisher eventPublisher;
@@ -93,7 +92,7 @@ public class UserService {
         final var user = Optional.of(u)
             .map(req -> {
                 req.setPassword(Optional.ofNullable(req.getPassword())
-                    .orElseGet(randomUtil::randomPassword));
+                    .orElseGet(RandomUtil::randomPassword));
                 req.setSecurityStamp(UUID.randomUUID()
                     .toString());
                 req.setProvider(loginProvider);

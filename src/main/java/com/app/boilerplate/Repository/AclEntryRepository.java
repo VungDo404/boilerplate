@@ -31,4 +31,5 @@ public interface AclEntryRepository extends JpaRepository<AclEntry, Long> {
             )
             """)
 	Page<AclEntry> findByUserId(Pageable pageable,@Param("userId") UUID userId);
+
 }

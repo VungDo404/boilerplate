@@ -23,6 +23,6 @@ public class JwtAuthenticationConverter implements Converter<Jwt, AbstractAuthen
 	}
 
 	private Collection<GrantedAuthority> extractAuthorities(String sid) {
-		return authorizeService.getGrantedAuthorities(sid);
+		return authorizeService.getSidGrantedAuthorities(sid);
 	}
 }

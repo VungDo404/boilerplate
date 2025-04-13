@@ -1,8 +1,5 @@
 package com.app.boilerplate.Util;
 
-import org.springframework.stereotype.Component;
-
-@Component
 public final class PermissionUtil {
 	public static final String USER = "com.app.boilerplate.Domain.User";
 	public static final String APPLICATION = "com.app.boilerplate.Domain.Application";

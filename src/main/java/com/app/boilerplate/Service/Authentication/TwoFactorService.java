@@ -24,7 +24,6 @@ import java.util.UUID;
 @Service
 public class TwoFactorService {
     private final UserService userService;
-    private final RandomUtil randomUtil;
     private final TwoFactorCacheService twoFactorCacheService;
     private final ApplicationEventPublisher eventPublisher;
     private final TokenService tokenService;
@@ -70,7 +69,7 @@ public class TwoFactorService {
             long timeWindow = System.currentTimeMillis() / 30000;
 
             for (int i = -WINDOW_SIZE; i <= WINDOW_SIZE; ++i) {
-                final var hash = randomUtil.generateTOTP(secretKey, timeWindow + i);
+                final var hash = RandomUtil.generateTOTP(secretKey, timeWindow + i);
                 if (Objects.equals(hash, inputCode)) {
                     return true;
                 }
@@ -82,7 +81,7 @@ public class TwoFactorService {
     }
 
     public TOTPModel generateSecret(String name){
-        final var secret = randomUtil.generateSecretKey();
+        final var secret = RandomUtil.generateSecretKey();
         final var uri = getQRCodeURI(name, APP_NAME, secret);
         return TOTPModel.builder()
             .secret(secret)

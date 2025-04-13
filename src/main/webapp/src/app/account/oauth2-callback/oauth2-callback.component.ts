@@ -22,7 +22,6 @@ export class Oauth2CallbackComponent implements OnInit {
             const tokenResult: AuthenticationTokenResult = {
                 accessToken: params.get('token') || '',
                 expiresInSeconds: +(params.get('expired') ?? '0'),
-                encryptedAccessToken: ''
             }
             const cb = () => {
                 this.spinnerService.hide();
