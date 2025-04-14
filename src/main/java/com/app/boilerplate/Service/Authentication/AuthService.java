@@ -56,6 +56,8 @@ public class AuthService {
     private final AccountService accountService;
     private final TwoFactorService twoFactorService;
 
+    private final String NONE = "None";
+
     public LoginResultModel authenticate(LoginDto request, HttpServletResponse response) {
         final var authenticationToken = new UsernamePasswordAuthenticationToken(request.getUsername(),
             request.getPassword());
@@ -120,21 +122,21 @@ public class AuthService {
                 .secure(true)
                 .path("/api/auth/refresh-token")
                 .maxAge(Duration.ZERO)
-                .sameSite("Lax")
+                .sameSite(NONE)
                 .build(),
             ResponseCookie.from(AppConsts.REFRESH_TOKEN, "")
                 .httpOnly(true)
                 .secure(true)
                 .path("/api/account/profile")
                 .maxAge(Duration.ZERO)
-                .sameSite("Lax")
+                .sameSite(NONE)
                 .build(),
             ResponseCookie.from(AppConsts.REFRESH_TOKEN, "")
                 .httpOnly(true)
                 .secure(true)
                 .path("/api/auth/logout")
                 .maxAge(Duration.ZERO)
-                .sameSite("Lax")
+                .sameSite(NONE)
                 .build()
         };
 
@@ -299,21 +301,21 @@ public class AuthService {
                 .secure(true)
                 .path("/api/auth/refresh-token")
                 .maxAge(maxAge)
-                .sameSite("Lax")
+                .sameSite(NONE)
                 .build(),
             ResponseCookie.from(AppConsts.REFRESH_TOKEN, value)
                 .httpOnly(true)
                 .secure(true)
                 .path("/api/account/profile")
                 .maxAge(maxAge)
-                .sameSite("Lax")
+                .sameSite(NONE)
                 .build(),
             ResponseCookie.from(AppConsts.REFRESH_TOKEN, value)
                 .httpOnly(true)
                 .secure(true)
                 .path("/api/auth/logout")
                 .maxAge(maxAge)
-                .sameSite("Lax")
+                .sameSite(NONE)
                 .build()
         };
         for (ResponseCookie cookie : cookies) {

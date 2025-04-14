@@ -7,6 +7,10 @@ import { ActivatedRoute } from "@angular/router";
 import { Button } from "primeng/button";
 import { TranslatePipe } from "@ngx-translate/core";
 import { ValidationMessageComponent } from "../../../shared/component/validation-message/validation-message.component";
+import { ROOT_OBJECT } from "../../../shared/const/app.const";
+import { Action } from "../../../shared/const/app.enum";
+import { NgIf } from "@angular/common";
+import { PermissionPipe } from "../../../shared/pipe/permission.pipe";
 
 @Component({
     selector: 'app-reset-password',
@@ -15,7 +19,9 @@ import { ValidationMessageComponent } from "../../../shared/component/validation
         FormsModule,
         ReactiveFormsModule,
         TranslatePipe,
-        ValidationMessageComponent
+        ValidationMessageComponent,
+        NgIf,
+        PermissionPipe
     ],
     templateUrl: './reset-password.component.html',
     standalone: true,
@@ -67,4 +73,7 @@ export class ResetPasswordComponent {
         });
 
     }
+
+    protected readonly ROOT_OBJECT = ROOT_OBJECT;
+    protected readonly Action = Action;
 }

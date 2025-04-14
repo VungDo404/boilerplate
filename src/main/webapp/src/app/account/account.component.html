@@ -1,5 +1,4 @@
-<p-toast/>
-<div class="account-container">
+<div class="account-container" *ngIf=" ROOT_OBJECT | permission: 'Authentication': Action.Read">
     <section class="left-wrapper">
         <div class="left">
             <p-image src="src/assets/logos/02.svg" alt="Logo" width="224" height="82" class="logo-1"/>

@@ -48,7 +48,7 @@ public class AuthController {
         authService.logout(jwt, response, refreshToken);
     }
 
-    @PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.WRITE +
+    @PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.READ +
         "')")
     @PostMapping("/send-code")
     public void sendTwoFactorCode(@RequestBody @Valid SendTwoFactorCodeDto request) {

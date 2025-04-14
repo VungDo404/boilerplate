@@ -1,7 +1,11 @@
 <div class="message ">
     <p>{{ 'SendCodeMessage' | translate }}</p>
 </div>
-<form [formGroup]="form" (ngSubmit)="submit()" class="card form">
+<form
+        [formGroup]="form"
+        (ngSubmit)="submit()"
+        class="card form"
+        *ngIf=" ROOT_OBJECT | permission: 'Authentication': Action.Read">
     <p-select [options]="selectedOption"
               formControlName="provider"
               optionLabel="label"

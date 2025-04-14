@@ -37,7 +37,6 @@ export class HttpErrorInterceptor implements HttpInterceptor {
                         }
 
                         const toastSource = this.toastService.toastSource;
-
                         if ('fieldErrors' in problemDetail) {
                             const messageOptions = problemDetail.fieldErrors.map(err => ({
                                 severity: 'error',

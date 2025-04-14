@@ -1,7 +1,15 @@
 <p-image src="src/assets/images/05.png" alt="Logo" width="230" height="230" class="logo-1"/>
-<div class="message body-2">
+<div class="message body-2" *ngIf=" ROOT_OBJECT | permission: 'Authentication': Action.Write">
     <span>{{'SendEmailMessage1' | translate}}</span>&nbsp;
     <span>{{ userEmail }}</span>&nbsp;
     <span>{{'SendEmailMessage2' | translate}}</span>
 </div>
-<p-button label="{{'OpenMyEmail' | translate}}" styleClass="primary-btn" type="button" (click)="openEmailClient()" fluid/>
+<p-button
+        label="{{'OpenMyEmail' | translate}}"
+        styleClass="primary-btn"
+        type="button"
+        (click)="openEmailClient()"
+        fluid
+        *ngIf=" ROOT_OBJECT | permission: 'Authentication': Action.Write"
+/>
+

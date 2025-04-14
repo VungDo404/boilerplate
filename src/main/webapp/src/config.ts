@@ -19,6 +19,7 @@ import { LanguageService } from "./shared/service/language.service";
 import { HttpErrorInterceptor } from "./shared/interceptor/http-error.interceptor";
 import { BearerTokenInterceptor } from "./shared/interceptor/bearer-token.interceptor";
 import { SessionService } from "./shared/service/session.service";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -38,13 +39,14 @@ export const config: ApplicationConfig = {
             }
         }),
         provideHttpClient(withInterceptorsFromDi()),
-        importProvidersFrom(TranslateModule.forRoot({
-            loader: {
-                provide: TranslateLoader,
-                useFactory: HttpLoaderFactory,
-                deps: [HttpClient]
-            }
-        })),
+        importProvidersFrom(
+            TranslateModule.forRoot({
+                loader: {
+                    provide: TranslateLoader,
+                    useFactory: HttpLoaderFactory,
+                    deps: [HttpClient]
+                }
+            }), BrowserAnimationsModule),
         {
             provide: HTTP_INTERCEPTORS,
             useClass: LanguageHeaderInterceptor,

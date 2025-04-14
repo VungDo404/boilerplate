@@ -7,6 +7,10 @@ import { NgxSpinnerService } from "ngx-spinner";
 import { SendTwoFactorCodeService } from "./send-two-factor-code.service";
 import { Button } from "primeng/button";
 import { LoginService } from "../login/login.service";
+import { ROOT_OBJECT } from "../../../shared/const/app.const";
+import { Action } from "../../../shared/const/app.enum";
+import { NgIf } from "@angular/common";
+import { PermissionPipe } from "../../../shared/pipe/permission.pipe";
 
 @Component({
     selector: 'app-send-two-factor-code',
@@ -15,7 +19,9 @@ import { LoginService } from "../login/login.service";
         Select,
         FormsModule,
         ReactiveFormsModule,
-        Button
+        Button,
+        NgIf,
+        PermissionPipe
     ],
     templateUrl: './send-two-factor-code.component.html',
     standalone: true,
@@ -77,4 +83,7 @@ export class SendTwoFactorCodeComponent implements OnInit {
             .replace(/_/g, ' ')
             .replace(/\b\w/g, char => char.toUpperCase());
     }
+
+    protected readonly ROOT_OBJECT = ROOT_OBJECT;
+    protected readonly Action = Action;
 }

@@ -21,36 +21,52 @@ export const ACCOUNT_ROUTE: Routes = [
             },
             {
                 path: "register",
-                loadComponent: () => import("./register/register.component").then(m => m.RegisterComponent)
+                loadComponent: () => import("./register/register.component").then(m => m.RegisterComponent),
+                canActivate: [PermissionGuard],
+                data: { mask: Action.Create, type: "Authentication", id: ROOT_OBJECT } as BaseAuthority
             },
             {
                 path: "forgot-password",
-                loadComponent: () => import("./forgot-password/forgot-password.component").then(m => m.ForgotPasswordComponent)
+                loadComponent: () => import("./forgot-password/forgot-password.component").then(m => m.ForgotPasswordComponent),
+                canActivate: [PermissionGuard],
+                data: { mask: Action.Write, type: "Authentication", id: ROOT_OBJECT } as BaseAuthority
             },
             {
                 path: "reset-password",
-                loadComponent: () => import("./reset-password/reset-password.component").then(m => m.ResetPasswordComponent)
+                loadComponent: () => import("./reset-password/reset-password.component").then(m => m.ResetPasswordComponent),
+                canActivate: [PermissionGuard],
+                data: { mask: Action.Write, type: "Authentication", id: ROOT_OBJECT } as BaseAuthority
             },
             {
                 path: "email-activation",
-                loadComponent: () => import("./email-activation/email-activation.component").then(m => m.EmailActivationComponent)
+                loadComponent: () => import("./email-activation/email-activation.component").then(m => m.EmailActivationComponent),
+                canActivate: [PermissionGuard],
+                data: { mask: Action.Write, type: "Authentication", id: ROOT_OBJECT } as BaseAuthority
             },
             {
                 path: "send-email",
-                loadComponent: () => import("./send-email/send-email.component").then(m => m.SendEmailComponent)
+                loadComponent: () => import("./send-email/send-email.component").then(m => m.SendEmailComponent),
+                canActivate: [PermissionGuard],
+                data: { mask: Action.Write, type: "Authentication", id: ROOT_OBJECT } as BaseAuthority
             },
             {
                 path: "send-code",
-                loadComponent: () => import("./send-two-factor-code/send-two-factor-code.component").then(m => m.SendTwoFactorCodeComponent)
+                loadComponent: () => import("./send-two-factor-code/send-two-factor-code.component").then(m => m.SendTwoFactorCodeComponent),
+                canActivate: [PermissionGuard],
+                data: { mask: Action.Read, type: "Authentication", id: ROOT_OBJECT } as BaseAuthority
 
             },
             {
                 path: "validate-code",
-                loadComponent: () => import("./validate-two-factor-code/validate-two-factor-code.component").then(m => m.ValidateTwoFactorCodeComponent)
+                loadComponent: () => import("./validate-two-factor-code/validate-two-factor-code.component").then(m => m.ValidateTwoFactorCodeComponent),
+                canActivate: [PermissionGuard],
+                data: { mask: Action.Read, type: "Authentication", id: ROOT_OBJECT } as BaseAuthority
             },
             {
                 path: "oauth-callback",
-                loadComponent: () => import("./oauth2-callback/oauth2-callback.component").then(m => m.Oauth2CallbackComponent)
+                loadComponent: () => import("./oauth2-callback/oauth2-callback.component").then(m => m.Oauth2CallbackComponent),
+                canActivate: [PermissionGuard],
+                data: { mask: Action.Read, type: "Authentication", id: ROOT_OBJECT } as BaseAuthority
             }
 
         ]

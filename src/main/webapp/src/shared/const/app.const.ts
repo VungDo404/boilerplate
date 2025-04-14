@@ -1,2 +1,2 @@
 export const ROOT_OBJECT = "0";
-
+export const DEFAULT_UUID = "00000000-0000-0000-0000-000000000000";

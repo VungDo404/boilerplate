@@ -3,34 +3,33 @@ import { Router, RouterLink, RouterOutlet } from "@angular/router";
 import { ImageModule } from "primeng/image";
 import { Divider } from "primeng/divider";
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { merge, Subject, Subscription, takeUntil } from "rxjs";
+import { Subject, takeUntil } from "rxjs";
 import { Toast } from "primeng/toast";
-import { MessageService, ToastMessageOptions } from "primeng/api";
-import { ToastService } from "../../shared/service/toast.service";
 import { ConfigService } from "../../shared/service/config.service";
+import { ROOT_OBJECT } from "../../shared/const/app.const";
+import { Action } from "../../shared/const/app.enum";
+import { NgIf } from "@angular/common";
+import { PermissionPipe } from "../../shared/pipe/permission.pipe";
 
 @Component({
     selector: 'app-account',
-    imports: [RouterOutlet, ImageModule, RouterLink, Divider, TranslatePipe, Toast],
-    providers: [MessageService],
+    imports: [RouterOutlet, ImageModule, RouterLink, Divider, TranslatePipe, NgIf, PermissionPipe],
     templateUrl: './account.component.html',
     standalone: true,
     styleUrl: './account.component.scss'
 })
 export class AccountComponent implements OnDestroy {
+    protected readonly ROOT_OBJECT = ROOT_OBJECT;
+    protected readonly Action = Action;
     title: string = '';
     message: string = '';
     linkText: string = '';
     linkRoute: string = '';
-    toastMessageOptions: ToastMessageOptions[] = [];
-    private toastSubscription!: Subscription;
     private destroy$ = new Subject<void>();
 
     constructor(
         private router: Router,
         private translate: TranslateService,
-        private messageService: MessageService,
-        private toastService: ToastService,
         private configService: ConfigService
     ) {
         this.router.events
@@ -38,12 +37,6 @@ export class AccountComponent implements OnDestroy {
             .subscribe(() => {
                 this.updateAuthPage();
             });
-        this.toastSubscription = merge(
-            this.toastService.toastMessage$,
-        ).subscribe((option: ToastMessageOptions[]) => {
-            this.toastMessageOptions = option;
-            this.messageService.addAll(this.toastMessageOptions);
-        });
     }
 
     updateAuthPage() {
@@ -128,7 +121,6 @@ export class AccountComponent implements OnDestroy {
     externalLogin(provider: string) {
         window.location.href = this.configService.oauthLoginUrl + provider;
     }
-
 
     ngOnDestroy(): void {
         this.destroy$.next();

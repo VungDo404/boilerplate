@@ -6,6 +6,10 @@ import { ValidationMessageComponent } from "../../../shared/component/validation
 import { NgxSpinnerService } from "ngx-spinner";
 import { RegisterService } from "./register.service";
 import { passwordMatchValidator } from "../../../shared/validator/confirmed-password.validator";
+import { ROOT_OBJECT } from "../../../shared/const/app.const";
+import { Action } from "../../../shared/const/app.enum";
+import { NgIf } from "@angular/common";
+import { PermissionPipe } from "../../../shared/pipe/permission.pipe";
 
 
 @Component({
@@ -16,6 +20,8 @@ import { passwordMatchValidator } from "../../../shared/validator/confirmed-pass
         ReactiveFormsModule,
         TranslatePipe,
         ValidationMessageComponent,
+        NgIf,
+        PermissionPipe,
     ],
     templateUrl: './register.component.html',
     standalone: true,
@@ -94,4 +100,7 @@ export class RegisterComponent implements OnInit {
         this.submitted = false;
         this.registerForm.reset();
     }
+
+    protected readonly ROOT_OBJECT = ROOT_OBJECT;
+    protected readonly Action = Action;
 }

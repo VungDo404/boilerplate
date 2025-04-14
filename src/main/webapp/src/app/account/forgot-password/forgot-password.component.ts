@@ -5,6 +5,10 @@ import { ValidationMessageComponent } from "../../../shared/component/validation
 import { Button } from "primeng/button";
 import { NgxSpinnerService } from "ngx-spinner";
 import { ForgotPasswordService } from "./forgot-password.service";
+import { ROOT_OBJECT } from "../../../shared/const/app.const";
+import { Action } from "../../../shared/const/app.enum";
+import { NgIf } from "@angular/common";
+import { PermissionPipe } from "../../../shared/pipe/permission.pipe";
 
 @Component({
     selector: 'app-forgot-password',
@@ -13,7 +17,9 @@ import { ForgotPasswordService } from "./forgot-password.service";
         ReactiveFormsModule,
         TranslatePipe,
         ValidationMessageComponent,
-        Button
+        Button,
+        NgIf,
+        PermissionPipe
     ],
     templateUrl: './forgot-password.component.html',
     standalone: true,
@@ -52,4 +58,7 @@ export class ForgotPasswordComponent {
         }
         this.forgotPasswordService.forgotPassword(email, cb);
     }
+
+    protected readonly ROOT_OBJECT = ROOT_OBJECT;
+    protected readonly Action = Action;
 }

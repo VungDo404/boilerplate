@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { AccountService } from "./http/account.service";
 import { map, tap } from "rxjs";
+import { DEFAULT_UUID } from "../const/app.const";
 
 @Injectable({
     providedIn: 'root'
 })
 export class SessionService {
     private authorities!: Authority[];
-    private userId: string = "00000000-0000-0000-0000-000000000000";
+    private userId: string = DEFAULT_UUID;
 
     constructor(private accountService: AccountService) { }
 
@@ -23,5 +24,9 @@ export class SessionService {
 
     get permissions(){
         return this.authorities;
+    }
+
+    get isAuthenticated(){
+        return this.userId !== DEFAULT_UUID;
     }
 }

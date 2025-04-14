@@ -64,8 +64,7 @@ public class SecurityConfig {
             .oauth2ResourceServer(oauth2 -> oauth2
                     .jwt(jwt -> jwt.decoder(jwtDecoder)
                         .jwtAuthenticationConverter(authenticationConverter))
-                    .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
-                                 )
+                    .authenticationEntryPoint(new JwtAuthenticationEntryPoint()))
             .oauth2Login(oauth -> oauth
                 .userInfoEndpoint(info -> info.userService(oAuth2UserService))
                 .authorizationEndpoint(aep -> aep.authorizationRequestResolver(authorizationRequestResolver(repository)))

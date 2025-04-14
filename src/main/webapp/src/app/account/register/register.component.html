@@ -1,4 +1,10 @@
-<form method="post" (ngSubmit)="register()" class="auth-form" [formGroup]="registerForm">
+<form
+        method="post"
+        (ngSubmit)="register()"
+        class="auth-form"
+        [formGroup]="registerForm"
+        *ngIf=" ROOT_OBJECT | permission: 'Authentication': Action.Create"
+>
     <div class="shad-form-item">
         <label class="shad-form-label" for="username">{{ "Username" | translate }}</label>
         <input

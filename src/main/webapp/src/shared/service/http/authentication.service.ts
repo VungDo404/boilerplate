@@ -15,7 +15,7 @@ export class AuthenticationService {
 
     authenticate(body: LoginForm) {
         const url = this.baseUrl + "/authenticate";
-        return this.http.post<AuthenticationResult>(url, body);
+        return this.http.post<AuthenticationResult>(url, body, { withCredentials: true });
     }
 
     sendTwoFactorCode(body: SendTwoFactorCode) {
@@ -25,11 +25,11 @@ export class AuthenticationService {
 
     refreshToken(){
         const url = this.baseUrl + "/refresh-token";
-        return this.http.post<AuthenticationTokenResult>(url, {});
+        return this.http.post<AuthenticationTokenResult>(url, {}, { withCredentials: true });
     }
 
     logout(){
         const url = this.baseUrl + "/logout";
-        return this.http.post(url, {});
+        return this.http.post(url, {}, { withCredentials: true });
     }
 }

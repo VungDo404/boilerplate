@@ -6,6 +6,10 @@ import { ValidationMessageComponent } from "../../../shared/component/validation
 import { LoginService } from "./login.service";
 import { NgxSpinnerService } from "ngx-spinner";
 import { RouterLink } from "@angular/router";
+import { PermissionPipe } from "../../../shared/pipe/permission.pipe";
+import { ROOT_OBJECT } from "../../../shared/const/app.const";
+import { NgIf } from "@angular/common";
+import { Action } from "../../../shared/const/app.enum";
 
 @Component({
     selector: 'app-login',
@@ -16,6 +20,8 @@ import { RouterLink } from "@angular/router";
         ReactiveFormsModule,
         ValidationMessageComponent,
         RouterLink,
+        NgIf,
+        PermissionPipe,
     ],
     templateUrl: './login.component.html',
     standalone: true,
@@ -59,4 +65,7 @@ export class LoginComponent implements OnDestroy, OnInit {
     ngOnInit(): void {
         this.loginService.initForm()
     }
+
+    protected readonly ROOT_OBJECT = ROOT_OBJECT;
+    protected readonly Action = Action;
 }
