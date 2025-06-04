@@ -53,5 +53,12 @@
   "PleaseEnterNoMoreThanNCharacter": "Please enter no more than {{value}} characters",
   "InvalidEmailAddress": "Invalid email address",
   "InvalidPattern": "Invalid pattern: {{value}}",
-  "PasswordMismatch": "Confirmed Password must be the same as Password"
+  "PasswordMismatch": "Confirmed Password must be the same as Password",
+
+  "Search": "Search",
+
+  "Profile": "Profile",
+  "SignOut": "Sign Out",
+  "Language": "Language",
+  "LanguageTitle": "Choose your language"
 }

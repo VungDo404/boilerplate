@@ -100,6 +100,9 @@ declare interface Authority extends BaseAuthority {
 declare interface ProfileResult {
     userId?: string;
     authorities: Authority[];
+    username?: string;
+    avatar?: string;
+    displayName?: string;
 }
 
 declare interface ObjectHierarchy {

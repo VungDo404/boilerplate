@@ -1,0 +1,7 @@
+:host {
+    grid-area: header;
+    background-color: white;
+    display: grid;
+    grid-template-columns: repeat(10, minmax(0, 1fr));
+    align-items: center;
+}

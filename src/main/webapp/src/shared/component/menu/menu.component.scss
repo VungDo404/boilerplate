@@ -1,0 +1,60 @@
+@use "util" as u;
+@use "header/variable" as hv;
+
+.menu-container {
+    background-color: white;
+    width: 300px;
+    max-width: 300px;
+    max-height: 747px;
+    border-radius: 12px;
+    overflow-x: hidden;
+    box-shadow: 0 4px 32px 0 rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    z-index: 100;
+
+    .menu-section {
+        &.bottom-border {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+    }
+
+    .sub-menu {
+        overflow: visible;
+        display: flex;
+        flex-direction: column;
+
+        ::ng-deep b-menu {
+            display: block !important;
+            flex: 1;
+
+            .menu-container {
+                position: static;
+            }
+        }
+    }
+
+    .menu-header {
+        display: flex;
+        align-items: center;
+        font-size: 1rem;
+        height: fit-content;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+        .header-icon {
+            width: hv.$header-icon;
+            height: hv.$header-icon;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.3s ease;
+
+            &:hover {
+                background-color: rgba(0, 0, 0, 0.1);
+                cursor: pointer;
+            }
+        }
+    }
+}

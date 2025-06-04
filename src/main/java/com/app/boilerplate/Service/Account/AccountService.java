@@ -5,7 +5,7 @@ import com.app.boilerplate.Exception.BadRequestException;
 import com.app.boilerplate.Mapper.IUserMapper;
 import com.app.boilerplate.Service.Authentication.TwoFactorService;
 import com.app.boilerplate.Service.Authorization.AuthorizeService;
-import com.app.boilerplate.Service.StorageService;
+import com.app.boilerplate.Service.Storage.StorageService;
 import com.app.boilerplate.Service.Token.TokenService;
 import com.app.boilerplate.Service.User.UserService;
 import com.app.boilerplate.Shared.Account.Dto.ChangePasswordDto;
@@ -31,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -172,7 +173,7 @@ public class AccountService {
         return url;
     }
 
-    public ProfileModel profile() {
+    public ProfileModel profile() throws MalformedURLException {
         final var author = authorizeService.getGrantedAuthority(SecurityUtil.getUserId()
             .toString());
         final var authorities = author.stream()
@@ -183,9 +184,30 @@ public class AccountService {
                 return new AuthorityModel(a.getMask(), last, a.isGranting(), a.getId());
             })
             .toList();
+        if(SecurityUtil.isAnonymous()){
+            return ProfileModel.builder()
+                .userId(SecurityUtil.getUserId())
+                .authorities(authorities)
+                .build();
+        }
+        final var user = userService.getUserById(SecurityUtil.getUserId());
+        final var imageUrl = Optional.ofNullable(user.getImage())
+            .map(String::trim)
+            .filter(s -> !s.isEmpty())
+            .flatMap(image -> {
+                try {
+                    return Optional.of(new URL(image));
+                } catch (MalformedURLException e) {
+                    return Optional.empty();
+                }
+            });
+
         return ProfileModel.builder()
             .userId(SecurityUtil.getUserId())
             .authorities(authorities)
+            .username(user.getUsername())
+            .displayName(user.getDisplayName())
+            .avatar(imageUrl.orElse(null))
             .build();
     }
 }

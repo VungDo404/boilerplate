@@ -6,3 +6,8 @@ export enum Action{
     Grant = 1 << 4,
     Admin = 1 << 5
 }
+
+export enum Locale {
+    English = 'en',
+    Vietnamese = 'vi'
+}

@@ -1,0 +1,41 @@
+<div
+    #menu
+    class="menu-container"
+    *ngIf="menuService.isVisible"
+    [style.top.px]="position.top"
+    [style.left.px]="position.left"
+>
+    <div>
+        <h2 *ngIf="getCurrentMenuData.title"
+            [class.hidden]="menuService.menuTracking.at(-1) !== currentMenu"
+            class="menu-header"
+        >
+            <div (click)="navigateBack()" class="header-icon">
+                <i *ngIf="menuService.menuTracking.length > 1" class="pi pi-arrow-left icon"></i>
+            </div>
+            <span>{{ getCurrentMenuData.title }}</span>
+        </h2>
+        <div class="menu-section"
+             [class.hidden]="menuService.menuTracking.at(-1) !== currentMenu"
+             *ngFor="let section of getCurrentMenuData.sections; let isLast = last"
+             [class.bottom-border]="!isLast"
+             [id]="section.id"
+        >
+            <ng-container *ngFor="let item of section.items">
+                <ng-container *ngIf="item.type === 'profile'">
+                    <b-menu-profile-item [item]="item"></b-menu-profile-item>
+                </ng-container>
+
+                <ng-container *ngIf="item.type === 'link'">
+                    <b-menu-link-item [item]="item" [isSubRender]="getCurrentMenuData.title"></b-menu-link-item>
+                </ng-container>
+            </ng-container>
+        </div>
+        <div class="sub-menu">
+            <ng-container
+                    *ngIf="menuService.menuTracking.length > 1 && menuService.menuTracking.at(-2) === currentMenu && menuService.menuTracking.at(-1) as currentKey">
+                <b-menu [items]="items" [currentMenu]="currentKey" ></b-menu>
+            </ng-container>
+        </div>
+    </div>
+</div>

@@ -1,4 +1,4 @@
-@use "style" as *;
+@use "util" as u;
 
 $gap: 35px;
 :host {
@@ -8,25 +8,6 @@ $gap: 35px;
   gap: $gap;
   text-align: center;
   margin-top: $gap;
-
-  .title-wrapper {
-    qrcode {
-      height: fit-content;
-    }
-
-    .qr-wrapper {
-      .secret-container {
-        display: flex;
-        gap: 5px;
-        justify-content: center;
-        align-items: center;
-
-        > p:first-child {
-          font-weight: bold;
-        }
-      }
-    }
-  }
 
   .form-wrapper {
     width: 100%;
@@ -52,6 +33,7 @@ $gap: 35px;
       width: 100%;
 
       ::ng-deep button.primary-btn {
+        @extend .primary-btn !optional;
         height: 66px !important;
       }
     }

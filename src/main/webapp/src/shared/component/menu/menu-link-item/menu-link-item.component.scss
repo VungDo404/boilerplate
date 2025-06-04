@@ -1,0 +1,22 @@
+@use 'header/variable' as hv;
+
+.icon {
+    font-size: hv.$icon-size;
+}
+
+.link {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: hv.$menu-gap;
+    color: inherit;
+    text-decoration: none;
+
+    &.check {
+        gap: calc(#{hv.$header-icon} - #{hv.$menu-gap} - #{hv.$icon-size});
+    }
+
+    .sub {
+        padding-left: calc(#{hv.$header-icon} - #{hv.$menu-gap});
+    }
+}

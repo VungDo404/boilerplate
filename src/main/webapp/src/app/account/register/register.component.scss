@@ -1,8 +1,11 @@
+@use "util" as u;
+
 :host{
   width: 100%;
   .auth-form {
     p-button {
       ::ng-deep button.primary-btn {
+        @extend .primary-btn !optional;
         height: 66px !important;
       }
     }

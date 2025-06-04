@@ -9,7 +9,9 @@ import { DEFAULT_UUID } from "../const/app.const";
 export class SessionService {
     private authorities!: Authority[];
     private userId: string = DEFAULT_UUID;
-
+    username = "anonymousUser";
+    name = "Anonymous User";
+    avatar = "";
     constructor(private accountService: AccountService) { }
 
     profile() {
@@ -17,6 +19,9 @@ export class SessionService {
             tap((response) => {
                 this.authorities = response.authorities;
                 this.userId = response.userId ?? this.userId;
+                this.username = response.username ?? this.username;
+                this.avatar = response.avatar ?? "https://api.dicebear.com/7.x/bottts/svg?seed=" + this.username;
+                this.name = response.displayName ?? this.name;
             }),
             map(() => void 0)
         );

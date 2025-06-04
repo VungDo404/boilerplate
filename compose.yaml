@@ -13,6 +13,7 @@ services:
             - mysqlboilerplate:/data/db
     redis:
         image: redis:6.2-alpine
+        restart: unless-stopped
         container_name: redis
         ports:
             - '6379:6379'
@@ -24,6 +25,7 @@ services:
             - backend
     minio:
         image: minio/minio:latest
+        restart: unless-stopped
         ports:
             - "9000:9000"  # API port
             - "9001:9001"  # Console port

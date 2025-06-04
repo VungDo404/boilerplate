@@ -1,4 +1,4 @@
-package com.app.boilerplate.Service;
+package com.app.boilerplate.Service.Storage;
 
 import com.app.boilerplate.Util.StorageConsts;
 import io.awspring.cloud.s3.S3Template;

@@ -1,0 +1,20 @@
+@use "util" as u;
+@use "header/variable" as hv;
+
+.profile{
+    display: flex;
+    align-items: center;
+    padding: hv.$menu-gap;
+    .avatar{
+        flex-shrink: 0;
+        margin-right: hv.$menu-gap;
+    }
+    .info{
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        gap: 3px;
+
+    }
+
+}

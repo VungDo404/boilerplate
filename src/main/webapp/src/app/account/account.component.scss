@@ -1,11 +1,10 @@
-@use "style" as *;
+@use "variable" as *;
 
 .account-container{
 	display: flex;
 	min-height: 100vh;
 	background-color: white;
 	flex-wrap: nowrap;
-	font-family: "FZPoppins", serif;
 	.left-wrapper{
 		display: none;
 		padding: 10px;
@@ -56,10 +55,10 @@
 			width: min(580px, 100%);
 			display: flex;
 			flex-direction: column;
+			align-items: center;
 			@media (min-width: $lg-breakpoint){
 				justify-content: center;
 			}
-			align-items: center;
 			.logo-wrapper{
 				margin-bottom: 2rem;
 				@media (min-width: $lg-breakpoint){

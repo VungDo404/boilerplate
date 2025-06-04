@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.net.URL;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,4 +17,7 @@ import java.util.UUID;
 public class ProfileModel {
     private UUID userId;
     private List<AuthorityModel> authorities;
+    private String displayName;
+    private String username;
+    private URL avatar;
 }

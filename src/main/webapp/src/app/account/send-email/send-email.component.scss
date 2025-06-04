@@ -1,5 +1,5 @@
-@use "style" as *;
-
+@use "variable" as v;
+@use "util" as u;
 $gap: 35px;
 :host{
   width: 100%;
@@ -11,12 +11,13 @@ $gap: 35px;
   .message{
     :nth-child(2) {
       line-height: 20px;
-      color: $light-100;
+      color: v.$light-100;
       font-weight: 600;
     }
   }
   p-button {
     ::ng-deep button.primary-btn {
+      @extend .primary-btn !optional;
       height: 66px !important;
     }
   }

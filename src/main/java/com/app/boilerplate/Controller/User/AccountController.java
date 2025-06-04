@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.UUID;
 
@@ -94,7 +95,7 @@ public class AccountController {
     @PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.WRITE +
         "')")
     @GetMapping("/profile")
-    public ProfileModel profile() {
+    public ProfileModel profile() throws MalformedURLException {
         return accountService.profile();
     }
 

@@ -1,0 +1,14 @@
+<a
+        class="link menu-item"
+        [routerLink]="item.routerLink"
+        [class.check]="item.leftIcon"
+        (click)="item.cb && item.cb(item)"
+>
+    <div *ngIf="item.leftIcon">
+        <i [class]="item.leftIcon" class="icon"></i>
+    </div>
+    <span [class.sub]="isSubRender && !item.leftIcon">{{ item.label }}</span>
+    <div *ngIf="item.rightIcon">
+        <i [class]="item.rightIcon" class="icon"></i>
+    </div>
+</a>

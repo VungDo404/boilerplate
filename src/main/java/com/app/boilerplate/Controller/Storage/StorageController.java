@@ -1,7 +1,7 @@
-package com.app.boilerplate.Controller;
+package com.app.boilerplate.Controller.Storage;
 
 import com.app.boilerplate.Decorator.FileValidator.ValidFile;
-import com.app.boilerplate.Service.StorageService;
+import com.app.boilerplate.Service.Storage.StorageService;
 import com.app.boilerplate.Util.PermissionUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
