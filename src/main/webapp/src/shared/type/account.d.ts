@@ -110,3 +110,5 @@ declare interface ObjectHierarchy {
     id: string | number;
     parent: ObjectHierarchy | null;
 }
+
+declare type SessionState = Required<ProfileResult>;

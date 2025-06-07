@@ -2,6 +2,6 @@
     grid-area: header;
     background-color: white;
     display: grid;
-    grid-template-columns: repeat(10, minmax(0, 1fr));
+    grid-template-columns: 10px repeat(5, 1fr) auto minmax(16px, auto) auto 100px;
     align-items: center;
 }

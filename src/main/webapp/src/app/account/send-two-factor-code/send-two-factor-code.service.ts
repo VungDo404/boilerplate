@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from "@angular/router";
 import { AuthenticationService } from "../../../shared/service/http/authentication.service";
+import { finalize } from "rxjs";
 
 @Injectable({
     providedIn: 'root'
@@ -8,12 +9,10 @@ import { AuthenticationService } from "../../../shared/service/http/authenticati
 export class SendTwoFactorCodeService {
     constructor(private router: Router, private authenticationService: AuthenticationService) {}
     sendTwoFactorCode(model: SendTwoFactorCode,cb: () => void){
-        this.authenticationService.sendTwoFactorCode(model).subscribe({
+        this.authenticationService.sendTwoFactorCode(model).pipe(finalize(cb)).subscribe({
             next: (response) => {
-                cb();
                 this.router.navigate(["account/validate-code"])
-            },
-            error: cb
+            }
         })
     }
 }

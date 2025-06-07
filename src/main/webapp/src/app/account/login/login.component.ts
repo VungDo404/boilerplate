@@ -5,7 +5,7 @@ import { TranslatePipe } from "@ngx-translate/core";
 import { ValidationMessageComponent } from "../../../shared/component/validation-message/validation-message.component";
 import { LoginService } from "./login.service";
 import { NgxSpinnerService } from "ngx-spinner";
-import { RouterLink } from "@angular/router";
+import { ActivatedRoute, RouterLink } from "@angular/router";
 import { PermissionPipe } from "../../../shared/pipe/permission.pipe";
 import { ROOT_OBJECT } from "../../../shared/const/app.const";
 import { NgIf } from "@angular/common";
@@ -33,6 +33,7 @@ export class LoginComponent implements OnDestroy, OnInit {
     constructor(
         protected loginService: LoginService,
         private spinnerService: NgxSpinnerService,
+        private route: ActivatedRoute
     ) {}
 
     get loginForm() {
@@ -51,7 +52,12 @@ export class LoginComponent implements OnDestroy, OnInit {
             this.spinnerService.hide();
         }
         this.loginService.authenticate(cb);
+    }
 
+    private setRedirectUrl(){
+        const redirectUrl = this.route.snapshot.queryParamMap.get('redirectUrl');
+        if(redirectUrl)
+            this.loginService.redirectUrl = redirectUrl;
     }
 
     ngOnDestroy(): void {
@@ -63,7 +69,8 @@ export class LoginComponent implements OnDestroy, OnInit {
     }
 
     ngOnInit(): void {
-        this.loginService.initForm()
+        this.loginService.initForm();
+        this.setRedirectUrl();
     }
 
     protected readonly ROOT_OBJECT = ROOT_OBJECT;

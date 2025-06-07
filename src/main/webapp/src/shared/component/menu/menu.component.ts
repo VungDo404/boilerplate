@@ -24,12 +24,13 @@ export class MenuComponent implements OnDestroy, OnInit, OnChanges {
     position = { top: 0, left: 0 };
     private resizeListener?: (event: Event) => void;
     private clickListener?: (event: Event) => void;
-
+    private triggerElement?: HTMLElement;
     private readonly SPACING = 8;
 
     constructor(protected menuService: MenuService) { }
 
     toggle(event: Event) {
+        event.stopPropagation()
         if (this.menuService.isVisible) {
             this.hide();
             this.menuService.hide();
@@ -54,21 +55,29 @@ export class MenuComponent implements OnDestroy, OnInit, OnChanges {
     }
 
     private show(event: Event) {
+        this.triggerElement = event.target as HTMLElement;
         setTimeout(() => {
-            this.updatePosition(event.target as HTMLElement);
+            this.updatePosition();
         }, 0);
-        this.addClickOutsideListener();
-        this.addResizeListener(event.target as HTMLElement);
+        setTimeout(() => {
+            this.addClickOutsideListener();
+        }, 10);
+        this.addResizeListener();
     }
 
     private hide() {
         this.removeClickOutsideListener();
         this.removeResizeListener();
+        this.triggerElement = undefined;
     }
 
-    private updatePosition(target: HTMLElement) {
-        const rect = target.getBoundingClientRect();
+    private updatePosition() {
+        if (!this.triggerElement) return;
+
+        const rect = this.triggerElement.getBoundingClientRect();
         const menu = this.menuRef.nativeElement as HTMLElement;
+        if (!menu) return;
+
         const menuRect = menu.getBoundingClientRect();
 
         this.position = {
@@ -77,8 +86,8 @@ export class MenuComponent implements OnDestroy, OnInit, OnChanges {
         };
     }
 
-    private addResizeListener(target: HTMLElement) {
-        this.resizeListener = () => this.updatePosition(target);
+    private addResizeListener() {
+        this.resizeListener = () => this.updatePosition();
         window.addEventListener('resize', this.resizeListener);
     }
 
@@ -91,17 +100,22 @@ export class MenuComponent implements OnDestroy, OnInit, OnChanges {
 
     private addClickOutsideListener() {
         this.removeClickOutsideListener();
+
         this.clickListener = (event: Event) => {
             const target = event.target as HTMLElement;
             const menu = this.menuRef?.nativeElement as HTMLElement;
 
-            if (menu && !menu.contains(target)) {
+            if (menu &&
+                !menu.contains(target) &&
+                this.triggerElement &&
+                !this.triggerElement.contains(target)) {
+
                 this.hide();
+                this.menuService.hide();
             }
-        }
-        setTimeout(() => {
-            document.addEventListener('click', this.clickListener!);
-        }, 0)
+        };
+
+        document.addEventListener('click', this.clickListener, true);
     }
 
     private removeClickOutsideListener() {

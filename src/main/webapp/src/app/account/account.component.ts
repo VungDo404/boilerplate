@@ -4,7 +4,6 @@ import { ImageModule } from "primeng/image";
 import { Divider } from "primeng/divider";
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from "rxjs";
-import { Toast } from "primeng/toast";
 import { ConfigService } from "../../shared/service/config.service";
 import { ROOT_OBJECT } from "../../shared/const/app.const";
 import { Action } from "../../shared/const/app.enum";
@@ -114,8 +113,6 @@ export class AccountComponent implements OnDestroy {
                     this.linkRoute = '/account/register';
                 });
         }
-
-
     }
 
     externalLogin(provider: string) {

@@ -1,3 +1,9 @@
 <app-search></app-search>
-<app-header-notification></app-header-notification>
-<app-header-avatar></app-header-avatar>
+<ng-container *ngIf="isAuthenticated$ | async; else notAuthenticated">
+    <app-header-notification></app-header-notification>
+    <app-header-avatar></app-header-avatar>
+</ng-container>
+<ng-template #notAuthenticated>
+    <app-header-button></app-header-button>
+    <app-header-sign-in [routerLink]="'/account/login'"></app-header-sign-in>
+</ng-template>

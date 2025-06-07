@@ -1,0 +1,16 @@
+@use "header/variable" as hv;
+
+.header-icon {
+    width: hv.$header-icon;
+    height: hv.$header-icon;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.3s ease;
+
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+    }
+}

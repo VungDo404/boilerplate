@@ -6,46 +6,47 @@ import { BehaviorSubject } from "rxjs";
 })
 export class MenuService {
     defaultMenuState: MenuKey[] = ['main'];
-    private isVisibleSubject= new BehaviorSubject<boolean>(false);
+
+    private isVisibleSubject = new BehaviorSubject<boolean>(false);
     private menuTrackingSubject = new BehaviorSubject<MenuKey[]>(this.defaultMenuState);
 
-    readonly isVisible$ = this.isVisibleSubject.asObservable();
-    constructor() {
-    }
+    constructor() {}
 
-    get menuTracking(){
+    get menuTracking() {
         return this.menuTrackingSubject.value;
     }
 
-    get isVisible(){
+    get isVisible() {
         return this.isVisibleSubject.value;
     }
 
-    navigateToSubmenu(key: MenuKey){
+    navigateToSubmenu(key: MenuKey) {
         const current = this.menuTracking;
-        if(current.at(-1) !== key) {
+        if (current.at(-1) !== key) {
             this.menuTrackingSubject.next([...current, key])
         }
     }
 
-    navigateBack(){
+    navigateBack() {
         const current = this.menuTracking;
-        if(current.length > 1) {
+        if (current.length > 1) {
             current.pop();
             this.menuTrackingSubject.next([...current]);
         }
     }
 
-    hide(){
+    hide() {
         this.isVisibleSubject.next(false);
         this.resetMenuState();
     }
 
-    show(){
+    show() {
         this.isVisibleSubject.next(true);
     }
 
-    resetMenuState(){
+    resetMenuState() {
         this.menuTrackingSubject.next(this.defaultMenuState);
     }
+
+
 }

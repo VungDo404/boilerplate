@@ -8,7 +8,7 @@ $green: #3DD9B3;
 $blue: #56B8FF;
 $pink: #EEA8FD;
 $orange: #F9AB72;
-
+$white: white;
 // Light Theme Colors
 $light-100: #333F4E;
 $light-200: #A3B2C7;
@@ -19,5 +19,8 @@ $light-400: #F2F4F8;
 $dark-100: #04050C;
 $dark-200: #131524;
 
+$xs-breakpoint: 480px;
+$sm-breakpoint: 768px;
+$md-breakpoint: 992px;
 $lg-breakpoint: 1024px;
 $xl-breakpoint: 1280px;

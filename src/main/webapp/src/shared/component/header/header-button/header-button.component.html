@@ -1,4 +1,6 @@
 <ng-container *ngIf="itemSubject | async as items">
-    <p-avatar (click)="menu.toggle($event)" [image]="(avatar$ | async ) ?? ''" size="large" shape="circle"/>
+    <div class="header-icon" (click)="menu.toggle($event)">
+        <i class="pi pi-ellipsis-v icon"></i>
+    </div>
     <b-menu #menu [items]="items" currentMenu="main"></b-menu>
 </ng-container>

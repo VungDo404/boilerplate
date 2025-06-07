@@ -9,7 +9,7 @@ import {
 import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
 import { providePrimeNG } from "primeng/config";
 import Aura from '@primeng/themes/aura';
-import { provideRouter } from "@angular/router";
+import { provideRouter, withRouterConfig } from "@angular/router";
 import { ROUTE } from "./root.route";
 import { HTTP_INTERCEPTORS, HttpClient, provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
 import { TranslateLoader, TranslateModule } from "@ngx-translate/core";
@@ -27,7 +27,9 @@ export function HttpLoaderFactory(http: HttpClient) {
 
 export const config: ApplicationConfig = {
     providers: [
-        provideRouter(ROUTE),
+        provideRouter(ROUTE, withRouterConfig({
+            onSameUrlNavigation: 'reload'
+        })),
         provideZoneChangeDetection({ eventCoalescing: true }),
         provideAnimationsAsync(),
         providePrimeNG({

@@ -162,3 +162,13 @@ VALUES (@application_obj_id, 1, @role_admin_app_id, @admin, 1, 1, 1),
        (@authentication_obj_id, 6, @role_authen_id, @delete, 1, 1, 1),
        (@authorization_obj_id, 1, @role_author_app_id, @admin, 1, 1, 1),
        (@domain_obj_id, 1, @role_domain_app_id, @admin, 1, 1, 1);
+
+INSERT INTO acl_entry(acl_object_identity, ace_order, sid, mask, granting, audit_success, audit_failure)
+SELECT aoi.id, seq.ace_order, aoi.owner_sid, seq.mask, 1, 1, 1
+FROM acl_object_identity aoi
+         JOIN (
+    SELECT 1 AS ace_order, @read AS mask
+    UNION ALL
+    SELECT 2 AS ace_order, @write AS mask
+) seq ON 1=1
+WHERE aoi.object_id_class = @acl_class_user_id AND aoi.id <> @user_obj_id;

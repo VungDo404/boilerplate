@@ -1,34 +1,30 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Avatar } from "primeng/avatar";
-import { MenuComponent } from "../../menu/menu.component";
 import { SessionService } from "../../../service/session.service";
-import { LangChangeEvent, TranslateService } from "@ngx-translate/core";
-import { BehaviorSubject, Observable, Subject, takeUntil } from "rxjs";
-import { AsyncPipe, NgIf } from "@angular/common";
 import { HeaderMenuService } from "../header-menu.service";
+import { LangChangeEvent, TranslateService } from "@ngx-translate/core";
+import { BehaviorSubject, Subject, takeUntil } from "rxjs";
+import { MenuComponent } from "../../menu/menu.component";
+import { AsyncPipe, NgIf } from "@angular/common";
 
 @Component({
-    selector: 'app-header-avatar',
+    selector: 'app-header-button',
     imports: [
-        Avatar,
         MenuComponent,
         AsyncPipe,
         NgIf
     ],
-    templateUrl: './header-avatar.component.html',
+    templateUrl: './header-button.component.html',
     standalone: true,
-    styleUrl: './header-avatar.component.scss'
+    styleUrl: './header-button.component.scss'
 })
-export class HeaderAvatarComponent implements OnInit, OnDestroy {
+export class HeaderButtonComponent implements OnInit, OnDestroy {
     private destroy$ = new Subject<void>();
-    avatar$!: Observable<string>;
     itemSubject!: BehaviorSubject<MenuData>;
     constructor(
         private sessionService: SessionService,
         private headerMenuService: HeaderMenuService,
         private translate: TranslateService
     ) {
-        this.avatar$ = this.sessionService.avatar$;
         this.itemSubject = this.headerMenuService.getItemSubject;
     }
 
@@ -42,7 +38,6 @@ export class HeaderAvatarComponent implements OnInit, OnDestroy {
             });
 
     }
-
 
     ngOnDestroy(): void {
         this.destroy$.next();

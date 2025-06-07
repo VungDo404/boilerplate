@@ -2,8 +2,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { Router } from "@angular/router";
 import { NotifyService } from "../../../shared/service/notify.service";
 import { TranslateService } from "@ngx-translate/core";
-import { Subject, takeUntil } from "rxjs";
-import Swal, { SweetAlertResult } from "sweetalert2";
+import { finalize, Subject, takeUntil } from "rxjs";
 import { AccountService } from "../../../shared/service/http/account.service";
 
 @Injectable({
@@ -20,10 +19,8 @@ export class ResetPasswordService implements OnDestroy {
     ) {}
 
     resetPassword(password: string, key: string, cb: () => void) {
-        this.accountService.resetPassword(password, key).subscribe({
+        this.accountService.resetPassword(password, key).pipe(finalize(cb)).subscribe({
             next: (response) => {
-                cb();
-
                 this.translate.get(['ResetPasswordMessage', 'ResetPasswordSuccessfully', 'GoToLogin'])
                     .pipe(takeUntil(this.destroy$))
                     .subscribe(translations => {
@@ -41,7 +38,6 @@ export class ResetPasswordService implements OnDestroy {
                     });
 
             },
-            error: cb
         })
     }
 

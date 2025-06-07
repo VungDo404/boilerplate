@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Router } from "@angular/router";
+import { ActivatedRouteSnapshot, Router } from "@angular/router";
 import { NotifyService } from "../../../shared/service/notify.service";
 import { TranslateService } from "@ngx-translate/core";
-import { Subject, takeUntil } from "rxjs";
+import { finalize, Subject, takeUntil } from "rxjs";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { LocalStorageService } from "../../../shared/service/local-storage.service";
 import { AuthenticationService } from "../../../shared/service/http/authentication.service";
@@ -13,6 +13,7 @@ import { AuthenticationService } from "../../../shared/service/http/authenticati
 export class LoginService {
     private destroy$ = new Subject<void>();
     loginForm!: FormGroup;
+    redirectUrl: string | undefined;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -24,12 +25,10 @@ export class LoginService {
     ) {}
 
     authenticate(cb: () => void) {
-        this.authenticationService.authenticate(this.loginForm.value).subscribe({
+        this.authenticationService.authenticate(this.loginForm.value).pipe(finalize(cb)).subscribe({
             next: (response) => {
                 this.processAuthenticationResult(response);
-                cb();
             },
-            error: cb
         });
     }
 
@@ -90,7 +89,10 @@ export class LoginService {
                 state: { loginResult: result }
             });
         } else if ("accessToken" in result) {
-            this.login(result, () => {this.router.navigate(["/main"])})
+            this.login(result, () => {
+                window.location.href = this.redirectUrl ?? '/main';
+                this.redirectUrl = undefined;
+            })
         } else {
             this.router.navigate(['/account/login'])
         }

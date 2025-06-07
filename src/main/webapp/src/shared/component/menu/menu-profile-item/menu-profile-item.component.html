@@ -1,4 +1,5 @@
-<div class="profile" >
+<div *ngIf="item.authority.id | permission: item.authority.type: item.authority.mask"
+     class="profile">
     <div class="avatar">
         <p-avatar [image]="item.avatar" size="large" shape="circle"/>
     </div>

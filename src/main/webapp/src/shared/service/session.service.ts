@@ -1,37 +1,71 @@
 import { Injectable } from '@angular/core';
 import { AccountService } from "./http/account.service";
-import { map, tap } from "rxjs";
-import { DEFAULT_UUID } from "../const/app.const";
+import { BehaviorSubject, combineLatest, finalize, map, tap } from "rxjs";
+import { DEFAULT_UUID, DISPLAY_NAME, USERNAME } from "../const/app.const";
+import { NgxSpinnerService } from "ngx-spinner";
 
 @Injectable({
     providedIn: 'root'
 })
 export class SessionService {
-    private authorities!: Authority[];
-    private userId: string = DEFAULT_UUID;
-    username = "anonymousUser";
-    name = "Anonymous User";
-    avatar = "";
-    constructor(private accountService: AccountService) { }
+    private authoritiesSubject = new BehaviorSubject<Authority[]>([]);
+    private userIdSubject = new BehaviorSubject<string>(DEFAULT_UUID);
+    private usernameSubject = new BehaviorSubject<string>(USERNAME);
+    private nameSubject = new BehaviorSubject<string>(DISPLAY_NAME);
+    private avatarSubject = new BehaviorSubject<string>('');
+
+    readonly authorities$ = this.authoritiesSubject.asObservable();
+    readonly userId$ = this.userIdSubject.asObservable();
+    readonly username$ = this.usernameSubject.asObservable();
+    readonly name$ = this.nameSubject.asObservable();
+    readonly avatar$ = this.avatarSubject.asObservable().pipe(
+        map(avatar => avatar || `https://api.dicebear.com/7.x/bottts/svg?seed=${ this.usernameSubject.value }`)
+    );
+
+    readonly sessionState$ = combineLatest([
+        this.authorities$, this.userId$, this.username$, this.name$, this.avatar$
+    ]).pipe(map(([authorities, userId, username, name, avatar]) => ({
+        authorities, userId, username, name, avatar
+    })));
+
+    constructor(private accountService: AccountService) {
+        this.avatarSubject.next(`https://api.dicebear.com/7.x/bottts/svg?seed=${ USERNAME }`);
+    }
 
     profile() {
         return this.accountService.profile().pipe(
             tap((response) => {
-                this.authorities = response.authorities;
-                this.userId = response.userId ?? this.userId;
-                this.username = response.username ?? this.username;
-                this.avatar = response.avatar ?? "https://api.dicebear.com/7.x/bottts/svg?seed=" + this.username;
-                this.name = response.displayName ?? this.name;
+                this.authoritiesSubject.next(response.authorities);
+                this.userIdSubject.next(response.userId ?? this.userIdSubject.value);
+                this.usernameSubject.next(response.username ?? this.usernameSubject.value);
+                this.nameSubject.next(response.displayName ?? this.nameSubject.value);
+                this.avatarSubject.next(
+                    response.avatar ?? `https://api.dicebear.com/7.x/bottts/svg?seed=${ this.usernameSubject.value }`
+                );
             }),
-            map(() => void 0)
+            map(() => void 0),
         );
     }
 
-    get permissions(){
-        return this.authorities;
+    get permissions() {
+        return this.authoritiesSubject.value;
     }
 
+    readonly isAuthenticated$ = this.userId$.pipe(
+        map(userId => {
+            return userId !== DEFAULT_UUID;
+        })
+    );
+
     get isAuthenticated(){
-        return this.userId !== DEFAULT_UUID;
+        return this.userIdSubject.value !== DEFAULT_UUID;
+    }
+
+    reset(): void {
+        this.authoritiesSubject.next([]);
+        this.userIdSubject.next(DEFAULT_UUID);
+        this.usernameSubject.next(USERNAME);
+        this.nameSubject.next(DISPLAY_NAME);
+        this.avatarSubject.next(`https://api.dicebear.com/7.x/bottts/svg?seed=${ USERNAME }`);
     }
 }

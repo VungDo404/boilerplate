@@ -92,7 +92,7 @@ public class AccountController {
         accountService.disableTwoFactor(id);
     }
 
-    @PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.WRITE +
+    @PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.DELETE +
         "')")
     @GetMapping("/profile")
     public ProfileModel profile() throws MalformedURLException {

@@ -1,25 +1,28 @@
 import { Injectable } from '@angular/core';
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
-import { BehaviorSubject, catchError, finalize, Observable, switchMap, take, throwError, filter } from 'rxjs';
+import { BehaviorSubject, catchError, filter, finalize, Observable, switchMap, take, throwError } from 'rxjs';
 import { ToastService } from "../service/toast.service";
 import { AuthenticationService } from "../service/http/authentication.service";
 import { Router } from "@angular/router";
 import { NotifyService } from "../service/notify.service";
 import { TranslateService } from "@ngx-translate/core";
 import { LoginService } from "../../app/account/login/login.service";
+import { LogoutService } from "../../app/account/logout/logout.service";
 
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {
     private readonly INVALID_TOKEN = "invalid_token";
     private isRefreshingToken = false;
     private tokenSubject = new BehaviorSubject<string | null>(null);
+
     constructor(
         private toastService: ToastService,
         private authenticationService: AuthenticationService,
         private router: Router,
         private notifyService: NotifyService,
         private translateService: TranslateService,
-        private loginService: LoginService
+        private loginService: LoginService,
+        private logoutService: LogoutService
     ) {}
 
     intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
@@ -59,7 +62,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
     }
 
     private process401InvalidToken(request: HttpRequest<unknown>, next: HttpHandler) {
-        if(!this.isRefreshingToken){
+        if (!this.isRefreshingToken) {
             this.isRefreshingToken = true;
             this.tokenSubject.next(null);
             return this.authenticationService.refreshToken().pipe(
@@ -76,6 +79,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
                                 translations['SessionExpired'],
                                 this.notifyService.option1(translations['SignIn']),
                                 () => {
+                                    this.logoutService.logout(() => {});
                                     this.router.navigate(['/account/login']);
                                 }
                             )
@@ -88,7 +92,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
                     this.isRefreshingToken = false;
                 })
             );
-        }else{
+        } else {
             return this.tokenSubject.pipe(
                 filter(token => token !== null),
                 take(1),
@@ -102,7 +106,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
     private updateRequestWithNewToken(request: HttpRequest<unknown>, newToken: string) {
         return request.clone({
             setHeaders: {
-                Authorization: `Bearer ${newToken}`
+                Authorization: `Bearer ${ newToken }`
             }
         });
     }

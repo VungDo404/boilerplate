@@ -67,8 +67,13 @@ export const ACCOUNT_ROUTE: Routes = [
                 loadComponent: () => import("./oauth2-callback/oauth2-callback.component").then(m => m.Oauth2CallbackComponent),
                 canActivate: [PermissionGuard],
                 data: { mask: Action.Read, type: "Authentication", id: ROOT_OBJECT } as BaseAuthority
+            },
+            {
+                path: "logout",
+                loadComponent: () => import("./logout/logout.component").then(m => m.LogoutComponent),
+                canActivate: [PermissionGuard],
+                data: { mask: Action.Delete, type: "Authentication", id: ROOT_OBJECT } as BaseAuthority
             }
-
         ]
     },
 ]

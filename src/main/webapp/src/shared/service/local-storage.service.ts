@@ -16,6 +16,10 @@ export class LocalStorageService {
         this.setItem(this.ACCESS_TOKEN, {accessToken, expiredDate});
     }
 
+    removeAccessToken(){
+        this.removeItem(this.ACCESS_TOKEN);
+    }
+
     getItem<T>(key: string): T | null {
         const item = localStorage.getItem(key);
         return item ? JSON.parse(item) as T : null;

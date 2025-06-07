@@ -1,4 +1,4 @@
-@use "variable" as *;
+@use "variable" as v;
 
 .account-container{
 	display: flex;
@@ -8,15 +8,15 @@
 	.left-wrapper{
 		display: none;
 		padding: 10px;
-		background-color: $brand-100;
+		background-color: v.$brand-100;
 		width: 50%;
 		flex-shrink: 0;
-		@media (min-width: $lg-breakpoint) {
+		@media (min-width: v.$lg-breakpoint) {
 			display: flex;
 			justify-content: center;
 		}
 
-		@media (min-width: $xl-breakpoint) {
+		@media (min-width: v.$xl-breakpoint) {
 			width: 40%;
 		}
 		.left{
@@ -56,17 +56,17 @@
 			display: flex;
 			flex-direction: column;
 			align-items: center;
-			@media (min-width: $lg-breakpoint){
+			@media (min-width: v.$lg-breakpoint){
 				justify-content: center;
 			}
 			.logo-wrapper{
 				margin-bottom: 2rem;
-				@media (min-width: $lg-breakpoint){
+				@media (min-width: v.$lg-breakpoint){
 					display: none;
 				}
 				.logo{
 					width: 200px;
-					@media (min-width: $lg-breakpoint){
+					@media (min-width: v.$lg-breakpoint){
 						width: 250px;
 					}
 				}
@@ -75,14 +75,14 @@
 				height: 56px;
 				font-weight: 700;
 				line-height: 56px;
-				color: $light-100;
+				color: v.$light-100;
 			}
 			.message-wrapper{
 				display: flex;
 				align-items: center;
 				gap: 5px;
 				a{
-					color: $brand;
+					color: v.$brand;
 					font-style: italic;
 					&:hover{
 						opacity: 80%;

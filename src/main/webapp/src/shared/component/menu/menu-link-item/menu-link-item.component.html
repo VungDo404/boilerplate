@@ -1,4 +1,5 @@
 <a
+        *ngIf="item.authority.id | permission: item.authority.type: item.authority.mask"
         class="link menu-item"
         [routerLink]="item.routerLink"
         [class.check]="item.leftIcon"

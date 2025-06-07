@@ -7,13 +7,15 @@ declare interface LinkItem{
     rightIcon?: string;
     cb?: (item: LinkItem) => void;
     target?: keyof MenuData;
+    authority: BaseAuthority;
 }
 
 declare interface ProfileItem{
     type: 'profile';
-    displayName: string;
-    username: string;
+    displayName: string | null;
+    username: string | null;
     avatar: string;
+    authority: BaseAuthority;
 }
 
 declare interface SectionItem<T>{

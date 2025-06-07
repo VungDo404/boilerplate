@@ -1,0 +1,45 @@
+@use "variable" as v;
+@use 'header/variable' as hv;
+@use 'sass:color';
+
+:host {
+    grid-column: 8/ span 1;
+    display: block;
+    min-width: 0;
+    .sign-in-container {
+        background-color: v.$white;
+        border-radius: 18px;
+        cursor: pointer;
+        height: 34px;
+        width: auto;
+        display: flex;
+        gap: 10px;
+        justify-content: space-around;
+        align-items: center;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        color: v.$brand-100;
+        transition: background-color 0.3s ease, box-shadow 0.2s ease;
+        text-decoration: none;
+        padding: 0 10px;
+        min-height: 2.5em; // Ensure a minimum clickable area
+        &:hover {
+            background-color: color.scale(v.$brand-100, $lightness: 30%);
+            color: color.scale(v.$brand-100, $lightness: -10%);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease-in-out;
+        }
+
+        .icon {
+            font-size: hv.$icon-size;
+            transition: transform 0.2s;
+            flex-shrink: 0;
+        }
+
+        .primary-text {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+    }
+}
+
