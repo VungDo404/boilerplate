@@ -40,7 +40,8 @@
 						"styles": [
 							"node_modules/ngx-spinner/animations/ball-clip-rotate.css",
 							"src/main/webapp/src/styles.scss",
-							"node_modules/primeflex/primeflex.css"
+							"node_modules/primeflex/primeflex.css",
+							"node_modules/perfect-scrollbar/css/perfect-scrollbar.css"
 						],
 						"scripts": []
 					},

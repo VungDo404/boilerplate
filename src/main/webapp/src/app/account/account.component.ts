@@ -3,12 +3,13 @@ import { Router, RouterLink, RouterOutlet } from "@angular/router";
 import { ImageModule } from "primeng/image";
 import { Divider } from "primeng/divider";
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { Subject, takeUntil } from "rxjs";
+import { takeUntil } from "rxjs";
 import { ConfigService } from "../../shared/service/config.service";
 import { ROOT_OBJECT } from "../../shared/const/app.const";
 import { Action } from "../../shared/const/app.enum";
 import { NgIf } from "@angular/common";
 import { PermissionPipe } from "../../shared/pipe/permission.pipe";
+import { BaseComponent } from "../../shared/component/base.component";
 
 @Component({
     selector: 'app-account',
@@ -17,20 +18,20 @@ import { PermissionPipe } from "../../shared/pipe/permission.pipe";
     standalone: true,
     styleUrl: './account.component.scss'
 })
-export class AccountComponent implements OnDestroy {
+export class AccountComponent extends BaseComponent{
     protected readonly ROOT_OBJECT = ROOT_OBJECT;
     protected readonly Action = Action;
     title: string = '';
     message: string = '';
     linkText: string = '';
     linkRoute: string = '';
-    private destroy$ = new Subject<void>();
 
     constructor(
         private router: Router,
         private translate: TranslateService,
         private configService: ConfigService
     ) {
+        super();
         this.router.events
             .pipe(takeUntil(this.destroy$))
             .subscribe(() => {
@@ -40,88 +41,83 @@ export class AccountComponent implements OnDestroy {
 
     updateAuthPage() {
         const url = this.router.url;
-        if (url.includes('/account/login')) {
+        if (url.includes('/login')) {
             this.translate.get(['Authenticate', 'DontHaveAccount', 'SignUp'])
                 .pipe(takeUntil(this.destroy$))
                 .subscribe(translations => {
                     this.title = translations['Authenticate'];
                     this.message = translations['DontHaveAccount'];
                     this.linkText = translations['SignUp'];
-                    this.linkRoute = '/account/register';
+                    this.linkRoute = '/register';
                 });
-        } else if (url.includes('/account/register')) {
+        } else if (url.includes('/register')) {
             this.translate.get(['CreateAccount', 'AlreadyHaveAccount', 'SignIn'])
                 .pipe(takeUntil(this.destroy$))
                 .subscribe(translations => {
                     this.title = translations['CreateAccount'];
                     this.message = translations['AlreadyHaveAccount'];
                     this.linkText = translations['SignIn'];
-                    this.linkRoute = '/account/login';
+                    this.linkRoute = '/login';
                 });
-        } else if (url.includes('/account/send-email')) {
+        } else if (url.includes('/send-email')) {
             this.translate.get(['CheckYourEmail', 'DontHaveAccount', 'SignUp'])
                 .pipe(takeUntil(this.destroy$))
                 .subscribe(translations => {
                     this.title = translations['CheckYourEmail'];
                     this.message = translations['DontHaveAccount'];
                     this.linkText = translations['SignUp'];
-                    this.linkRoute = '/account/register';
+                    this.linkRoute = '/register';
                 });
-        } else if (url.includes('/account/email-activation')) {
+        } else if (url.includes('/email-activation')) {
             this.translate.get(['VerifyEmail', 'DontHaveAccount', 'SignUp'])
                 .pipe(takeUntil(this.destroy$))
                 .subscribe(translations => {
                     this.title = translations['VerifyEmail'];
                     this.message = translations['DontHaveAccount'];
                     this.linkText = translations['SignUp'];
-                    this.linkRoute = '/account/register';
+                    this.linkRoute = '/register';
                 });
-        } else if (url.includes('/account/forgot-password')) {
+        } else if (url.includes('/forgot-password')) {
             this.translate.get(['ForgotPasswordTitle', 'DontHaveAccount', 'SignUp'])
                 .pipe(takeUntil(this.destroy$))
                 .subscribe(translations => {
                     this.title = translations['ForgotPasswordTitle'];
                     this.message = translations['DontHaveAccount'];
                     this.linkText = translations['SignUp'];
-                    this.linkRoute = '/account/register';
+                    this.linkRoute = '/register';
                 });
-        } else if (url.includes('/account/reset-password')) {
+        } else if (url.includes('/reset-password')) {
             this.translate.get(['NewPassword', 'DontHaveAccount', 'SignUp'])
                 .pipe(takeUntil(this.destroy$))
                 .subscribe(translations => {
                     this.title = translations['NewPassword'];
                     this.message = translations['DontHaveAccount'];
                     this.linkText = translations['SignUp'];
-                    this.linkRoute = '/account/register';
+                    this.linkRoute = '/register';
                 });
-        } else if (url.includes('/account/send-code')) {
+        } else if (url.includes('/send-code')) {
             this.translate.get(['SendCodeTitle', 'DontHaveAccount', 'SignUp'])
                 .pipe(takeUntil(this.destroy$))
                 .subscribe(translations => {
                     this.title = translations['SendCodeTitle'];
                     this.message = translations['DontHaveAccount'];
                     this.linkText = translations['SignUp'];
-                    this.linkRoute = '/account/register';
+                    this.linkRoute = '/register';
                 });
-        } else if (url.includes('/account/validate-code')) {
+        } else if (url.includes('/validate-code')) {
             this.translate.get(['VerifyCodeTitle', 'DontHaveAccount', 'SignUp'])
                 .pipe(takeUntil(this.destroy$))
                 .subscribe(translations => {
                     this.title = translations['VerifyCodeTitle'];
                     this.message = translations['DontHaveAccount'];
                     this.linkText = translations['SignUp'];
-                    this.linkRoute = '/account/register';
+                    this.linkRoute = '/register';
                 });
         }
     }
 
     externalLogin(provider: string) {
         window.location.href = this.configService.oauthLoginUrl + provider;
-    }
-
-    ngOnDestroy(): void {
-        this.destroy$.next();
-        this.destroy$.complete();
     }
 
 }

@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AccountService } from "./http/account.service";
-import { BehaviorSubject, combineLatest, finalize, map, tap } from "rxjs";
+import { BehaviorSubject, combineLatest, map, tap } from "rxjs";
 import { DEFAULT_UUID, DISPLAY_NAME, USERNAME } from "../const/app.const";
-import { NgxSpinnerService } from "ngx-spinner";
 
 @Injectable({
     providedIn: 'root'
@@ -49,6 +48,14 @@ export class SessionService {
 
     get permissions() {
         return this.authoritiesSubject.value;
+    }
+
+    get id(){
+        return this.userIdSubject.value;
+    }
+
+    get avatar(){
+        return this.avatarSubject.value;
     }
 
     readonly isAuthenticated$ = this.userId$.pipe(

@@ -22,5 +22,4 @@ public interface UserRepository extends JpaRepository<User, UUID>, RevisionRepos
 	boolean existsByEmailIgnoreCaseAndProvider(String email, LoginProvider provider);
 
     Page<User> findAll(@NonNull Specification<User> specification, @NonNull Pageable page);
-
 }

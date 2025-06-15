@@ -1,5 +1,6 @@
 package com.app.boilerplate.Controller.Auth;
 
+import com.app.boilerplate.Decorator.RateLimit.RateLimit;
 import com.app.boilerplate.Service.Authentication.AuthService;
 import com.app.boilerplate.Service.Authentication.TwoFactorService;
 import com.app.boilerplate.Shared.Authentication.AccessJwt;
@@ -17,6 +18,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.temporal.ChronoUnit;
+
 @Tag(name = "Auth")
 @RequiredArgsConstructor
 @RequestMapping("/auth")
@@ -25,6 +28,7 @@ public class AuthController {
     private final AuthService authService;
     private final TwoFactorService twoFactorService;
 
+    @RateLimit(capacity = 1000, tokens = 50, duration = 5, timeUnit = ChronoUnit.SECONDS, key = "'authenticate-' + #ip")
     @PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.READ +
         "')")
     @PostMapping("/authenticate")
@@ -32,6 +36,7 @@ public class AuthController {
         return authService.authenticate(request, response);
     }
 
+    @RateLimit(capacity = 1000, tokens = 50, duration = 5, timeUnit = ChronoUnit.SECONDS, key = "'refreshToken-' + #ip")
     @PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.DELETE +
         "')")
     @PostMapping("/refresh-token")
@@ -40,6 +45,7 @@ public class AuthController {
         return authService.refreshAccessToken(refreshToken, response);
     }
 
+    @RateLimit(capacity = 1000, tokens = 50, duration = 5, timeUnit = ChronoUnit.SECONDS, key = "'logout-' + #ip")
     @PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.DELETE +
         "')")
     @PostMapping("/logout")
@@ -48,6 +54,7 @@ public class AuthController {
         authService.logout(jwt, response, refreshToken);
     }
 
+    @RateLimit(capacity = 1000, tokens = 50, duration = 5, timeUnit = ChronoUnit.SECONDS, key = "'sendTwoFactorCode-' + #ip")
     @PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.READ +
         "')")
     @PostMapping("/send-code")

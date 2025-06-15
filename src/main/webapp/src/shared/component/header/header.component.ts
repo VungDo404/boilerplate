@@ -7,6 +7,7 @@ import { SessionService } from "../../service/session.service";
 import { HeaderSignInComponent } from "./header-sign-in/header-sign-in.component";
 import { Observable, Subject } from "rxjs";
 import { HeaderButtonComponent } from "./header-button/header-button.component";
+import { BaseComponent } from "../base.component";
 
 @Component({
     selector: 'header[app-header]',
@@ -23,17 +24,11 @@ import { HeaderButtonComponent } from "./header-button/header-button.component";
     standalone: true,
     styleUrl: './header.component.scss'
 })
-export class HeaderComponent implements OnDestroy {
+export class HeaderComponent extends BaseComponent {
     isAuthenticated$!: Observable<boolean>;
-    private destroy$ = new Subject<void>();
 
     constructor(protected sessionService: SessionService) {
+        super();
         this.isAuthenticated$ = this.sessionService.isAuthenticated$;
-    }
-
-
-    ngOnDestroy(): void {
-        this.destroy$.next();
-        this.destroy$.complete();
     }
 }

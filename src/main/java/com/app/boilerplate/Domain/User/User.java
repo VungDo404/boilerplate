@@ -1,5 +1,6 @@
 package com.app.boilerplate.Domain.User;
 
+import com.app.boilerplate.Shared.Authentication.Gender;
 import com.app.boilerplate.Shared.Authentication.LoginProvider;
 import com.app.boilerplate.Shared.User.UserListener;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -16,6 +17,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serial;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
@@ -33,7 +35,7 @@ import java.util.UUID;
         @Index(name = "idx_user_username_provider", columnList = User_.USERNAME + ", " + User_.PROVIDER)
     },
     uniqueConstraints = {
-        @UniqueConstraint(name = "uq_user_username_provider", columnNames = {"username", "provider"})
+        @UniqueConstraint(name = "uq_user_username_provider", columnNames = {User_.USERNAME, User_.PROVIDER})
     }
 )
 public class User implements UserDetails {
@@ -69,6 +71,18 @@ public class User implements UserDetails {
     @Email
     @Column(length = 50, nullable = false, updatable = false)
     private String email;
+
+    @Audited(withModifiedFlag = true)
+    @Column(name = "phone_number", length = 20)
+    private String phoneNumber;
+
+    @Audited(withModifiedFlag = true)
+    @Column(name = "date_of_birth")
+    private LocalDate dateOfBirth;
+
+    @Audited(withModifiedFlag = true)
+    @Column(columnDefinition = "TINYINT")
+    private Gender gender;
 
     @Audited(withModifiedFlag = true)
     @Column(length = 100)

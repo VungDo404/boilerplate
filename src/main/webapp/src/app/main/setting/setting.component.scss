@@ -1,0 +1,18 @@
+@use "header/variable" as hv;
+@use "variable" as v;
+
+:host{
+    grid-area: content;
+    display: grid;
+    grid-template-columns: hv.$header-logo-icon-width 1fr;
+    grid-template-areas: "sidebar content";
+    overflow-y: hidden;
+    background-color: v.$white;
+    .setting-content{
+        grid-area: content;
+        background-color: v.$white;
+        border-radius: 30px;
+        flex-shrink: 0;
+        padding: 0 15px;
+    }
+}

@@ -24,7 +24,7 @@ public class CorsConfig {
         final var originsList = Arrays.asList(allowedOrigins.split(","));
         config.setAllowedOrigins(originsList);
 
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
         config.setExposedHeaders(List.of(HttpHeaders.WWW_AUTHENTICATE));

@@ -55,9 +55,9 @@ public class UserController {
 	@PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.APPLICATION + "', '" + PermissionUtil.WRITE +
 		"')")
 	@ResponseStatus(HttpStatus.CREATED)
-	@PutMapping
-	public User putUser(@RequestBody @Valid PutUserDto request) {
-		return userService.putUser(request);
+	@PutMapping("/{id}")
+	public User putUser(@RequestBody @Valid PutUserDto request, @PathVariable @NotNull UUID id) {
+		return userService.putUser(request, id);
 	}
 
 	@PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.APPLICATION + "', '" + PermissionUtil.DELETE +

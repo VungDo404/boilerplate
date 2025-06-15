@@ -6,14 +6,15 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.27.xsd">
     <property name="now" value="now()" dbms="mysql" />
     <property name="uuid" value="unhex(replace(uuid(),'-',''))" dbms="mysql"/>
-
+								<!--Schema-->
 	<include file="liquibase/changelog/schema/15-01-changelog.xml" />
     <include file="liquibase/changelog/schema/16-01-changelog.xml" />
 	<include file="liquibase/changelog/schema/08-01-changelog.xml" context="!prod"/>
 	<include file="liquibase/changelog/schema/23-01-changelog.xml" />
 	<include file="liquibase/changelog/schema/13-01-changelog.xml"/>
 	<include file="liquibase/changelog/schema/27-01-changelog.xml"/>
-
+	<include file="liquibase/changelog/schema/10-01-changelog.xml"/>
+								<!--Seeding-->
 	<include file="liquibase/changelog/schema/13-01-seeding-user-changelog.xml"/>
 			<include file="liquibase/changelog/schema/07-01-seeding-acl-changelog.xml"/>
 	<include file="liquibase/changelog/schema/08-01-seeding-dev-changelog.xml" context="!prod"/>

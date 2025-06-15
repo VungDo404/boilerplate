@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Router } from "@angular/router";
+import { Router } from "@angular/router";
 import { NotifyService } from "../../../shared/service/notify.service";
 import { TranslateService } from "@ngx-translate/core";
 import { finalize, Subject, takeUntil } from "rxjs";
@@ -63,7 +63,7 @@ export class LoginService {
 
     private processAuthenticationResult(result: AuthenticationResult) {
         if ("requiresEmailVerification" in result) {
-            this.router.navigate(['/account/send-email'], {
+            this.router.navigate(['/send-email'], {
                 queryParams: { email: result.email }
             });
         } else if ("shouldChangePasswordOnNextLogin" in result && result.shouldChangePasswordOnNextLogin) {
@@ -78,14 +78,14 @@ export class LoginService {
                         title,
                         this.notifyService.option1(translations['OK']),
                         () => {
-                            this.router.navigate(['/account/reset-password'], {
+                            this.router.navigate(['/reset-password'], {
                                 queryParams: { key: result.passwordResetCode }
                             });
                         }
                     );
                 });
         } else if ("isTwoFactorEnabled" in result && result.isTwoFactorEnabled) {
-            this.router.navigate(['/account/send-code'], {
+            this.router.navigate(['/send-code'], {
                 state: { loginResult: result }
             });
         } else if ("accessToken" in result) {
@@ -94,7 +94,7 @@ export class LoginService {
                 this.redirectUrl = undefined;
             })
         } else {
-            this.router.navigate(['/account/login'])
+            this.router.navigate(['/login'])
         }
     }
 

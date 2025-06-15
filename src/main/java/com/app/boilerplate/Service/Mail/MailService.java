@@ -95,7 +95,7 @@ public class MailService {
     @Async
     public void sendResetPasswordEmail(ResetPasswordEvent event) {
         final var locale = LocaleContextHolder.getLocale();
-        final var fullUrl = clientBaseUrl + "/account/reset-password" + "?key=" + event.getKey();
+        final var fullUrl = clientBaseUrl + "/reset-password" + "?key=" + event.getKey();
         final Map<String, Object> properties = Map.of(
                 "returnUrl", fullUrl,
                 "helpLink", "",
@@ -110,7 +110,7 @@ public class MailService {
     @Async
     public void sendEmailActivation(SendEmailActivationEvent event) {
         final var locale = LocaleContextHolder.getLocale();
-        final var fullUrl = clientBaseUrl + "/account/email-activation" + "?key=" + event.getKey();
+        final var fullUrl = clientBaseUrl + "/email-activation" + "?key=" + event.getKey();
         final Map<String, Object> properties = Map.of(
                 "returnUrl", fullUrl,
                 "helpLink", "",

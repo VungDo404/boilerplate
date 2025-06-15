@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Router } from "@angular/router";
-import { AuthenticationService } from "../../../shared/service/http/authentication.service";
 import { AccountService } from "../../../shared/service/http/account.service";
 import { finalize } from "rxjs";
 
@@ -14,7 +13,7 @@ export class ForgotPasswordService {
     forgotPassword(email: string, cb: () => void) {
         this.accountService.forgotPassword(email).pipe(finalize(cb)).subscribe({
             next: (response) => {
-                this.router.navigate(['/account/send-email'], {
+                this.router.navigate(['/send-email'], {
                     queryParams: { email }
                 });
             },

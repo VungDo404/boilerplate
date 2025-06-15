@@ -78,7 +78,6 @@ declare type ResourceType =
     | "Domain";
 
 
-
 declare type Mask =
     | 1
     | 2
@@ -111,4 +110,9 @@ declare interface ObjectHierarchy {
     parent: ObjectHierarchy | null;
 }
 
-declare type SessionState = Required<ProfileResult>;
+declare interface UpdateUserInfo {
+    displayName?: string;
+    gender?: number;
+    dateOfBirth?: Date;
+    phoneNumber?: string;
+}

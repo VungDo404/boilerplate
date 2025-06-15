@@ -70,14 +70,14 @@ export class HeaderMenuService {
                                             {
                                                 type: "link",
                                                 label: translations['Profile'],
-                                                routerLink: "/",
+                                                routerLink: "/account",
                                                 leftIcon: "pi pi-user",
                                                 authority: { id: sessionState.userId, type: "User", mask: Action.Write }
                                             },
                                             {
                                                 type: "link",
                                                 label: translations['SignOut'],
-                                                routerLink: "/account/logout",
+                                                routerLink: "/logout",
                                                 leftIcon: "pi pi-sign-out",
                                                 authority: { id: sessionState.userId, type: "User", mask: Action.Write }
                                             }

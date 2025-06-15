@@ -48,12 +48,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
                             }))
                             toastSource.next(messageOptions);
                         } else {
-                            const messageOption = [{
-                                severity: 'error',
-                                summary: problemDetail.title,
-                                detail: problemDetail.detail,
-                            }]
-                            toastSource.next(messageOption);
+                            this.toastService.push('error', problemDetail.title, problemDetail.detail);
                         }
                     }
                     return throwError(() => error);
@@ -80,7 +75,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
                                 this.notifyService.option1(translations['SignIn']),
                                 () => {
                                     this.logoutService.logout(() => {});
-                                    this.router.navigate(['/account/login']);
+                                    this.router.navigate(['/login']);
                                 }
                             )
                         }

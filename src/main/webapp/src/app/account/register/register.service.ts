@@ -14,7 +14,7 @@ export class RegisterService {
         this.accountService.register(registerForm).pipe(finalize(cb)).subscribe({
             next: (response) => {
                 if (!response.canLogin) {
-                    this.router.navigate(['/account/send-email'], {
+                    this.router.navigate(['/send-email'], {
                         queryParams: {email: registerForm.email}
                     });
                 }

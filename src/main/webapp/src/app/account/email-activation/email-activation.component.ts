@@ -61,7 +61,7 @@ export class EmailActivationComponent implements OnInit, OnDestroy {
     }
 
     navigateLogin() {
-        this.router.navigate(['/account/login']);
+        this.router.navigate(['/login']);
     }
 
     ngOnDestroy(): void {

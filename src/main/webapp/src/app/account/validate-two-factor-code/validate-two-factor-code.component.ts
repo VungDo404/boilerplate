@@ -56,7 +56,7 @@ export class ValidateTwoFactorCodeComponent implements OnInit {
 
     ngOnInit(): void {
         if (!this.canActive)
-            this.router.navigate(["account/login"]);
+            this.router.navigate(["/login"]);
         this.form = this.formBuilder.group({
             otp: [
                 '',

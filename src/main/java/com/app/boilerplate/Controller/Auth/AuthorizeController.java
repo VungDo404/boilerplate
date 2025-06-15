@@ -1,5 +1,6 @@
 package com.app.boilerplate.Controller.Auth;
 
+import com.app.boilerplate.Decorator.RateLimit.RateLimit;
 import com.app.boilerplate.Domain.Authorization.*;
 import com.app.boilerplate.Service.Authorization.AccessControlListService;
 import com.app.boilerplate.Service.Authorization.AuthorizeService;
@@ -16,10 +17,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
+@RateLimit(capacity = 100, tokens = 10, duration = 5, timeUnit = ChronoUnit.SECONDS, key = "'authorize-' + #ip")
 @Tag(name = "AuthorizeController")
 @RequiredArgsConstructor
 @RequestMapping("/authorize")
@@ -42,6 +45,7 @@ public class AuthorizeController {
 			request.getPrincipal()
 		);
 	}
+
 
 	@PreAuthorize("hasPermission(#request.objectId.toString(), #request.type.toString(), '" + PermissionUtil.WRITE +
 		"')")

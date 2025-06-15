@@ -6,6 +6,7 @@ import { LangChangeEvent, TranslateService } from "@ngx-translate/core";
 import { BehaviorSubject, Observable, Subject, takeUntil } from "rxjs";
 import { AsyncPipe, NgIf } from "@angular/common";
 import { HeaderMenuService } from "../header-menu.service";
+import { BaseComponent } from "../../base.component";
 
 @Component({
     selector: 'app-header-avatar',
@@ -19,8 +20,7 @@ import { HeaderMenuService } from "../header-menu.service";
     standalone: true,
     styleUrl: './header-avatar.component.scss'
 })
-export class HeaderAvatarComponent implements OnInit, OnDestroy {
-    private destroy$ = new Subject<void>();
+export class HeaderAvatarComponent extends BaseComponent implements OnInit {
     avatar$!: Observable<string>;
     itemSubject!: BehaviorSubject<MenuData>;
     constructor(
@@ -28,6 +28,7 @@ export class HeaderAvatarComponent implements OnInit, OnDestroy {
         private headerMenuService: HeaderMenuService,
         private translate: TranslateService
     ) {
+        super();
         this.avatar$ = this.sessionService.avatar$;
         this.itemSubject = this.headerMenuService.getItemSubject;
     }
@@ -44,9 +45,8 @@ export class HeaderAvatarComponent implements OnInit, OnDestroy {
     }
 
 
-    ngOnDestroy(): void {
-        this.destroy$.next();
-        this.destroy$.complete();
+    override ngOnDestroy(): void {
+        super.ngOnDestroy();
         this.headerMenuService.dispose();
     }
 }

@@ -50,10 +50,7 @@ public class HierarchicalPermissionGrantingStrategy extends DefaultPermissionGra
                         return true;
                     }
 
-                    if (firstRejection == null) {
-                        firstRejection = ace;
-                    }
-
+                    firstRejection = ace;
                     scanNextSid = false;
                     break;
                 }

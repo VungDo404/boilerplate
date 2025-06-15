@@ -1,0 +1,6 @@
+<a class="sidebar-item-container" [class.selected]="isActive()" [routerLink]="item.routerLink">
+    <div *ngIf="item.icon">
+        <i [class]="item.icon" class="icon"></i>
+    </div>
+    <span>{{ item.label }}</span>
+</a>

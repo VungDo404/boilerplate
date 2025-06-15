@@ -1,5 +1,6 @@
 package com.app.boilerplate.Controller.Dev;
 
+import com.app.boilerplate.Decorator.RateLimit.RateLimit;
 import com.app.boilerplate.Domain.Dev.Organization;
 import com.app.boilerplate.Service.Dev.OrganizationService;
 import com.app.boilerplate.Shared.Dev.Organization.Dto.CreateOrganizationDto;
@@ -16,9 +17,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.temporal.ChronoUnit;
+
 import static org.springframework.http.HttpStatus.CREATED;
 
-
+@RateLimit(capacity = 10, tokens = 1, duration = 10, timeUnit = ChronoUnit.SECONDS, key = "'organization-' + #ip")
 @Profile("!prod")
 @Tag(name = "Organization")
 @RequiredArgsConstructor

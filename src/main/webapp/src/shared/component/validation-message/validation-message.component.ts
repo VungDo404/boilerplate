@@ -2,68 +2,70 @@ import { Component, Input } from '@angular/core';
 import { AsyncPipe, NgIf } from "@angular/common";
 import { AbstractControl } from "@angular/forms";
 import { TranslateService } from "@ngx-translate/core";
-import { filter, find, concat } from 'lodash';
+import { concat, filter, find } from 'lodash';
 
 export type Error = {
-  error: string;
-  localizationKey: string;
-  errorProperty?: string;
+    error: string;
+    localizationKey: string;
+    errorProperty?: string;
 }
+
 @Component({
-  selector: 'validation-message',
-  imports: [
-    NgIf,
-    AsyncPipe
-  ],
-  templateUrl: './validation-message.component.html',
-  standalone: true,
-  styleUrl: "validation-message.component.scss"
+    selector: 'validation-message',
+    imports: [
+        NgIf,
+        AsyncPipe
+    ],
+    templateUrl: './validation-message.component.html',
+    standalone: true,
+    styleUrl: "validation-message.component.scss"
 })
 export class ValidationMessageComponent {
-  error: Error[] = [];
+    error: Error[] = [];
 
-  @Input() formCtrl!: AbstractControl;
-  @Input() set Errors(value: Error[]) {
-    this.error = value;
-  }
+    @Input() formCtrl!: AbstractControl;
 
-  readonly standardErrors: Error[] = [
-    { error: 'required', localizationKey: 'ThisFieldIsRequired' },
-    {
-      error: 'minlength',
-      localizationKey: 'PleaseEnterAtLeastNCharacter',
-      errorProperty: 'requiredLength',
-    },
-    {
-      error: 'maxlength',
-      localizationKey: 'PleaseEnterNoMoreThanNCharacter',
-      errorProperty: 'requiredLength',
-    },
-    { error: 'email', localizationKey: 'InvalidEmailAddress' },
-    { error: 'pattern', localizationKey: 'InvalidPattern', errorProperty: 'requiredPattern' }
-  ];
+    @Input() set Errors(value: Error[]) {
+        this.error = value;
+    }
 
-  constructor(private translateService: TranslateService) {}
+    readonly standardErrors: Error[] = [
+        { error: 'required', localizationKey: 'ThisFieldIsRequired' },
+        {
+            error: 'minlength',
+            localizationKey: 'PleaseEnterAtLeastNCharacter',
+            errorProperty: 'requiredLength',
+        },
+        {
+            error: 'maxlength',
+            localizationKey: 'PleaseEnterNoMoreThanNCharacter',
+            errorProperty: 'requiredLength',
+        },
+        { error: 'email', localizationKey: 'InvalidEmailAddress' },
+        { error: 'pattern', localizationKey: 'InvalidPattern', errorProperty: 'requiredPattern' }
+    ];
 
-  get errorDefsInternal(): Error[] {
-    const standards = filter(
-        this.standardErrors,
-        (ed) => !find(this.error, (edC) => edC.error === ed.error)
-    );
-    return concat(standards, this.error);
-  }
+    constructor(private translateService: TranslateService) {}
 
-  getErrorDefinitionIsInValid(errorDef: Error): boolean {
-    return Boolean(this.formCtrl.errors?.[errorDef.error]);
-  }
+    get errorDefsInternal(): Error[] {
+        const standards = filter(
+            this.standardErrors,
+            (ed) => !find(this.error, (edC) => edC.error === ed.error)
+        );
+        return concat(standards, this.error);
+    }
 
-  get firstErrorMessage() {
-    const firstError = this.errorDefsInternal.find(errorDef => this.getErrorDefinitionIsInValid(errorDef));
-    return firstError ? this.getErrorDefinitionMessage(firstError) : null;
-  }
+    getErrorDefinitionIsInValid(errorDef: Error): boolean {
+        return Boolean(this.formCtrl.errors?.[errorDef.error]);
+    }
 
-  getErrorDefinitionMessage(errorDef: Error) {
-    const errorRequirement = this.formCtrl.errors?.[errorDef.error]?.[errorDef.errorProperty || ''];
-    return this.translateService.get(errorDef.localizationKey, { value: errorRequirement });
-  }
+    get firstErrorMessage() {
+        const firstError = this.errorDefsInternal.find(errorDef => this.getErrorDefinitionIsInValid(errorDef));
+        return firstError ? this.getErrorDefinitionMessage(firstError) : null;
+    }
+
+    getErrorDefinitionMessage(errorDef: Error) {
+        const errorRequirement = this.formCtrl.errors?.[errorDef.error]?.[errorDef.errorProperty || ''];
+        return this.translateService.get(errorDef.localizationKey, { value: errorRequirement });
+    }
 }

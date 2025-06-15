@@ -1,0 +1,75 @@
+<h1>{{ 'Account' | translate }}</h1>
+<form
+        (ngSubmit)="submit()"
+        class="simple-form"
+        [formGroup]="form"
+        *ngIf=" userId | permission: 'User': Action.Write"
+>
+    <div class="avatar-container">
+        <p-avatar shape="circle" [image]="avatar"></p-avatar>
+        <div (click)="file.trigger()">
+            <i class="pi pi-camera edit"></i>
+        </div>
+        <app-upload #file accept="image/png, image/jpeg" size="1MB"
+                    (onFileUpload)="onAvatarUpload($event)"></app-upload>
+    </div>
+    <div class="input-container">
+        <div class="shad-form-item">
+            <label class="shad-form-label" for="displayName">{{ "DisplayName" | translate }}</label>
+            <input
+                    class="shad-input"
+                    placeholder="{{'UsernamePlaceholder' | translate}}"
+                    id="displayName"
+                    autocomplete="off"
+                    type="text"
+                    formControlName="displayName"
+            />
+            <validation-message [formCtrl]="form.get('displayName')!"></validation-message>
+        </div>
+        <div class="shad-form-item">
+            <label class="shad-form-label" for="phoneNumber">{{ "PhoneNumber" | translate }}</label>
+            <input
+                    class="shad-input"
+                    placeholder="{{'PhoneNumberPlaceholder' | translate}}"
+                    id="phoneNumber"
+                    autocomplete="off"
+                    type="text"
+                    formControlName="phoneNumber"
+            />
+            <validation-message [formCtrl]="form.get('phoneNumber')!"></validation-message>
+        </div>
+        <div class="shad-form-item">
+            <label class="shad-form-label">{{ "Gender" | translate }}</label>
+            <div class="radio-container">
+                <div *ngFor="let s of sex">
+                    <p-radiobutton
+                            variant="filled"
+                            [inputId]="s.key.toString()"
+                            [value]="s.key"
+                            formControlName="gender"
+                    >
+                    </p-radiobutton>
+                    <label [for]="s.key" class="ml-2">{{ s.name | translate }}</label>
+                </div>
+            </div>
+        </div>
+        <div class="shad-form-item">
+            <label class="shad-form-label">{{ "DateOfBirth" | translate }}</label>
+            <p-datepicker
+                    placeholder="{{'DateOfBirthPlaceholder' | translate}}"
+                    [iconDisplay]="'input'"
+                    [showIcon]="true"
+                    styleClass="shad-input"
+                    formControlName="dateOfBirth"
+                    [readonlyInput]="true"
+                    [maxDate]="maxDate"
+            ></p-datepicker>
+
+        </div>
+    </div>
+    <div class="button-container">
+        <p-button label="{{'Update' | translate}}" styleClass="primary-btn" type="submit"/>
+        <p-button label="{{'Cancel' | translate}}" styleClass="primary-btn cancel" (click)="cancel()"/>
+    </div>
+    <ngx-spinner *ngIf="submitted" [fullScreen]="false" type="ball-clip-rotate" [name]="spinnerName"></ngx-spinner>
+</form>

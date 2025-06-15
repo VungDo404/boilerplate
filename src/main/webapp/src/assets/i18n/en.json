@@ -56,9 +56,30 @@
   "PasswordMismatch": "Confirmed Password must be the same as Password",
 
   "Search": "Search",
+  "Success:": "Success",
 
   "Profile": "Profile",
   "SignOut": "Sign Out",
   "Language": "Language",
-  "LanguageTitle": "Choose your language"
+  "LanguageTitle": "Choose your language",
+
+  "BackToHome": "Back To Home",
+  "Account": "Account",
+  "Notification": "Notification",
+  "Update": "Update",
+  "Cancel": "Cancel",
+  "FileTooLarge": "File too large",
+  "FileTooLargeDetail": "The maximum allowed file size is {{value}}",
+  "FileTypeNotSupported": "File type not supported",
+  "FileTypeNotSupportedDetail": "Only {{value}} is/are allowed",
+  "DisplayName": "Display Name",
+  "DisplayNamePlaceholder": "Your Display Name",
+  "PhoneNumber": "Phone Number",
+  "PhoneNumberPlaceholder": "Your Phone Number",
+  "Gender": "Gender",
+  "DateOfBirth": "Date of Birth",
+  "DateOfBirthPlaceholder": "Select Your Date of Birth",
+  "Male": "Male",
+  "Female": "Female",
+  "UpdateAccountSuccessMessage": "Update account successfully"
 }

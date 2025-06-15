@@ -6,12 +6,12 @@ export const ROUTE: Routes = [
 		loadChildren: () => import("./app/admin/admin.route").then(m => m.ADMIN_ROUTE)
 	},
 	{
-		path: "account",
-		loadChildren: () => import("./app/account/account.route").then(m  => m.ACCOUNT_ROUTE)
-	},
-	{
-		path: "main",
+		path: "",
 		loadChildren: () => import("./app/main/main.route").then(m => m.MAIN_ROUTE)
 	},
-	{ path: "**", redirectTo: "main"}
+	{
+		path: "",
+		loadChildren: () => import("./app/account/account.route").then(m  => m.ACCOUNT_ROUTE)
+	},
+	{ path: "**", redirectTo: ""}
 ]

@@ -38,4 +38,21 @@ export class AccountService {
         const url = this.baseUrl + "/profile";
         return this.http.get<ProfileResult>(url, {})
     }
+
+    avatar(id: string, file: File){
+        const url = this.baseUrl + "/avatar/user/" + id;
+        const formData = new FormData();
+        formData.append('file', file);
+        return this.http.patch<string>(url, formData);
+    }
+
+    updateUserInfo(id: string, body: UpdateUserInfo){
+        const url = this.baseUrl + "/user/" + id;
+        return this.http.patch(url, body);
+    }
+
+    getUpdateUserInfo(id: string){
+        const url = this.baseUrl + "/user/" + id;
+        return this.http.get<UpdateUserInfo>(url);
+    }
 }

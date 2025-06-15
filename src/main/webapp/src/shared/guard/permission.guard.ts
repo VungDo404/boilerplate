@@ -9,7 +9,6 @@ import {
 } from '@angular/router';
 import { AclService } from "../service/acl.service";
 import { SessionService } from "../service/session.service";
-import { LoginService } from "../../app/account/login/login.service";
 
 @Injectable({
     providedIn: 'root'
@@ -45,7 +44,7 @@ export class PermissionGuard implements CanActivate {
             if(state.url.includes("account")) return this.router.parseUrl("/main");
             return this.router.parseUrl("/main/access-denied");
         }else{
-            return this.router.createUrlTree(['/account/login'], {
+            return this.router.createUrlTree(['/login'], {
                 queryParams: { redirectUrl: state.url }
             });
         }

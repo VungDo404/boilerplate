@@ -1,0 +1,39 @@
+@use "variable" as v;
+@use 'header/variable' as hv;
+@use 'sass:color';
+
+:host{
+    .icon {
+        font-size: hv.$icon-size;
+    }
+    .sidebar-item-container{
+        display: flex;
+        width: 253px;
+        height: 52px;
+        padding: 17px 30px;
+        align-items: center;
+
+        gap: 10px;
+        border-radius: 26px;
+        background-color: v.$white;
+        text-decoration: none;
+        color: v.$light-100;
+        font-weight: 550;
+        line-height: 20px;
+        &.selected {
+            background-color: color.adjust(v.$brand, $lightness: 10%);
+            font-weight: 600;
+            &:hover {
+                background-color: color.adjust(v.$brand, $lightness: 10%);
+                font-weight: 600;
+            }
+        }
+
+        &:hover {
+            background-color: color.adjust(v.$brand, $lightness: 25%);
+            font-weight: 600;
+        }
+    }
+}
+
+

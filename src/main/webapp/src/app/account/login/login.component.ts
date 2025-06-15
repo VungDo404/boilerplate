@@ -61,10 +61,6 @@ export class LoginComponent implements OnDestroy, OnInit {
     }
 
     ngOnDestroy(): void {
-        this.resetForm();
-    }
-
-    resetForm() {
         this.submitted = false;
     }
 

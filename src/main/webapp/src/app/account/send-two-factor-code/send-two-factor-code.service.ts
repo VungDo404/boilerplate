@@ -11,7 +11,7 @@ export class SendTwoFactorCodeService {
     sendTwoFactorCode(model: SendTwoFactorCode,cb: () => void){
         this.authenticationService.sendTwoFactorCode(model).pipe(finalize(cb)).subscribe({
             next: (response) => {
-                this.router.navigate(["account/validate-code"])
+                this.router.navigate(["/validate-code"])
             }
         })
     }

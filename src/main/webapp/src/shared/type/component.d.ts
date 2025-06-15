@@ -35,3 +35,9 @@ declare interface MenuData {
 
 declare type MenuKey = keyof MenuData;
 
+declare interface SettingSidebarItem {
+    icon?: string;
+    label: string;
+    routerLink: string;
+}
+

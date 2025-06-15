@@ -19,6 +19,7 @@ import com.app.boilerplate.Shared.Authentication.LoginProvider;
 import com.app.boilerplate.Shared.Authentication.TokenType;
 import com.app.boilerplate.Shared.Authorization.Model.AuthorityModel;
 import com.app.boilerplate.Shared.User.Dto.CreateUserDto;
+import com.app.boilerplate.Shared.User.Dto.UpdateUserDto;
 import com.app.boilerplate.Util.SecurityUtil;
 import com.app.boilerplate.Util.StorageConsts;
 import lombok.RequiredArgsConstructor;
@@ -209,5 +210,14 @@ public class AccountService {
             .displayName(user.getDisplayName())
             .avatar(imageUrl.orElse(null))
             .build();
+    }
+
+    public void updateUserInfo(UpdateUserDto updateUserDto, UUID id){
+        this.userService.putUser(updateUserDto, id);
+    }
+
+    public UpdateUserDto getUserInfoForEdit(UUID id){
+        final var user = userService.getUserById(id);
+        return userMapper.toUpdateUserDto(user);
     }
 }

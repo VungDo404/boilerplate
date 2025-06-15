@@ -9,11 +9,6 @@ export const ACCOUNT_ROUTE: Routes = [
         loadComponent: () => import("./account.component").then(m => m.AccountComponent),
         children: [
             {
-                path: "",
-                redirectTo: "login",
-                pathMatch: "full"
-            },
-            {
                 path: "login",
                 loadComponent: () => import("./login/login.component").then(m => m.LoginComponent),
                 canActivate: [PermissionGuard],

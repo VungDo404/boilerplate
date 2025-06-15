@@ -56,9 +56,30 @@
   "PasswordMismatch": "Mật khẩu xác nhận phải trùng khớp với mật khẩu đã nhập.",
 
   "Search": "Tìm kiếm",
+  "Success:": "Thành công",
 
   "Profile": "Hồ sơ",
   "SignOut": "Đăng xuất",
   "Language": "Ngôn ngữ",
-  "LanguageTitle": "Chọn ngôn ngữ của bạn"
+  "LanguageTitle": "Chọn ngôn ngữ của bạn",
+
+  "BackToHome": "Trở về trang chủ",
+  "Account": "Tài khoản",
+  "Notification": "Thông báo",
+  "Update": "Cập nhật",
+  "Cancel": "Hủy bỏ",
+  "FileTooLarge": "Tệp quá lớn",
+  "FileTooLargeDetail": "Kích thước tối đa cho phép là {{value}}",
+  "FileTypeNotSupported": "Định dạng tệp không được hỗ trợ",
+  "FileTypeNotSupportedDetail": "Chỉ cho phép định dạng {{value}}",
+  "DisplayName": "Tên hiển thị",
+  "DisplayNamePlaceholder": "Tên hiển thị của bạn",
+  "PhoneNumber": "Số điện thoại",
+  "PhoneNumberPlaceholder": "Số điện thoại của bạn",
+  "Gender": "Giới tính",
+  "DateOfBirth": "Ngày sinh",
+  "DateOfBirthPlaceholder": "Chọn ngày sinh của bạn",
+  "Male": "Nam",
+  "Female": "Nữ",
+  "UpdateAccountSuccessMessage": "Cập nhật thông tin thành công"
 }

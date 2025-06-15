@@ -88,17 +88,13 @@ export class RegisterComponent implements OnInit {
             return;
         }
         this.submitted = true;
+        this.spinnerService.show();
         const cb = () => {
             this.submitted = false;
             this.spinnerService.hide();
         }
         const { confirmedPassword, ...rest} = this.registerForm.value as RegisterFormWithConfirmedPassword;
         this.registerService.register(rest, cb);
-    }
-
-    resetForm() {
-        this.submitted = false;
-        this.registerForm.reset();
     }
 
     protected readonly ROOT_OBJECT = ROOT_OBJECT;

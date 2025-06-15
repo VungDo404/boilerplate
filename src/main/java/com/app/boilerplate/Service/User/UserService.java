@@ -9,7 +9,7 @@ import com.app.boilerplate.Shared.Account.Event.EmailActivationEvent;
 import com.app.boilerplate.Shared.Authentication.LoginProvider;
 import com.app.boilerplate.Shared.User.Dto.CreateUserDto;
 import com.app.boilerplate.Shared.User.Dto.PostUserDto;
-import com.app.boilerplate.Shared.User.Dto.PutUserDto;
+import com.app.boilerplate.Shared.User.Dto.UpdateUserDto;
 import com.app.boilerplate.Shared.User.Dto.UserCriteriaDto;
 import com.app.boilerplate.Util.RandomUtil;
 import lombok.RequiredArgsConstructor;
@@ -105,9 +105,10 @@ public class UserService {
         return user;
     }
 
-    @CachePut(value = "user", key = "#request.id")
-    public User putUser(PutUserDto request) {
-        return Optional.of(request.getId())
+    @CachePut(value = "user", key = "#id")
+    public User putUser(UpdateUserDto request, UUID id) {
+
+        return Optional.of(id)
             .map(this::getUserById)
             .map(user -> {
                 userMapper.update(user, request);
@@ -116,7 +117,7 @@ public class UserService {
                 log.debug("Updated Information for User: {}", user);
                 return save(user);
             })
-            .orElseThrow(() -> new NotFoundException("", "error.user.id.notfound", request.getId()));
+            .orElseThrow(() -> new NotFoundException("", "error.user.id.notfound", id));
     }
 
     @CacheEvict(value = "user", key = "#id")
