@@ -20,7 +20,6 @@ public class ApplicationRevisionListener implements EntityTrackingRevisionListen
 		}else{
 			revision.setUserId(AppConsts.SYSTEM_USER_ID);
 		}
-
 	}
 
 	@Override

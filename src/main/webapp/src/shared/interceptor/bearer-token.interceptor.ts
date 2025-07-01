@@ -6,7 +6,8 @@ import { LocalStorageService } from "../service/local-storage.service";
 @Injectable()
 export class BearerTokenInterceptor implements HttpInterceptor {
     private readonly excludedUrls = [
-        "/api/auth/refresh-token"
+        "/api/auth/refresh-token",
+        "/api/auth/logout"
     ];
     constructor(private localStorageService: LocalStorageService) {}
 

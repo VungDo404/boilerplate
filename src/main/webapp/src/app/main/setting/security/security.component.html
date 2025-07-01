@@ -1,0 +1,12 @@
+<h1>{{ 'Security' | translate }}</h1>
+<div class="security-content">
+    <ng-container appBusy [busyIf]="loading">
+        <app-accordion
+                [items]="securityItems"
+                [title]="'SecurityTitle' | translate"
+                [description]="'SecurityDescription' | translate"
+
+        >
+        </app-accordion>
+    </ng-container>
+</div>

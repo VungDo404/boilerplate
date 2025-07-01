@@ -1,5 +1,6 @@
 package com.app.boilerplate.Shared.Account.Model;
 
+import com.app.boilerplate.Shared.Authentication.LoginProvider;
 import com.app.boilerplate.Shared.Authorization.Model.AuthorityModel;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
@@ -20,4 +21,5 @@ public class ProfileModel {
     private String displayName;
     private String username;
     private URL avatar;
+    private LoginProvider provider;
 }

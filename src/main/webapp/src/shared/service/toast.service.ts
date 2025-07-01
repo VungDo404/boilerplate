@@ -13,8 +13,8 @@ export class ToastService {
 
     constructor() { }
 
-    push(severity: string, summary: string, detail: string, postion?: ToastPositionType) {
-        this.positionSubject.next(postion ?? 'top-right')
+    push(severity: string, summary: string, detail: string, position?: ToastPositionType) {
+        this.positionSubject.next(position ?? 'top-right')
         const messageOption = [{
             severity: severity,
             summary: summary,

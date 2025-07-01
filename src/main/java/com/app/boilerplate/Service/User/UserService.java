@@ -7,6 +7,7 @@ import com.app.boilerplate.Repository.UserRepository;
 import com.app.boilerplate.Security.OAuth2UserInfo;
 import com.app.boilerplate.Shared.Account.Event.EmailActivationEvent;
 import com.app.boilerplate.Shared.Authentication.LoginProvider;
+import com.app.boilerplate.Shared.Authorization.Event.ObjectIdentityEvent;
 import com.app.boilerplate.Shared.User.Dto.CreateUserDto;
 import com.app.boilerplate.Shared.User.Dto.PostUserDto;
 import com.app.boilerplate.Shared.User.Dto.UpdateUserDto;
@@ -102,6 +103,7 @@ public class UserService {
             .orElseThrow();
         if (shouldSendConfirmationEmail)
             eventPublisher.publishEvent(new EmailActivationEvent(user));
+        eventPublisher.publishEvent(new ObjectIdentityEvent<>(user));
         return user;
     }
 

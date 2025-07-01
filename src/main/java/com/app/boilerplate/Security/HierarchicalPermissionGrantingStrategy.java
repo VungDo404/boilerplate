@@ -3,14 +3,12 @@ package com.app.boilerplate.Security;
 import org.springframework.security.acls.domain.AuditLogger;
 import org.springframework.security.acls.domain.DefaultPermissionGrantingStrategy;
 import org.springframework.security.acls.model.*;
-import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-@Component
 public class HierarchicalPermissionGrantingStrategy extends DefaultPermissionGrantingStrategy {
     private final transient AuditLogger auditLogger;
 

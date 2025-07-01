@@ -25,7 +25,7 @@ export class AccountComponent extends BaseComponent{
     message: string = '';
     linkText: string = '';
     linkRoute: string = '';
-
+    showExternalLogin = true;
     constructor(
         private router: Router,
         private translate: TranslateService,
@@ -113,6 +113,13 @@ export class AccountComponent extends BaseComponent{
                     this.linkText = translations['SignUp'];
                     this.linkRoute = '/register';
                 });
+        }else{
+            this.translate.get(['ReconfirmCredential'])
+                .pipe(takeUntil(this.destroy$))
+                .subscribe(translations => {
+                    this.title = translations['ReconfirmCredential'];
+                });
+            this.showExternalLogin = false;
         }
     }
 

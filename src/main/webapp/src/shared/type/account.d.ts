@@ -90,11 +90,14 @@ declare interface BaseAuthority {
     mask: Mask;
     type: ResourceType;
     id: string;
+    allowProvider?: Provider[];
 }
 
 declare interface Authority extends BaseAuthority {
     granting: boolean;
 }
+
+declare type Provider = 'LOCAL' | 'GOOGLE' | 'GITHUB';
 
 declare interface ProfileResult {
     userId?: string;
@@ -102,6 +105,7 @@ declare interface ProfileResult {
     username?: string;
     avatar?: string;
     displayName?: string;
+    provider?: Provider;
 }
 
 declare interface ObjectHierarchy {
@@ -115,4 +119,23 @@ declare interface UpdateUserInfo {
     gender?: number;
     dateOfBirth?: Date;
     phoneNumber?: string;
+}
+
+declare interface SecurityInfo{
+    passwordLastUpdate?: Date;
+    twoFactorEnable: boolean;
+}
+
+declare interface IsConfirmSecurity{
+    confirmed: boolean;
+}
+
+declare interface ConfirmSecurity{
+    username: string;
+    password: string;
+}
+
+declare interface ChangePassword{
+    id: string;
+    newPassword: string;
 }

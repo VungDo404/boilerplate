@@ -1,8 +1,10 @@
 @use "util" as u;
 @use "header/variable" as hv;
 @use "header/util" as hu;
+@use "variable" as v;
+
 .menu-container {
-    background-color: white;
+    background-color: v.$white;
     width: 300px;
     max-width: 300px;
     max-height: 747px;

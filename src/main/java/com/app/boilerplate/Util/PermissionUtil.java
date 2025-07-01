@@ -1,7 +1,7 @@
 package com.app.boilerplate.Util;
 
 public final class PermissionUtil {
-	public static final String USER = "com.app.boilerplate.Domain.User";
+	public static final String USER = "com.app.boilerplate.Domain.User.User";
 	public static final String APPLICATION = "com.app.boilerplate.Domain.Application";
 	public static final String AUTHENTICATION = "com.app.boilerplate.Domain.Authentication";
 	public static final String AUTHORIZATION = "com.app.boilerplate.Domain.Authorization";

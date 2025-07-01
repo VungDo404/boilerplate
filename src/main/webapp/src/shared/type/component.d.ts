@@ -1,3 +1,4 @@
+
 declare interface LinkItem{
     type: 'link';
     label: string;
@@ -39,5 +40,7 @@ declare interface SettingSidebarItem {
     icon?: string;
     label: string;
     routerLink: string;
+    isRender: boolean;
 }
 
+declare type AccordionMode = 'compact' | 'wide';

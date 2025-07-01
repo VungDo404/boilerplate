@@ -1,0 +1,20 @@
+<a
+        class="accordion-item-container"
+        [ngClass]="mode"
+        [class.border-bottom]="mode === 'compact' && !isLast"
+        [routerLink]="item.routerLink"
+>
+    <div class="icon-title">
+        <i class="pi" [class]="item.titleIcon"></i>
+    </div>
+    <div class="title">
+        <span>{{ item.title }}</span>
+    </div>
+    <div class="description">
+        <i *ngIf="item.descriptionIcon" class="pi" [class]="item.descriptionIcon"></i>
+        <span>{{ item.description }}</span>
+    </div>
+    <div class="arrow-icon">
+        <i class="pi pi-chevron-right"></i>
+    </div>
+</a>

@@ -1,12 +1,14 @@
 @use "header/variable" as hv;
 @use "variable" as v;
-:host{
-  grid-area: logo;
-  display: flex;
-  justify-content: start;
-  align-items: center;
-  width: hv.$header-logo-icon-width;
-  height: 100px;
-  background-color: v.$white;
-  padding-left: 36px;
+
+:host {
+    grid-area: logo;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    min-width: hv.$header-logo-icon-width;
+    height: 100px;
+    background-color: v.$white;
+    padding-left: 36px;
+    cursor: pointer;
 }

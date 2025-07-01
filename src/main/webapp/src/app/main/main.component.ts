@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { HeaderComponent } from "../../shared/component/header/header.component";
 import { HeaderLogoComponent } from "../../shared/component/header-logo/header-logo.component";
 import { RouterOutlet } from "@angular/router";

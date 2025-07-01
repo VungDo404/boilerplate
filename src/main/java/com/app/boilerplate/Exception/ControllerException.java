@@ -187,6 +187,18 @@ public class ControllerException extends ResponseEntityExceptionHandler {
 		);
 	}
 
+	@ExceptionHandler(value = {CredentialsNotConfirmedException.class})
+	ResponseEntity<Object> handleCredentialsNotConfirmedException(CredentialsNotConfirmedException exception, NativeWebRequest request) {
+		return handleException(
+			exception,
+			HttpStatus.BAD_REQUEST,
+			exception.getMessage(),
+			HttpStatus.BAD_REQUEST.getReasonPhrase(),
+			null,
+			request,
+			null);
+	}
+
 	@ExceptionHandler(value = {AlreadyExistsException.class})
 	ResponseEntity<Object> handleNotFoundException(AlreadyExistsException exception, NativeWebRequest request) {
 		return handleException(

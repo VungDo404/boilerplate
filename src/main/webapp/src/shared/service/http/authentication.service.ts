@@ -32,4 +32,14 @@ export class AuthenticationService {
         const url = this.baseUrl + "/logout";
         return this.http.post(url, {}, { withCredentials: true });
     }
+
+    isConfirmSecurity(id: string){
+        const url = this.baseUrl + "/confirm-credential/" + id;
+        return this.http.get<IsConfirmSecurity>(url);
+    }
+
+    confirmSecurity(body: ConfirmSecurity, id: string){
+        const url = this.baseUrl + "/confirm-credential/" + id;
+        return this.http.post(url, body, { withCredentials: true });
+    }
 }

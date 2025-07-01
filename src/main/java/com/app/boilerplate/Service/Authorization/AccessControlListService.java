@@ -24,6 +24,9 @@ public class AccessControlListService extends JdbcMutableAclService {
         final LookupStrategy lookupStrategy,
         final AclCache aclCache) {
         super(dataSource, lookupStrategy, aclCache);
+        setSidIdentityQuery("SELECT LAST_INSERT_ID()");
+        setClassIdentityQuery("SELECT LAST_INSERT_ID()");
+        setAclClassIdSupported(true);
     }
 
     public void addPermission(Class<?> type, Long objectId, Permission permission) {
@@ -130,7 +133,6 @@ public class AccessControlListService extends JdbcMutableAclService {
             .map(super::readAclById)
             .map(MutableAcl.class::cast)
             .orElseGet(() -> createAcl(objectIdentity));
-        ;
 
         operation.execute(acl);
         updateAcl(acl);

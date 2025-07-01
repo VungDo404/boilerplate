@@ -22,7 +22,7 @@ export class HeaderMenuService {
         this.item$ = this.itemSubject.asObservable();
     }
 
-    get getItemSubject(){
+    get getItemSubject() {
         return this.itemSubject;
     }
 
@@ -43,7 +43,7 @@ export class HeaderMenuService {
         return items;
     }
 
-     loadMenuItems(): void {
+    loadMenuItems(): void {
         combineLatest(
             [this.translate.get(['Profile', 'SignOut', 'Language', 'LanguageTitle']), this.sessionService.sessionState$])
             .pipe(

@@ -90,7 +90,7 @@ export class LoginService {
             });
         } else if ("accessToken" in result) {
             this.login(result, () => {
-                window.location.href = this.redirectUrl ?? '/main';
+                window.location.href = this.redirectUrl ?? '/';
                 this.redirectUrl = undefined;
             })
         } else {

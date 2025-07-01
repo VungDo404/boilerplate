@@ -55,4 +55,14 @@ export class AccountService {
         const url = this.baseUrl + "/user/" + id;
         return this.http.get<UpdateUserInfo>(url);
     }
+
+    getSecurityInfo(id: string){
+        const url = this.baseUrl + "/user/" + id + "/security";
+        return this.http.get<SecurityInfo>(url);
+    }
+
+    changePassword(body: ChangePassword){
+        const url = this.baseUrl + "/change-password";
+        return this.http.post(url, body);
+    }
 }

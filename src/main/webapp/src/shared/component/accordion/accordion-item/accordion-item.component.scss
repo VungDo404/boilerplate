@@ -1,0 +1,81 @@
+@use 'variable' as v;
+
+:host {
+    display: block;
+    padding: 0 24px;
+    width: 100%;
+
+    .accordion-item-container {
+        display: grid;
+        justify-content: center;
+        align-items: center;
+        padding: 15px 24px 16px 24px;
+        text-decoration: none;
+        color: inherit;
+        transition: background-color 0.2s ease;
+
+        &.compact {
+            height: 55px;
+            grid-template-columns: 34px 349px 343px 40px;
+
+            &.border-bottom {
+                border-bottom: 1px solid v.$light-200;
+
+            }
+
+            .title {
+                font-size: 1rem;
+            }
+
+            .description {
+                font-size: 0.875rem;
+            }
+
+            .icon-title {
+                width: 1.125rem;
+                height: 1.125rem;
+            }
+
+            .arrow-icon {
+                justify-self: end;
+            }
+        }
+
+        &.wide {
+            height: auto;
+            grid-template-columns: 80px 345px 345px 48px;
+
+            .title {
+                font-size: 1rem;
+            }
+
+            .description {
+                font-size: 0.875rem;
+            }
+
+            .icon-title {
+                i {
+                    font-size: 1.5rem;
+                }
+
+                justify-self: center;
+                align-self: center;
+            }
+
+            .arrow-icon {
+                i {
+                    font-size: 1.5rem;
+                }
+                justify-self: center;
+                align-self: center;
+
+            }
+        }
+
+
+    }
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+
+}

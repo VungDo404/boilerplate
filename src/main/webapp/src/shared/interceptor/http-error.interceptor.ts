@@ -31,7 +31,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
                 catchError((error: HttpErrorResponse) => {
                     if (error.error) {
                         const problemDetail: ProblemDetail | ProblemDetailWithFieldError = error.error;
-                        if (error.status === 401 && problemDetail.instance === "/api/auth/refresh-token") {
+                        if ([401, 400].includes(error.status) && problemDetail.instance === "/api/auth/refresh-token") {
                             return throwError(() => error);
                         }
                         const wwwAuthenticate = error.headers.get('WWW-Authenticate');
@@ -74,8 +74,12 @@ export class HttpErrorInterceptor implements HttpInterceptor {
                                 translations['SessionExpired'],
                                 this.notifyService.option1(translations['SignIn']),
                                 () => {
-                                    this.logoutService.logout(() => {});
-                                    this.router.navigate(['/login']);
+                                    this.logoutService.logout(() => {
+                                        this.router.navigate(['/login']).then(r => {
+                                            window.location.reload();
+                                        });
+                                    });
+
                                 }
                             )
                         }

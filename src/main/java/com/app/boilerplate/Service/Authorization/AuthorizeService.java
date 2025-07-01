@@ -5,10 +5,12 @@ import com.app.boilerplate.Repository.*;
 import com.app.boilerplate.Service.User.UserService;
 import com.app.boilerplate.Shared.Authorization.Dto.CreateAuthorityDto;
 import com.app.boilerplate.Shared.Authorization.Dto.CreateObjectIdentityDto;
+import com.app.boilerplate.Shared.Authorization.Event.ObjectIdentityEvent;
 import com.app.boilerplate.Shared.Authorization.Model.AuthorityModel;
 import com.app.boilerplate.Util.SecurityUtil;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.acls.model.NotFoundException;
@@ -17,7 +19,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -30,6 +35,7 @@ public class AuthorizeService {
     private final AclSidRepository aclSidRepository;
     private final AuthorityRepository authorityRepository;
     private final UserService userService;
+    private final AccessControlListService accessControlListService;
 
     public Page<AclSid> getSid(Pageable pageable) {
         return aclSidRepository.findAll(pageable);
@@ -72,14 +78,15 @@ public class AuthorizeService {
 
     public List<AuthorityModel> getGrantedAuthority(String id) {
         final List<Object[]> rawResults;
-        if(SecurityUtil.isAnonymous()){
+        if (SecurityUtil.isAnonymous()) {
             final var authorities = SecurityUtil.getAuthorities();
             final var authorityStrings = authorities.stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toSet());
             rawResults = authorityRepository.findAclEntriesBySid(authorityStrings);
-        }else{
-            rawResults = authorityRepository.findAclEntriesByUserId(id, SecurityUtil.getPrincipalSid().getPrincipal());
+        } else {
+            rawResults = authorityRepository.findAclEntriesByUserId(id, SecurityUtil.getPrincipalSid()
+                .getPrincipal());
         }
 
         return rawResults.stream()
@@ -129,15 +136,32 @@ public class AuthorizeService {
             objectIdentity.setParentObject(parentObject);
         }
 
-        final var ownerSid = aclSidRepository.findById(createObjectIdentityDto.getOwnerSid())
-            .orElseThrow(() -> new EntityNotFoundException("Owner SID not found"));
-        objectIdentity.setOwnerSid(ownerSid);
+        if (createObjectIdentityDto.getOwnerSid() != null) {
+            final var ownerSid = aclSidRepository.findById(createObjectIdentityDto.getOwnerSid())
+                .orElseThrow(() -> new EntityNotFoundException("Owner SID not found"));
+            objectIdentity.setOwnerSid(ownerSid);
+        }
 
         objectIdentity.setEntriesInheriting(createObjectIdentityDto.isEntriesInheriting());
 
         final var returnedObjectIdentity = aclObjectIdentityRepository.save(objectIdentity);
 
         return returnedObjectIdentity.getId();
+    }
+
+
+    @EventListener(ObjectIdentityEvent.class)
+    public void addObjectIdentity(ObjectIdentityEvent<?> event) {
+        final var entity = event.getEntity();
+        final var className = entity.getClass().getName();
+        final var id = entity.getId().toString();
+        final var sid = SecurityUtil.isAnonymous() ?
+            null :
+            accessControlListService.callCreateOrRetrieveSidPrimaryKey(
+                SecurityUtil.getPrincipalSid().getPrincipal(),
+                true,
+                true);
+        aclObjectIdentityRepository.createAclObjectIdentity(className, id, sid);
     }
 
     public Page<Authority> getAuthorities(Pageable pageable) {

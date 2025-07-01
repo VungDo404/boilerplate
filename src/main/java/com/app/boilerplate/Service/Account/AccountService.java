@@ -1,10 +1,13 @@
 package com.app.boilerplate.Service.Account;
 
+import com.app.boilerplate.Decorator.Confirmcredential.ConfirmCredential;
 import com.app.boilerplate.Domain.User.User;
+import com.app.boilerplate.Domain.User.User_;
 import com.app.boilerplate.Exception.BadRequestException;
 import com.app.boilerplate.Mapper.IUserMapper;
 import com.app.boilerplate.Service.Authentication.TwoFactorService;
 import com.app.boilerplate.Service.Authorization.AuthorizeService;
+import com.app.boilerplate.Service.Revision.RevisionService;
 import com.app.boilerplate.Service.Storage.StorageService;
 import com.app.boilerplate.Service.Token.TokenService;
 import com.app.boilerplate.Service.User.UserService;
@@ -14,6 +17,7 @@ import com.app.boilerplate.Shared.Account.Event.ResetPasswordEvent;
 import com.app.boilerplate.Shared.Account.Event.SendEmailActivationEvent;
 import com.app.boilerplate.Shared.Account.Model.ProfileModel;
 import com.app.boilerplate.Shared.Account.Model.RegisterResultModel;
+import com.app.boilerplate.Shared.Account.Model.SecurityInfoModel;
 import com.app.boilerplate.Shared.Account.Model.TOTPModel;
 import com.app.boilerplate.Shared.Authentication.LoginProvider;
 import com.app.boilerplate.Shared.Authentication.TokenType;
@@ -26,7 +30,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,21 +48,20 @@ import java.util.UUID;
 public class AccountService {
     private final UserService userService;
     private final IUserMapper userMapper;
-    private final PasswordEncoder passwordEncoder;
     private final ApplicationEventPublisher eventPublisher;
     private final TokenService tokenService;
     private final TwoFactorService twoFactorService;
     private final StorageService storageService;
     private final AuthorizeService authorizeService;
+    private final RevisionService revisionService;
 
     private final Duration LOCK_OUT_TIME = Duration.ofDays(1);
     private final Integer ACCESS_FAILED_ATTEMPTS = 10;
 
+    @ConfirmCredential
     public void changePassword(ChangePasswordDto request) {
         Optional.of(request.getId())
             .map(userService::getUserById)
-            .filter(user -> passwordEncoder.matches(request.getCurrentPassword(),
-                user.getPassword()))
             .map(user -> {
                 userMapper.update(user, request.getNewPassword());
                 return user;
@@ -74,6 +76,7 @@ public class AccountService {
             .build();
     }
 
+    @ConfirmCredential
     public TOTPModel enableTwoFactor(UUID userId) {
         final var user = userService.getUserById(userId);
         if (user.getIsTwoFactorEnabled())
@@ -84,6 +87,7 @@ public class AccountService {
         return totp;
     }
 
+    @ConfirmCredential
     public void disableTwoFactor(UUID userId) {
         final var user = userService.getUserById(userId);
         user.setIsTwoFactorEnabled(false);
@@ -209,6 +213,7 @@ public class AccountService {
             .username(user.getUsername())
             .displayName(user.getDisplayName())
             .avatar(imageUrl.orElse(null))
+            .provider(user.getProvider())
             .build();
     }
 
@@ -219,5 +224,15 @@ public class AccountService {
     public UpdateUserDto getUserInfoForEdit(UUID id){
         final var user = userService.getUserById(id);
         return userMapper.toUpdateUserDto(user);
+    }
+
+    public SecurityInfoModel getSecurityInfo(UUID id){
+        final var lastChange = revisionService.getLastChangeDateForField(id, User_.PASSWORD, User.class);
+        final var user = userService.getUserById(id);
+
+        return SecurityInfoModel.builder()
+            .twoFactorEnable(user.getIsTwoFactorEnabled())
+            .passwordLastUpdate(lastChange.toLocalDate())
+            .build();
     }
 }

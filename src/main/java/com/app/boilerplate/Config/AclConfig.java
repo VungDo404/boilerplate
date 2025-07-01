@@ -4,6 +4,7 @@ import com.app.boilerplate.Security.HierarchicalPermission;
 import com.app.boilerplate.Security.HierarchicalPermissionGrantingStrategy;
 import com.app.boilerplate.Service.Authorization.AccessControlListService;
 import com.app.boilerplate.Util.SecurityUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
@@ -13,7 +14,6 @@ import org.springframework.security.access.expression.method.MethodSecurityExpre
 import org.springframework.security.acls.AclPermissionEvaluator;
 import org.springframework.security.acls.domain.*;
 import org.springframework.security.acls.jdbc.BasicLookupStrategy;
-import org.springframework.security.acls.jdbc.JdbcMutableAclService;
 import org.springframework.security.acls.model.Sid;
 import org.springframework.security.acls.model.SidRetrievalStrategy;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,25 +22,11 @@ import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Configuration
 public class AclConfig {
-
-    @Bean
-    public JdbcMutableAclService aclService(
-        SpringCacheBasedAclCache aclCache,
-        BasicLookupStrategy lookupStrategy,
-        DataSource dataSource) {
-        final var mutableAclService = new AccessControlListService(
-            dataSource,
-            lookupStrategy,
-            aclCache
-        );
-        mutableAclService.setSidIdentityQuery("SELECT LAST_INSERT_ID()");
-        mutableAclService.setClassIdentityQuery("SELECT LAST_INSERT_ID()");
-        mutableAclService.setAclClassIdSupported(true);
-
-        return mutableAclService;
-    }
+    private final DataSource dataSource;
+    private final CacheManager cacheManager;
 
     @Bean
     public AclAuthorizationStrategy aclAuthorizationStrategy() {
@@ -48,20 +34,17 @@ public class AclConfig {
     }
 
     @Bean
-    public HierarchicalPermissionGrantingStrategy permissionGrantingStrategy(AuditLogger auditLogger) {
-        return new HierarchicalPermissionGrantingStrategy(auditLogger);
+    public HierarchicalPermissionGrantingStrategy permissionGrantingStrategy() {
+        return new HierarchicalPermissionGrantingStrategy(auditLogger());
     }
 
     @Bean
-    public SpringCacheBasedAclCache aclCache(
-        CacheManager cacheManager,
-        HierarchicalPermissionGrantingStrategy permissionGrantingStrategy,
-        AclAuthorizationStrategy aclAuthorizationStrategy) {
+    public SpringCacheBasedAclCache aclCache() {
         Cache redisCache = cacheManager.getCache("acl_cache");
         if (redisCache == null) {
             throw new IllegalStateException("Cache named 'acl_cache' must be configured in RedisCacheManager.");
         }
-        return new SpringCacheBasedAclCache(redisCache, permissionGrantingStrategy, aclAuthorizationStrategy);
+        return new SpringCacheBasedAclCache(redisCache, permissionGrantingStrategy(), aclAuthorizationStrategy());
     }
 
     @Bean
@@ -75,22 +58,21 @@ public class AclConfig {
     }
 
     @Bean
-    public BasicLookupStrategy lookupStrategy(
-        SpringCacheBasedAclCache aclCache, DataSource dataSource,
-        AuditLogger auditLogger, PermissionFactory permissionFactory) {
+    public BasicLookupStrategy lookupStrategy() {
         var basicLookupStrategy = new BasicLookupStrategy(
             dataSource,
-            aclCache,
+            aclCache(),
             aclAuthorizationStrategy(),
-            auditLogger
+            permissionGrantingStrategy()
         );
-        basicLookupStrategy.setPermissionFactory(permissionFactory);
+        basicLookupStrategy.setPermissionFactory(aclPermissionFactory());
         basicLookupStrategy.setAclClassIdSupported(true);
+
         return basicLookupStrategy;
     }
 
     @Bean
-    public MethodSecurityExpressionHandler defaultMethodSecurityExpressionHandler(JdbcMutableAclService aclService) {
+    public MethodSecurityExpressionHandler defaultMethodSecurityExpressionHandler(AccessControlListService aclService) {
         DefaultMethodSecurityExpressionHandler expressionHandler = new DefaultMethodSecurityExpressionHandler();
         AclPermissionEvaluator permissionEvaluator = new AclPermissionEvaluator(aclService);
         permissionEvaluator.setSidRetrievalStrategy(sidRetrievalStrategy());

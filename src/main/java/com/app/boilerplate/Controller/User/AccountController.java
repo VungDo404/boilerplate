@@ -9,6 +9,7 @@ import com.app.boilerplate.Shared.Account.Dto.ResetPasswordDto;
 import com.app.boilerplate.Shared.Account.Group.RegisterUser;
 import com.app.boilerplate.Shared.Account.Model.ProfileModel;
 import com.app.boilerplate.Shared.Account.Model.RegisterResultModel;
+import com.app.boilerplate.Shared.Account.Model.SecurityInfoModel;
 import com.app.boilerplate.Shared.Account.Model.TOTPModel;
 import com.app.boilerplate.Shared.User.Dto.CreateUserDto;
 import com.app.boilerplate.Shared.User.Dto.UpdateUserDto;
@@ -59,8 +60,9 @@ public class AccountController {
     }
 
     @RateLimit(capacity = 100, tokens = 10, duration = 5, timeUnit = ChronoUnit.SECONDS, key = "'changePassword-' + #ip")
-    @PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.WRITE +
+    @PreAuthorize("hasPermission(#request.id.toString(), '" + PermissionUtil.USER + "', '" + PermissionUtil.WRITE +
         "')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping("/change-password")
     public void changePassword(@RequestBody @Valid ChangePasswordDto request) {
         accountService.changePassword(request);
@@ -128,5 +130,11 @@ public class AccountController {
     @GetMapping("/user/{id}")
     public UpdateUserDto getInfoForEdit(@PathVariable @NotNull UUID id){
         return accountService.getUserInfoForEdit(id);
+    }
+
+    @PreAuthorize("hasPermission(#id.toString(), '" + PermissionUtil.USER + "', '" + PermissionUtil.WRITE + "')")
+    @GetMapping("/user/{id}/security")
+    public SecurityInfoModel getSecurityInfo(@PathVariable @NotNull UUID id) {
+        return accountService.getSecurityInfo(id);
     }
 }

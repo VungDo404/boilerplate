@@ -1,12 +1,14 @@
 <div #scrollable class="sidebar-scroll">
     <div class="back">
-        <div class="icon" routerLink="['/']">
+        <div class="icon-1" routerLink="['/']">
             <i class="pi pi-arrow-left"></i>
         </div>
-        <span>{{'BackToHome' | translate}}</span>
+        <span>{{ 'BackToHome' | translate }}</span>
     </div>
     <div *ngFor="let item of items">
-        <app-sidebar-item [item]="item"></app-sidebar-item>
+        <ng-container *ngIf="provider">
+            <app-sidebar-item [item]="item"></app-sidebar-item>
+        </ng-container>
     </div>
 </div>
 

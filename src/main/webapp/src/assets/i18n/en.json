@@ -81,5 +81,20 @@
   "DateOfBirthPlaceholder": "Select Your Date of Birth",
   "Male": "Male",
   "Female": "Female",
-  "UpdateAccountSuccessMessage": "Update account successfully"
+  "UpdateAccountSuccessMessage": "Update account successfully",
+  "Security": "Security",
+  "SecurityTitle": "Manage Your Account Access",
+  "SecurityDescription": "Make sure you can always access your account by keeping this information up to date",
+  "2-StepVerification": "2-Step Verification",
+  "UnchangedPassword": "No password change recorded",
+  "2FAOn": "2-Step Verification is on",
+  "2FAOff": "2-Step Verification is off",
+  "LastChanged": "Last changed {{value}}",
+
+  "ReconfirmCredential": "Reconfirm Credential",
+  "PasswordHeadline": "Choose a strong password and don’t reuse it for other accounts.",
+  "PasswordSubtext": "You may be signed out of your account after you change your password.",
+  "PasswordStrength": "Password strength:",
+  "PasswordStrengthMessage": "Use at least 8 characters. Don’t use a password from another site, or something too obvious like your pet's name.",
+  "ChangePasswordMessage": "Changing password successfully. You may log in with your new password."
 }

@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { PermissionGuard } from "../../shared/guard/permission.guard";
-import { ROOT_OBJECT } from "../../shared/const/app.const";
+import { CURRENT_USER_ID, ROOT_OBJECT } from "../../shared/const/app.const";
 import { Action } from "../../shared/const/app.enum";
 
 export const ACCOUNT_ROUTE: Routes = [
@@ -68,6 +68,12 @@ export const ACCOUNT_ROUTE: Routes = [
                 loadComponent: () => import("./logout/logout.component").then(m => m.LogoutComponent),
                 canActivate: [PermissionGuard],
                 data: { mask: Action.Delete, type: "Authentication", id: ROOT_OBJECT } as BaseAuthority
+            },
+            {
+                path: "confirm-credential",
+                loadComponent: () => import("./confirm-credential/confirm-credential.component").then(m => m.ConfirmCredentialComponent),
+                canActivate: [PermissionGuard],
+                data: { mask: Action.Write, type: "User", id: CURRENT_USER_ID } as BaseAuthority
             }
         ]
     },

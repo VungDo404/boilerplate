@@ -12,6 +12,7 @@ export class SessionService {
     private usernameSubject = new BehaviorSubject<string>(USERNAME);
     private nameSubject = new BehaviorSubject<string>(DISPLAY_NAME);
     private avatarSubject = new BehaviorSubject<string>('');
+    private providerSubject = new BehaviorSubject<Provider>('LOCAL');
 
     readonly authorities$ = this.authoritiesSubject.asObservable();
     readonly userId$ = this.userIdSubject.asObservable();
@@ -41,9 +42,18 @@ export class SessionService {
                 this.avatarSubject.next(
                     response.avatar ?? `https://api.dicebear.com/7.x/bottts/svg?seed=${ this.usernameSubject.value }`
                 );
+                this.providerSubject.next(response.provider ?? this.providerSubject.value);
             }),
             map(() => void 0),
         );
+    }
+
+    get username(){
+        return this.usernameSubject.value;
+    }
+
+    get provider(){
+        return this.providerSubject.value;
     }
 
     get permissions() {

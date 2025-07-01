@@ -1,10 +1,12 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import PerfectScrollbar from "perfect-scrollbar";
-import { NgForOf } from "@angular/common";
+import { NgForOf, NgIf } from "@angular/common";
 import { SidebarItemComponent } from "./sidebar-item/sidebar-item.component";
 import { RouterLink } from "@angular/router";
 import { LangChangeEvent, TranslatePipe, TranslateService } from "@ngx-translate/core";
-import { Subject, takeUntil } from "rxjs";
+import { takeUntil } from "rxjs";
+import { BaseComponent } from "../base.component";
+import { SessionService } from "../../service/session.service";
 
 @Component({
     selector: 'aside[app-sidebar]',
@@ -12,28 +14,28 @@ import { Subject, takeUntil } from "rxjs";
         NgForOf,
         SidebarItemComponent,
         RouterLink,
-        TranslatePipe
+        TranslatePipe,
+        NgIf
     ],
     templateUrl: './sidebar.component.html',
     standalone: true,
     styleUrl: './sidebar.component.scss'
 })
-export class SidebarComponent implements OnInit, AfterViewInit, OnDestroy {
-    private destroy$ = new Subject<void>();
+export class SidebarComponent extends BaseComponent implements OnInit, AfterViewInit {
     @ViewChild('scrollable') scrollableRef!: ElementRef;
     private ps!: PerfectScrollbar;
     items!: SettingSidebarItem[];
-    constructor(private translate: TranslateService) {}
+    constructor(private translate: TranslateService, private sessionService: SessionService) {super();}
     ngAfterViewInit() {
         this.ps = new PerfectScrollbar(this.scrollableRef.nativeElement);
     }
 
-    ngOnDestroy() {
+
+    override ngOnDestroy() {
+        super.ngOnDestroy()
         if (this.ps) {
             this.ps.destroy();
         }
-        this.destroy$.next();
-        this.destroy$.complete();
     }
 
     ngOnInit(): void {
@@ -46,16 +48,27 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnDestroy {
 
     }
 
+    get provider(){
+        return this.sessionService.provider;
+    }
+
     private loadItems(){
-        this.translate.get(['Account', 'Notification']).pipe(takeUntil(this.destroy$)).subscribe(translations => {
+        this.translate.get(['Account', 'Notification', 'Security']).pipe(takeUntil(this.destroy$)).subscribe(translations => {
             this.items = [
                 {
                     label: translations['Account'],
-                    routerLink: "/account"
+                    routerLink: "/account",
+                    isRender: true
+                },
+                {
+                    label: translations['Security'],
+                    routerLink: "/security",
+                    isRender: this.provider !== 'LOCAL'
                 },
                 {
                     label: translations['Notification'],
-                    routerLink: "/"
+                    routerLink: "/",
+                    isRender: true
                 }
             ]
         })

@@ -9,6 +9,7 @@ import {
 } from '@angular/router';
 import { AclService } from "../service/acl.service";
 import { SessionService } from "../service/session.service";
+import { CURRENT_USER_ID } from "../const/app.const";
 
 @Injectable({
     providedIn: 'root'
@@ -25,7 +26,8 @@ export class PermissionGuard implements CanActivate {
         state: RouterStateSnapshot): MaybeAsync<GuardResult> {
 
         const { id, type, mask } = route.data as BaseAuthority;
-        const targetId = route.params['id'] ? route.params['id'] : id;
+        const temp = id === CURRENT_USER_ID ? this.sessionService.id : id;
+        const targetId = route.params['id'] ? route.params['id'] : temp;
 
         if (type && mask) {
 
@@ -41,8 +43,8 @@ export class PermissionGuard implements CanActivate {
 
     private selectBestRoute(state: RouterStateSnapshot){
         if(this.sessionService.isAuthenticated){
-            if(state.url.includes("account")) return this.router.parseUrl("/main");
-            return this.router.parseUrl("/main/access-denied");
+            if(state.url.includes("account")) return this.router.parseUrl("/");
+            return this.router.parseUrl("/access-denied");
         }else{
             return this.router.createUrlTree(['/login'], {
                 queryParams: { redirectUrl: state.url }

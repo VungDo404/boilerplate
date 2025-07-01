@@ -1,4 +1,5 @@
 @use "variable" as v;
+@use 'sass:color';
 
 .header-1 {
     font-size: 34px;
@@ -173,5 +174,21 @@
     padding: 0 16px;
     &:hover{
         background-color: rgba(0, 0, 0, 0.05);
+    }
+}
+
+.icon-1{
+    box-shadow: 0 9.583px 28.75px 0 rgba(66, 71, 97, 0.10);
+    background-color: v.$white;
+    border-radius: 28.75px;
+    cursor: pointer;
+    width: 46px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &:hover {
+        background-color: color.adjust(v.$brand, $lightness: 25%);
+        box-shadow: 0 12px 32px rgba(66, 71, 97, 0.15);
     }
 }

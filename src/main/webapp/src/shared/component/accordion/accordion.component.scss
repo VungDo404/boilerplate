@@ -1,0 +1,25 @@
+@use "variable" as v;
+
+
+:host{
+    display: block;
+    width: 840px;
+
+    border-radius: 12px;
+    overflow-x: hidden;
+    box-shadow: 0 4px 32px 0 rgba(0, 0, 0, 0.1);
+    background-color: v.$white;
+    .header-container{
+        padding: 24px 24px 8px;
+        h2{
+            font-size: 1.375rem;
+            line-height: 1.75rem;
+            font-weight: 400;
+        }
+        span{
+            font-size: 0.875rem;
+            color: v.$light-100;
+        }
+    }
+
+}

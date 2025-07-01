@@ -2,6 +2,7 @@ package com.app.boilerplate.Domain.User;
 
 import com.app.boilerplate.Shared.Authentication.Gender;
 import com.app.boilerplate.Shared.Authentication.LoginProvider;
+import com.app.boilerplate.Shared.Common.Identifiable;
 import com.app.boilerplate.Shared.User.UserListener;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -28,7 +29,7 @@ import java.util.UUID;
 @Audited
 @AuditTable("user_history")
 @Entity
-@EntityListeners(UserListener.class)
+@EntityListeners({UserListener.class})
 @Table(
     name = "user",
     indexes = {
@@ -38,7 +39,7 @@ import java.util.UUID;
         @UniqueConstraint(name = "uq_user_username_provider", columnNames = {User_.USERNAME, User_.PROVIDER})
     }
 )
-public class User implements UserDetails {
+public class User implements UserDetails, Identifiable<UUID> {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -58,7 +59,8 @@ public class User implements UserDetails {
     @Column(length = 50, nullable = false, updatable = false)
     private String username;
 
-    @NotAudited
+
+    @Audited(withModifiedFlag = true)
     @JsonIgnore
     @NotNull
     @Size(min = 6, message = "Password must be between {min} and {max} characters long")

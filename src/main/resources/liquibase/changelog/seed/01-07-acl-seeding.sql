@@ -1,5 +1,5 @@
 INSERT INTO acl_class(class, class_id_type)
-VALUES ('com.app.boilerplate.Domain.User', 'java.lang.String'),
+VALUES ('com.app.boilerplate.Domain.User.User', 'java.lang.String'),
        ('com.app.boilerplate.Domain.Application', 'java.lang.Long'),
        ('com.app.boilerplate.Domain.Authentication', 'java.lang.Long'),
        ('com.app.boilerplate.Domain.Authorization', 'java.lang.Long'),
@@ -72,7 +72,7 @@ SET
 @acl_class_user_id = (
     SELECT id
     FROM acl_class
-    WHERE class = 'com.app.boilerplate.Domain.User'
+    WHERE class = 'com.app.boilerplate.Domain.User.User'
 );
 
 INSERT INTO acl_object_identity(object_id_class, object_id_identity, parent_object, owner_sid, entries_inheriting)
@@ -101,7 +101,7 @@ SET
          WHERE object_id_class = (
          		SELECT id
     			FROM acl_class
-    			WHERE class = 'com.app.boilerplate.Domain.User'
+    			WHERE class = 'com.app.boilerplate.Domain.User.User'
              )
         	AND object_id_identity = 0
 );

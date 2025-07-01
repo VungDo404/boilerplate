@@ -81,5 +81,20 @@
   "DateOfBirthPlaceholder": "Chọn ngày sinh của bạn",
   "Male": "Nam",
   "Female": "Nữ",
-  "UpdateAccountSuccessMessage": "Cập nhật thông tin thành công"
+  "UpdateAccountSuccessMessage": "Cập nhật thông tin thành công",
+  "Security": "Bảo mật",
+  "SecurityTitle": "Quản lý quyền truy cập tài khoản",
+  "SecurityDescription": "Hãy đảm bảo bạn luôn có thể truy cập tài khoản của mình bằng cách cập nhật thông tin này",
+  "2-StepVerification": "Xác minh 2 bước",
+  "UnchangedPassword": "Chưa ghi nhận thay đổi mật khẩu",
+  "2FAOn": "Xác minh 2 bước đang bật",
+  "2FAOff": "Xác minh 2 bước đang tắt",
+  "LastChanged": "Thay đổi lần cuối vào {{value}}",
+
+  "ReconfirmCredential": "Xác minh lại thông tin đăng nhập",
+  "PasswordHeadline": "Chọn mật khẩu mạnh và không sử dụng lại cho các tài khoản khác.",
+  "PasswordSubtext": "Bạn có thể sẽ bị đăng xuất khỏi tài khoản của mình sau khi đổi mật khẩu.",
+  "PasswordStrength": "Độ mạnh của mật khẩu:",
+  "PasswordStrengthMessage": "Sử dụng ít nhất 8 ký tự. Không nên dùng mật khẩu từ trang web khác hoặc những thứ quá dễ đoán như tên thú cưng của bạn.",
+  "ChangePasswordMessage": "Thay đổi mật khẩu thành công. Bạn có thể đăng nhập với mật khẩu mới."
 }

@@ -22,7 +22,7 @@ public class SwaggerAuthenticationSuccessHandler implements AuthenticationSucces
 	public void onAuthenticationSuccess(final HttpServletRequest request, final HttpServletResponse response,
                                         final Authentication authentication) throws IOException {
 		final var user = (User) authentication.getPrincipal();
-		final var accessToken = authService.createAccessToken(user, UUID.randomUUID());
+		final var accessToken = authService.createAccessToken(user);
 		request.getSession().setAttribute(AppConsts.ACCESS_TOKEN, accessToken);
 		response.sendRedirect("/api/swagger-ui/index.html");
 	}

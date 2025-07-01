@@ -1,5 +1,6 @@
 package com.app.boilerplate.Security;
 
+import com.app.boilerplate.Config.TokenAuthConfig;
 import com.app.boilerplate.Service.Authentication.AuthService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,10 +20,11 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
     private final AuthService authService;
     @Value("${client.oauth2.redirect-url}")
     private String redirectUrl;
+    private final TokenAuthConfig tokenAuthConfig;
     @Override
     public void onAuthenticationSuccess(final HttpServletRequest request, final HttpServletResponse response, final Authentication authentication) throws IOException, ServletException {
         final var principal = (AuthenticationOAuth2User) authentication.getPrincipal();
-        final var result = authService.processLoginResult(principal.getUser(), response);
+        final var result = authService.processLoginResult(principal.getUser(), response, tokenAuthConfig.getRefreshTokenExpirationInSeconds());
         final var url = UriComponentsBuilder.fromUriString(redirectUrl)
             .queryParam("token", result.getAccessToken())
             .queryParam("expired", result.getExpiresInSeconds())

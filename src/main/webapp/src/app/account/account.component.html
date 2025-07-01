@@ -16,8 +16,8 @@
             </div>
             <h1 class="header-1">{{ title }}</h1>
             <router-outlet></router-outlet>
-            <p-divider align="center" type="solid">{{ "Or" | translate }}</p-divider>
-            <div class="auth2 body-2">
+            <p-divider *ngIf="showExternalLogin" align="center" type="solid">{{ "Or" | translate }} </p-divider>
+            <div class="auth2 body-2" *ngIf="showExternalLogin">
                 <div class="auth2-button" (click)="externalLogin('google')">
                     <p-image src="src/assets/logos/brand/01.svg" alt="Google Logo" width="30" height="30"/>
                 </div>

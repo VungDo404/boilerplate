@@ -14,6 +14,10 @@ export const MAIN_ROUTE: Routes = [
                 loadChildren: () => import("./setting/setting.route").then(m => m.SETTING_ROUTE)
             },
             {
+                path: "",
+                loadChildren: () => import("./signin-option/signin-option.route").then(m => m.SIGN_IN_OPTION_ROUTE)
+            },
+            {
                 path: "access-denied",
                 loadComponent: () => import("./access-denied/access-denied.component").then(m => m.AccessDeniedComponent)
             }

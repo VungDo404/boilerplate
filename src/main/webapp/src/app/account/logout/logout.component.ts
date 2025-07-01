@@ -19,7 +19,7 @@ export class LogoutComponent implements OnInit {
         });
         const cb = () => {
             this.spinnerService.hide();
-            window.location.href = '/main';
+            window.location.href = '/';
 
         }
         this.logoutService.logout(cb);

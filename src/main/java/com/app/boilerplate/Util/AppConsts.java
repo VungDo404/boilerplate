@@ -13,7 +13,7 @@ public final class AppConsts {
 	public static final String ACCESS_TOKEN = "at";
 	public static final String ACCESS_TOKEN_PROVIDER = "pvd";
 	public static final String ACCESS_TOKEN_USERNAME = "un";
-	public static final String ACCESS_TOKEN_ID = "access_token_id";
+	public static final String ACCESS_TOKEN_ID = "ati";
 
 	public static final String HMAC_SHA_256 = "HmacSHA256";
 	public static final String HMAC_SHA_1 = "HmacSHA1";

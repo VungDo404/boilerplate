@@ -6,9 +6,9 @@ import com.app.boilerplate.Service.Account.AccountService;
 import com.app.boilerplate.Service.Token.TokenService;
 import com.app.boilerplate.Service.User.UserService;
 import com.app.boilerplate.Shared.Authentication.*;
+import com.app.boilerplate.Shared.Authentication.Dto.ConfirmCredentialsDto;
 import com.app.boilerplate.Shared.Authentication.Dto.LoginDto;
 import com.app.boilerplate.Shared.Authentication.Model.LoginResultModel;
-import com.app.boilerplate.Shared.Authentication.Model.RefreshAccessTokenModel;
 import com.app.boilerplate.Util.AppConsts;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.JOSEException;
@@ -23,6 +23,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -31,7 +33,10 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
-import org.springframework.security.oauth2.jwt.*;
+import org.springframework.security.oauth2.jwt.BadJwtException;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -92,29 +97,19 @@ public class AuthService {
             twoFactorService.validateTwoFactorCode(user.getId(), request.getTwoFactorCode());
         }
         accountService.resetLockout(user.getUsername());
-        return processLoginResult(user, response);
+        return processLoginResult(user, response, tokenAuthConfig.getRefreshTokenExpirationInSeconds());
     }
 
-    public RefreshAccessTokenModel refreshAccessToken(String refreshToken, HttpServletResponse response) {
+    public LoginResultModel refreshAccessToken(String refreshToken, HttpServletResponse response) {
         final var jwt = refreshJwtDecoder(refreshToken);
 
         final var user = userService.getUserById(jwt.getSub());
         final var remainingDuration = Duration.between(Instant.now(), jwt.getExpiresAt());
 
-        final var rotateRefreshToken = createRefreshToken(user, remainingDuration);
-        final var accessToken = createAccessToken(user, rotateRefreshToken.getRight());
-
-        setRefreshTokenOnCookie(response, rotateRefreshToken.getLeft(), remainingDuration);
-
-        return RefreshAccessTokenModel.builder()
-            .accessToken(accessToken)
-            .expiresInSeconds((int) tokenAuthConfig.getAccessTokenExpirationInSeconds()
-                .toSeconds())
-            .build();
+        return processLoginResult(user, response, remainingDuration);
     }
 
-    public void logout(AccessJwt accessJwt, HttpServletResponse response, String refreshToken) {
-        final var refreshJwt = refreshJwtDecoder(refreshToken);
+    public void logout(HttpServletResponse response, String refreshToken) {
 
         ResponseCookie[] cookies = new ResponseCookie[]{
             ResponseCookie.from(AppConsts.REFRESH_TOKEN, "")
@@ -144,9 +139,27 @@ public class AuthService {
             response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         }
 
-        tokenService.deleteByValue(accessJwt.getId());
-        tokenService.deleteByValue(refreshJwt.getId());
+        if (refreshToken != null) {
+            try {
+                final var refreshJwt = refreshJwtDecoder(refreshToken);
+                tokenService.deleteByValue(refreshJwt.getAccessJti());
+                tokenService.deleteByValue(refreshJwt.getId());
+            } catch (Exception ignored) {}
+        }
+    }
 
+    @CachePut(value = "confirmCredentials", key = "#userId.toString()")
+    public boolean confirmCredentials(ConfirmCredentialsDto confirmCredentialsDto, UUID userId) {
+        authenticationManagerBuilder.getObject().authenticate(
+            new UsernamePasswordAuthenticationToken(confirmCredentialsDto.getUsername(),
+                confirmCredentialsDto.getPassword()));
+        accountService.resetLockout(confirmCredentialsDto.getUsername());
+        return true;
+    }
+
+    @Cacheable(value = "confirmCredentials",  key = "#userId.toString()")
+    public boolean isConfirmCredentials(UUID userId){
+        return false;
     }
 
     @Bean
@@ -171,15 +184,16 @@ public class AuthService {
 
     }
 
-    public String createAccessToken(User user, UUID refreshTokenId) {
-        final var claims = generateClaims(TokenType.ACCESS_TOKEN, user, refreshTokenId);
-        return createJwtToken(claims, tokenAuthConfig.getAccessTokenExpirationInSeconds(), JWSAlgorithm.RS256);
+    public Pair<String, UUID> createAccessToken(User user) {
+        final var claims = generateClaims(TokenType.ACCESS_TOKEN, user, null);
+        final var accessToken = createJwtToken(claims, tokenAuthConfig.getAccessTokenExpirationInSeconds(),
+            JWSAlgorithm.RS256);
+        return Pair.of(accessToken, UUID.fromString((String) claims.get(AppConsts.JWT_JTI)));
     }
 
-    private Pair<String, UUID> createRefreshToken(User user, Duration expired) {
-        final var claims = generateClaims(TokenType.REFRESH_TOKEN, user, null);
-        final var refreshToken = createJwtToken(claims, expired, JWSAlgorithm.HS256);
-        return Pair.of(refreshToken, UUID.fromString((String) claims.get(AppConsts.JWT_JTI)));
+    private String createRefreshToken(User user, Duration expired, UUID accessTokenId) {
+        final var claims = generateClaims(TokenType.REFRESH_TOKEN, user, accessTokenId);
+        return createJwtToken(claims, expired, JWSAlgorithm.HS256);
     }
 
     private <T extends BaseJwt> T decoder(NimbusJwtDecoder decoder, String token, Function<Jwt, T> function) {
@@ -246,7 +260,7 @@ public class AuthService {
         }
     }
 
-    private Map<String, Object> generateClaims(TokenType tokenType, User user, UUID refreshTokenId) {
+    private Map<String, Object> generateClaims(TokenType tokenType, User user, UUID associatedTokenId) {
         Assert.isTrue(tokenType == TokenType.ACCESS_TOKEN || tokenType == TokenType.REFRESH_TOKEN,
             "Invalid token type");
 
@@ -255,12 +269,12 @@ public class AuthService {
             .toString();
 
         if (tokenType == TokenType.ACCESS_TOKEN) {
-            claims.put(AppConsts.REFRESH_TOKEN_ID, refreshTokenId);
             claims.put(AppConsts.SECURITY_STAMP, user.getSecurityStamp());
             claims.put(AppConsts.ACCESS_TOKEN_PROVIDER, user.getProvider());
             claims.put(AppConsts.ACCESS_TOKEN_USERNAME, user.getUsername());
             tokenService.addAccessToken(user, tokenId);
         } else {
+            claims.put(AppConsts.ACCESS_TOKEN_ID, associatedTokenId);
             tokenService.addRefreshToken(user, tokenId);
         }
 
@@ -323,15 +337,15 @@ public class AuthService {
         }
     }
 
-    public LoginResultModel processLoginResult(User user, HttpServletResponse response) {
-        final var refreshToken = createRefreshToken(user, tokenAuthConfig.getRefreshTokenExpirationInSeconds());
-        final var accessToken = createAccessToken(user, refreshToken.getRight());
+    public LoginResultModel processLoginResult(
+        User user, HttpServletResponse response, Duration refreshTokenExpiration) {
+        final var accessToken = createAccessToken(user);
+        final var refreshToken = createRefreshToken(user, refreshTokenExpiration, accessToken.getRight());
 
-        setRefreshTokenOnCookie(response, refreshToken.getLeft(),
-            tokenAuthConfig.getRefreshTokenExpirationInSeconds());
+        setRefreshTokenOnCookie(response, refreshToken, refreshTokenExpiration);
 
         return LoginResultModel.builder()
-            .accessToken(accessToken)
+            .accessToken(accessToken.getLeft())
             .expiresInSeconds((int) tokenAuthConfig.getAccessTokenExpirationInSeconds()
                 .toSeconds())
             .build();

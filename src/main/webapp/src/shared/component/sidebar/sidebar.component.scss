@@ -1,5 +1,6 @@
 @use "variable" as v;
 @use 'sass:color';
+@use "util" as u;
 
 :host {
     grid-area: sidebar;
@@ -20,21 +21,6 @@
             gap: 10px;
             font-weight: 600;
             margin-bottom: 26px;
-            .icon{
-                box-shadow: 0 9.583px 28.75px 0 rgba(66, 71, 97, 0.10);
-                background-color: v.$white;
-                border-radius: 28.75px;
-                cursor: pointer;
-                width: 46px;
-                height: 46px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                &:hover {
-                    background-color: color.adjust(v.$brand, $lightness: 25%);
-                    box-shadow: 0 12px 32px rgba(66, 71, 97, 0.15);
-                }
-            }
         }
     }
 
