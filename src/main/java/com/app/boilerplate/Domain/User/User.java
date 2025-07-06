@@ -115,6 +115,10 @@ public class User implements UserDetails, Identifiable<UUID> {
     private Boolean isTwoFactorEnabled = Boolean.FALSE;
 
     @NotAudited
+    @Column(name = "last_authenticator_update")
+    private LocalDate lastAuthenticatorUpdate;
+
+    @NotAudited
     @Enumerated(EnumType.ORDINAL)
     @Column(columnDefinition = "TINYINT", updatable = false, nullable = false)
     private LoginProvider provider;

@@ -10,6 +10,7 @@ import { PermissionPipe } from "../../../shared/pipe/permission.pipe";
 import { ROOT_OBJECT } from "../../../shared/const/app.const";
 import { NgIf } from "@angular/common";
 import { Action } from "../../../shared/const/app.enum";
+import { PasswordToggleDirective } from "../../../shared/directive/password-toggle.directive";
 
 @Component({
     selector: 'app-login',
@@ -22,6 +23,7 @@ import { Action } from "../../../shared/const/app.enum";
         RouterLink,
         NgIf,
         PermissionPipe,
+        PasswordToggleDirective,
     ],
     templateUrl: './login.component.html',
     standalone: true,

@@ -11,6 +11,7 @@ import { ROOT_OBJECT } from "../../../shared/const/app.const";
 import { Action } from "../../../shared/const/app.enum";
 import { NgIf } from "@angular/common";
 import { PermissionPipe } from "../../../shared/pipe/permission.pipe";
+import { PasswordToggleDirective } from "../../../shared/directive/password-toggle.directive";
 
 @Component({
     selector: 'app-reset-password',
@@ -21,7 +22,8 @@ import { PermissionPipe } from "../../../shared/pipe/permission.pipe";
         TranslatePipe,
         ValidationMessageComponent,
         NgIf,
-        PermissionPipe
+        PermissionPipe,
+        PasswordToggleDirective
     ],
     templateUrl: './reset-password.component.html',
     standalone: true,

@@ -1,20 +1,30 @@
 <a
-        class="accordion-item-container"
+        class="accordion-header-container"
         [ngClass]="mode"
         [class.border-bottom]="mode === 'compact' && !isLast"
         [routerLink]="item.routerLink"
+        (click)="toggleContent()"
+        [attr.aria-expanded]="isOpen"
+        [attr.aria-controls]="'accordion-content-' + id"
+        role="button"
 >
     <div class="icon-title">
         <i class="pi" [class]="item.titleIcon"></i>
     </div>
-    <div class="title">
-        <span>{{ item.title }}</span>
+    <div class="primary-text-container">
+        <div class="title">
+            <span>{{ item.title | translate }}</span>
+        </div>
+        <div class="description">
+            <i *ngIf="item.descriptionIcon" class="pi" [class]="item.descriptionIcon"></i>
+            <span>{{ item.description | translate }}</span>
+        </div>
     </div>
-    <div class="description">
-        <i *ngIf="item.descriptionIcon" class="pi" [class]="item.descriptionIcon"></i>
-        <span>{{ item.description }}</span>
-    </div>
-    <div class="arrow-icon">
+
+    <div class="arrow-icon" [class.rotated]="isOpen">
         <i class="pi pi-chevron-right"></i>
     </div>
 </a>
+<div class="accordion-content-container" *ngIf="isOpen" [attr.aria-hidden]="!isOpen" role="region" [id]="'accordion-content-' + id">
+    <ng-content></ng-content>
+</div>

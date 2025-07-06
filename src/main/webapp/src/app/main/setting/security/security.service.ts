@@ -7,7 +7,7 @@ import { SessionService } from "../../../../shared/service/session.service";
     providedIn: 'root'
 })
 export class SecurityService {
-    private securityInfoSubject = new BehaviorSubject<SecurityInfo>({twoFactorEnable: false});
+    private securityInfoSubject = new BehaviorSubject<SecurityInfo | null>(null);
     securityInfo$ = this.securityInfoSubject.asObservable();
     constructor(private accountService: AccountService, private sessionService: SessionService) {
         this.getSecurityInfo();

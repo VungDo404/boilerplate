@@ -3,16 +3,20 @@ import { LangChangeEvent, TranslatePipe, TranslateService } from "@ngx-translate
 import { AccordionComponent, AccordionItem } from "../../../../shared/component/accordion/accordion.component";
 import { SecurityService } from "./security.service";
 import { BaseComponent } from "../../../../shared/component/base.component";
-import { map, switchMap, takeUntil } from "rxjs";
+import { filter, map, switchMap, takeUntil } from "rxjs";
 import { BusyDirective } from "../../../../shared/directive/busy.directive";
 import { LanguageService } from "../../../../shared/service/language.service";
+import { AccordionItemComponent } from "../../../../shared/component/accordion/accordion-item/accordion-item.component";
+import { NgForOf } from "@angular/common";
 
 @Component({
     selector: 'app-security',
     imports: [
         TranslatePipe,
         AccordionComponent,
-        BusyDirective
+        BusyDirective,
+        AccordionItemComponent,
+        NgForOf
     ],
     templateUrl: './security.component.html',
     standalone: true,
@@ -22,7 +26,11 @@ export class SecurityComponent extends BaseComponent implements OnInit {
     securityItems!: AccordionItem[];
     loading = true;
 
-    constructor(private securityService: SecurityService, private translate: TranslateService, private languageService: LanguageService) {super();}
+    constructor(
+        private securityService: SecurityService,
+        private translate: TranslateService,
+        private languageService: LanguageService
+    ) {super();}
 
     ngOnInit(): void {
         this.loadSecurityItems();
@@ -36,6 +44,7 @@ export class SecurityComponent extends BaseComponent implements OnInit {
     private loadSecurityItems() {
 
         this.securityService.securityInfo$.pipe(
+            filter(data => data !== null),
             switchMap(securityInfo => {
                 const formattedDate = securityInfo.passwordLastUpdate
                     ? new Date(securityInfo.passwordLastUpdate).toLocaleDateString(this.languageService.getCurrentLanguage(), {

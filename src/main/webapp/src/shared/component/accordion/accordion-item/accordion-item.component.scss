@@ -2,80 +2,95 @@
 
 :host {
     display: block;
-    padding: 0 24px;
     width: 100%;
 
-    .accordion-item-container {
+    .accordion-header-container {
         display: grid;
         justify-content: center;
         align-items: center;
-        padding: 15px 24px 16px 24px;
+        padding: 15px 0 16px 0;
         text-decoration: none;
         color: inherit;
         transition: background-color 0.2s ease;
+        cursor: pointer;
+        &.compact, &.wide {
+            .primary-text-container {
+                display: flex;
 
-        &.compact {
-            height: 55px;
-            grid-template-columns: 34px 349px 343px 40px;
+                .title {
+                    flex: 1;
+                    font-size: 1rem;
+                }
 
-            &.border-bottom {
-                border-bottom: 1px solid v.$light-200;
-
-            }
-
-            .title {
-                font-size: 1rem;
-            }
-
-            .description {
-                font-size: 0.875rem;
-            }
-
-            .icon-title {
-                width: 1.125rem;
-                height: 1.125rem;
+                .description {
+                    flex: 1;
+                    font-size: 0.875rem;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                }
             }
 
             .arrow-icon {
+                margin-right: 16px;
                 justify-self: end;
+                transition: transform 0.2s ease-in-out;
+                &.rotated {
+                    transform: rotate(90deg);
+                }
+            }
+
+            .icon-title {
+                margin-left: 24px;
+                display: block;
+                justify-self: center;
+                align-self: center;
+            }
+        }
+
+        &.compact {
+            grid-template-columns: auto 1fr auto;
+            gap: 15px;
+
+            &.border-bottom {
+                border-bottom: 1px solid v.$light-200;
             }
         }
 
         &.wide {
             height: auto;
-            grid-template-columns: 80px 345px 345px 48px;
+            grid-template-columns: auto 8fr auto;
+            gap: 25px;
 
-            .title {
-                font-size: 1rem;
-            }
-
-            .description {
-                font-size: 0.875rem;
-            }
-
-            .icon-title {
-                i {
-                    font-size: 1.5rem;
-                }
-
-                justify-self: center;
-                align-self: center;
-            }
-
-            .arrow-icon {
-                i {
-                    font-size: 1.5rem;
-                }
-                justify-self: center;
-                align-self: center;
-
+            .icon-title i,
+            .arrow-icon i {
+                font-size: 1.5rem;
             }
         }
 
+        .description {
+            i {
+                &.green {
+                    color: green;
+                }
 
-    }
-    &:hover {
-        background-color: rgba(0, 0, 0, 0.05);
+                &.yellow {
+                    color: #FBBF24;
+                }
+            }
+        }
+
+        &:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
     }
 
+    .accordion-content-container {
+        margin-left: 25px;
+        overflow: hidden;
+        transition: max-height 0.3s ease-in-out;
+        &:empty {
+            display: none;
+        }
+    }
 }

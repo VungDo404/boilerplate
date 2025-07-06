@@ -103,6 +103,20 @@ public class ControllerException extends ResponseEntityExceptionHandler {
 			null);
 	}
 
+	@ExceptionHandler(value = {AuthenticatorSecretRetrievalException.class})
+	ResponseEntity<Object> handleAuthenticatorSecretRetrievalException(
+		AuthenticatorSecretRetrievalException exception,
+		NativeWebRequest request) {
+		return handleException(
+			exception,
+			HttpStatus.FORBIDDEN,
+			exception.getMessage(),
+			HttpStatus.FORBIDDEN.getReasonPhrase(),
+			null,
+			request,
+			null);
+	}
+
 	@ExceptionHandler(value = {AccessDeniedException.class})
 	ResponseEntity<Object> handleAccessDeniedException(
 			AccessDeniedException exception,

@@ -1,1 +1,201 @@
-<p>two-factor-verification works!</p>
+<div class="security-message">
+    <p class="headline">{{ '2FAHeadline' | translate }}</p>
+    <p class="subtext">{{ '2FASubtext' | translate }}</p>
+</div>
+<div class="button-container" *ngIf=" id | permission: 'User': Action.Write">
+    <p-button
+            label="{{buttonText | translate}}"
+            [styleClass]="'primary-btn' + (twoFactorInfo?.twoFactorEnable ? ' outline' : '')"
+            (click)="handleTwoFactor()"
+    />
+</div>
+<div class="option-container" *ngIf=" id | permission: 'User': Action.Write">
+    <app-accordion
+            [title]="'SecurityTitle' | translate"
+            [description]="'SecurityDescription' | translate"
+    >
+        <ng-container *ngIf="items">
+            <app-accordion-item
+                    [mode]="'wide'"
+                    [isLast]="false"
+                    [item]="items.at(0)!"
+                    [id]="0"
+            >
+                <div class="authenticator-container">
+                    <div class="authenticator-container-message">
+                        <div>
+                            <p>{{ 'AuthenticatorMessage' | translate }}</p>
+                            <p [innerHTML]="translatedMessage"></p>
+                        </div>
+                        <p-image src="src/assets/logos/04.svg" alt="Logo" width="181"/>
+                    </div>
+                    <p-button *ngIf="!twoFactorInfo?.lastAuthenticatorUpdate"
+                              label="{{'AuthenticatorButton' | translate}}"
+                              styleClass="primary-btn outline"
+                              (click)="openSetUpModal()"
+                    />
+                    <div *ngIf="twoFactorInfo?.lastAuthenticatorUpdate" class="authenticator-button-group">
+                        <div><i class="pi pi-qrcode"></i></div>
+                        <div class="header-icon" (click)="dialogVisibility.disableAuthenticator = true">
+                            <i class="pi pi-trash icon"></i>
+                        </div>
+                    </div>
+                </div>
+
+            </app-accordion-item>
+            <app-accordion-item
+                    [mode]="'wide'"
+                    [isLast]="true"
+                    [item]="items.at(1)!"
+                    [id]="1"
+            >
+                <div class="recovery-email-container">
+                    <p>{{ 'RecoveryEmailMessage' | translate }}</p>
+                    <p-image src="src/assets/logos/03.svg" alt="Logo" width="181"/>
+                </div>
+            </app-accordion-item>
+        </ng-container>
+    </app-accordion>
+</div>
+
+<p-dialog
+        header="{{ 'Turn2FAOnDialogHeader' | translate }}"
+        [modal]="true"
+        [(visible)]="dialogVisibility.turnOn2FA"
+        [closable]="false"
+        [style]="{ width: '40%' }">
+    <div class="check-success-container">
+
+        <p-image src="src/assets/logos/05.svg" alt="Logo" width="200"/>
+    </div>
+
+    <p>
+        {{ 'Turn2FAOnDialogMessage' | translate }}
+    </p>
+
+    <ng-template #footer>
+        <p-button label="{{ 'Done' | translate}}" styleClass="primary-btn"
+                  (click)="dialogVisibility.turnOn2FA = false"/>
+    </ng-template>
+</p-dialog>
+<p-dialog
+        header="{{ 'Turn2FAOff' | translate }}"
+        [modal]="true"
+        [(visible)]="dialogVisibility.turnOff2FA"
+        [closable]="false"
+        [style]="{ width: '40%' }">
+    <p>
+        {{ 'Turn2FAOffDialogMessage' | translate }}
+    </p>
+    <ng-template #footer>
+        <p-button
+                label="{{ 'Cancel' | translate}}"
+                styleClass="primary-btn outline no-border"
+                (click)="dialogVisibility.turnOff2FA = false"
+                [autofocus]="false"/>
+        <p-button label="{{ 'TurnOff' | translate}}" styleClass="primary-btn outline no-border"
+                  (click)="handleDisable()"/>
+    </ng-template>
+</p-dialog>
+<p-dialog
+        header="{{ 'SetUpAuthenticatorApp' | translate }}"
+        [modal]="true"
+        [(visible)]="dialogVisibility.setUpAuthenticator"
+        [closable]="false"
+        [style]="{ width: '40%' }">
+    <div>
+        <ul>
+            <li>{{ 'TapMessage' | translate }} <span class="bold">+</span></li>
+            <li>{{ 'Choose' | translate }} <span class="bold">Scan a QR code</span></li>
+        </ul>
+
+    </div>
+    <div class="qr-container">
+        <qrcode *ngIf="authenticatorInfo?.uri"
+                [qrdata]="authenticatorInfo.uri"
+                [width]="200"
+                [errorCorrectionLevel]="'M'"
+                [allowEmptyString]="true">
+
+        </qrcode>
+        <p *ngIf="authenticatorInfo?.secret">{{ authenticatorInfo?.secret }}</p>
+        <ng-container appBusy [busyIf]="loadingQRModal"></ng-container>
+    </div>
+    <ng-template #footer>
+        <p-button
+                label="{{ 'Cancel' | translate}}"
+                styleClass="primary-btn outline no-border"
+                (click)="dialogVisibility.setUpAuthenticator = false"
+                [autofocus]="false"/>
+        <p-button label="{{ 'Next' | translate}}" styleClass="primary-btn outline no-border"
+                  (click)="navigateVerify()"/>
+    </ng-template>
+</p-dialog>
+<p-dialog
+        header="{{ 'SetUpAuthenticatorApp' | translate }}"
+        [modal]="true"
+        [(visible)]="dialogVisibility.verifyCode"
+        [closable]="false"
+        [style]="{ width: 'auto' }"
+        (onHide)="resetVerifyForm()"
+>
+    <p [style]="{ margin: '0' }">{{ "EnterCodeMessage" | translate }}</p>
+    <form
+            method="post"
+            (ngSubmit)="submit()"
+            class="auth-form"
+            [formGroup]="form"
+            *ngIf=" id | permission: 'User': Action.Write"
+    >
+        <div class="otp-container">
+            <p-inputotp [length]="6" formControlName="twoFactorCode" [integerOnly]="true">
+                <ng-template #otpInput let-token let-events="events">
+                    <input
+                            class="custom-otp-input"
+                            (input)="events.input($event)"
+                            (keydown)="blockNonNumeric($event)"
+                            type="text"
+                            [attr.value]="token"
+                            [maxLength]="1"
+                    />
+                </ng-template>
+            </p-inputotp>
+        </div>
+
+        <div class="button-group-container">
+            <p-button
+                    label="{{ 'Back' | translate}}"
+                    styleClass="primary-btn outline no-border"
+                    (click)="navigateBackSetUp()"
+                    [autofocus]="false"/>
+            <div>
+                <p-button
+                        label="{{ 'Cancel' | translate}}"
+                        styleClass="primary-btn outline no-border"
+                        (click)="dialogVisibility.verifyCode = false"
+                        [autofocus]="false"/>
+                <p-button label="{{'Verify' | translate}}" styleClass="primary-btn outline no-border" type="submit"/>
+            </div>
+
+        </div>
+    </form>
+</p-dialog>
+<p-dialog
+        header="{{ 'RemoveAuthenticator' | translate }}"
+        [modal]="true"
+        [(visible)]="dialogVisibility.disableAuthenticator"
+        [closable]="false"
+        [style]="{ width: '40%' }">
+    <p>
+        {{ 'RemoveAuthenticatorMessage' | translate }}
+    </p>
+    <ng-template #footer>
+        <p-button
+                label="{{ 'Cancel' | translate}}"
+                styleClass="primary-btn outline no-border"
+                (click)="dialogVisibility.disableAuthenticator = false"
+                [autofocus]="false"/>
+        <p-button label="{{ 'OK' | translate}}" styleClass="primary-btn outline no-border"
+                  (click)="removeAuthenticator()"/>
+    </ng-template>
+</p-dialog>

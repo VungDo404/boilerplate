@@ -49,18 +49,26 @@ public class TwoFactorService {
         final var id = userId.toString();
         final var provider = twoFactorCacheService.getTwoFactorProvider(id);
         if(provider.equals(TwoFactorProvider.GOOGLE_AUTHENTICATOR)) {
-            final var user = userService.getUserById(userId);
-            final var token = tokenService.getAuthenticatorToken(user);
-            if(!validateCode(token.getValue(), submitCode))
-                throw new InvalidVerificationCodeException("error.auth.two-factor");
+            validateAuthenticatorCode(userId, submitCode);
         }else{
-            final var code = twoFactorCacheService.getTwoFactorCode(id);
-            if (!submitCode.equals(code)) {
-                throw new InvalidVerificationCodeException("error.auth.two-factor");
-            }
-            twoFactorCacheService.deleteTwoFactorCode(id);
+            validateEmailCode(id, submitCode);
         }
         twoFactorCacheService.deleteTwoFactorProvider(id);
+    }
+
+    public void validateAuthenticatorCode(UUID userId, String submitCode){
+        final var user = userService.getUserById(userId);
+        final var token = tokenService.getAuthenticatorToken(user);
+        if(!validateCode(token.getValue(), submitCode))
+            throw new InvalidVerificationCodeException("error.auth.two-factor");
+    }
+
+    public void validateEmailCode(String id, String submitCode){
+        final var code = twoFactorCacheService.getTwoFactorCode(id);
+        if (!submitCode.equals(code)) {
+            throw new InvalidVerificationCodeException("error.auth.two-factor");
+        }
+        twoFactorCacheService.deleteTwoFactorCode(id);
     }
 
     public boolean validateCode(String secretKey, String inputCode) {

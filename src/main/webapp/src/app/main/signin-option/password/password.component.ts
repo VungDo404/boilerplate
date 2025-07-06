@@ -13,6 +13,7 @@ import {
 import { SessionService } from "../../../../shared/service/session.service";
 import { PasswordService } from "./password.service";
 import { BusyDirective } from "../../../../shared/directive/busy.directive";
+import { PasswordToggleDirective } from "../../../../shared/directive/password-toggle.directive";
 
 @Component({
     selector: 'app-password',
@@ -24,7 +25,8 @@ import { BusyDirective } from "../../../../shared/directive/busy.directive";
         ReactiveFormsModule,
         TranslatePipe,
         ValidationMessageComponent,
-        BusyDirective
+        BusyDirective,
+        PasswordToggleDirective
     ],
     templateUrl: './password.component.html',
     standalone: true,

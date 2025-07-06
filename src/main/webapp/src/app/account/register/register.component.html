@@ -50,6 +50,7 @@
                 type="password"
                 autocomplete="off"
                 formControlName="password"
+                passwordToggle
         />
         <validation-message [formCtrl]="registerForm.get('password')!"></validation-message>
     </div>
@@ -62,6 +63,7 @@
                 type="password"
                 autocomplete="off"
                 formControlName="confirmedPassword"
+                passwordToggle
         />
         <validation-message
                 [formCtrl]="registerForm.get('confirmedPassword')!"

@@ -3,6 +3,7 @@ package com.app.boilerplate.Service.Token;
 import com.app.boilerplate.Config.TokenAuthConfig;
 import com.app.boilerplate.Domain.User.Token;
 import com.app.boilerplate.Domain.User.User;
+import com.app.boilerplate.Exception.NotFoundException;
 import com.app.boilerplate.Repository.TokenRepository;
 import com.app.boilerplate.Shared.Authentication.TokenType;
 import com.app.boilerplate.Util.CacheConsts;
@@ -68,17 +69,20 @@ public class TokenService {
             .set("access_token::" + value, "", ttl.toSeconds(), TimeUnit.SECONDS);
     }
 
+    @Async
     public void addAuthenticatorToken(User user, String value) {
         final var expireDate = LocalDateTime.now()
             .plus(tokenAuthConfig.getAuthenticatorExpirationInSeconds());
         addToken(TokenType.AUTHENTICATOR_TOKEN, value, expireDate, user);
     }
 
+    @Transactional(noRollbackFor = NotFoundException.class, readOnly = true)
     public Token getAuthenticatorToken(User user) {
-        return tokenRepository.findByTypeAndUser(TokenType.AUTHENTICATOR_TOKEN,  user).orElse(null);
+        return tokenRepository.findByTypeAndUser(TokenType.AUTHENTICATOR_TOKEN, user)
+            .orElseThrow(() -> new NotFoundException("Not found", "error.twoft.notfound"));
     }
 
-    public void deleteAuthenticatorToken(User user){
+    public void deleteAuthenticatorToken(User user) {
         deleteByTypeAndUser(TokenType.AUTHENTICATOR_TOKEN, user);
     }
 

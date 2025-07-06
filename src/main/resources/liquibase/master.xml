@@ -15,6 +15,7 @@
 	<include file="liquibase/changelog/schema/27-01-changelog.xml"/>
 	<include file="liquibase/changelog/schema/10-01-changelog.xml"/>
 	<include file="liquibase/changelog/schema/29-01-changelog.xml"/>
+	<include file="liquibase/changelog/schema/02-01-changelog.xml"/>
 								<!--Seeding-->
 	<include file="liquibase/changelog/schema/13-01-seeding-user-changelog.xml"/>
 			<include file="liquibase/changelog/schema/07-01-seeding-acl-changelog.xml"/>

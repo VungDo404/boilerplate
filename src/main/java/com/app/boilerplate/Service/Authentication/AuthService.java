@@ -88,9 +88,13 @@ public class AuthService {
         if (user.getIsTwoFactorEnabled()) {
             if (request.getTwoFactorCode() == null || request.getTwoFactorCode()
                 .isBlank()) {
+                final var twoFactorProviders = new ArrayList<>(List.of(TwoFactorProvider.EMAIL));
+                if (user.getLastAuthenticatorUpdate() != null)
+                    twoFactorProviders.add(TwoFactorProvider.GOOGLE_AUTHENTICATOR);
+
                 return LoginResultModel.builder()
                     .isTwoFactorEnabled(true)
-                    .twoFactorProviders(List.of(TwoFactorProvider.EMAIL, TwoFactorProvider.GOOGLE_AUTHENTICATOR))
+                    .twoFactorProviders(twoFactorProviders)
                     .userId(user.getId())
                     .build();
             }

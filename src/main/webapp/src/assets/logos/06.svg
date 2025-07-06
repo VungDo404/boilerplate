@@ -1,0 +1,24 @@
+<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+    <path d="M200 30 L320 80 L320 170 C320 230 270 270 200 290 C130 270 80 230 80 170 L80 80 Z" fill="#f5f7fa" stroke="#e1e5eb" stroke-width="4"/>
+
+    <rect x="150" y="140" width="100" height="90" rx="10" ry="10" fill="#EA6365" />
+
+    <path d="M170 140 L170 110 C170 85 230 85 230 110 L230 140" stroke="#EA6365" stroke-width="20" fill="none" stroke-linecap="round" />
+
+    <circle cx="200" cy="180" r="35" fill="#ffffff" />
+    <line x1="175" y1="155" x2="225" y2="205" stroke="#FA7275" stroke-width="12" stroke-linecap="round" />
+    <line x1="225" y1="155" x2="175" y2="205" stroke="#FA7275" stroke-width="12" stroke-linecap="round" />
+
+    <g stroke="#e1e5eb" stroke-width="3">
+        <line x1="200" y1="80" x2="200" y2="100" />
+        <line x1="240" y1="90" x2="230" y2="107" />
+        <line x1="160" y1="90" x2="170" y2="107" />
+        <line x1="270" y1="120" x2="250" y2="130" />
+        <line x1="130" y1="120" x2="150" y2="130" />
+    </g>
+
+    <circle cx="200" cy="180" r="55" fill="none" stroke="#FA7275" stroke-width="3" opacity="0.3">
+        <animate attributeName="r" values="45;65;45" dur="3s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.1;0.3;0.1" dur="3s" repeatCount="indefinite" />
+    </circle>
+</svg>

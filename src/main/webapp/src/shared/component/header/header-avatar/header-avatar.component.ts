@@ -1,9 +1,9 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Avatar } from "primeng/avatar";
 import { MenuComponent } from "../../menu/menu.component";
 import { SessionService } from "../../../service/session.service";
 import { LangChangeEvent, TranslateService } from "@ngx-translate/core";
-import { BehaviorSubject, Observable, Subject, takeUntil } from "rxjs";
+import { BehaviorSubject, Observable, takeUntil } from "rxjs";
 import { AsyncPipe, NgIf } from "@angular/common";
 import { HeaderMenuService } from "../header-menu.service";
 import { BaseComponent } from "../../base.component";

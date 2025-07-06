@@ -139,3 +139,18 @@ declare interface ChangePassword{
     id: string;
     newPassword: string;
 }
+
+declare interface TwoFactorInfo{
+    lastAuthenticatorUpdate: Date | null;
+    email: string;
+    twoFactorEnable: boolean;
+}
+
+declare interface AuthenticatorInfo{
+    secret: string;
+    uri: string;
+}
+
+declare interface EnableAuthenticator{
+    twoFactorCode: string;
+}

@@ -11,6 +11,7 @@ import { ValidationMessageComponent } from "../../../shared/component/validation
 import { SessionService } from "../../../shared/service/session.service";
 import { BusyDirective } from "../../../shared/directive/busy.directive";
 import { ActivatedRoute } from "@angular/router";
+import { PasswordToggleDirective } from "../../../shared/directive/password-toggle.directive";
 
 @Component({
     selector: 'app-confirm-credential',
@@ -22,7 +23,8 @@ import { ActivatedRoute } from "@angular/router";
         ReactiveFormsModule,
         TranslatePipe,
         ValidationMessageComponent,
-        BusyDirective
+        BusyDirective,
+        PasswordToggleDirective
     ],
     templateUrl: './confirm-credential.component.html',
     standalone: true,

@@ -10,6 +10,7 @@ import { ROOT_OBJECT } from "../../../shared/const/app.const";
 import { Action } from "../../../shared/const/app.enum";
 import { NgIf } from "@angular/common";
 import { PermissionPipe } from "../../../shared/pipe/permission.pipe";
+import { PasswordToggleDirective } from "../../../shared/directive/password-toggle.directive";
 
 
 @Component({
@@ -22,6 +23,7 @@ import { PermissionPipe } from "../../../shared/pipe/permission.pipe";
         ValidationMessageComponent,
         NgIf,
         PermissionPipe,
+        PasswordToggleDirective,
     ],
     templateUrl: './register.component.html',
     standalone: true,

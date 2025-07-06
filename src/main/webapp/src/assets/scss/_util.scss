@@ -38,6 +38,29 @@
     &:hover {
         background-color: v.$brand-100;
     }
+    &.outline {
+        background-color: v.$white;
+        color: v.$brand;
+        border: 2px solid v.$brand;
+
+
+        &:hover {
+            background-color: v.$brand;
+            color: v.$white;
+        }
+
+    }
+
+    &.outline.no-border {
+        border: none !important;
+
+        &:hover {
+            border: none !important;
+            background-color: v.$brand !important;
+            color: v.$white !important;
+        }
+    }
+
 }
 
 .form-submit-button {
@@ -63,7 +86,7 @@
     padding: 0;
     outline: none;
     width: 100%;
-
+    height: inherit;
     &::placeholder {
         color: v.$light-200;
         font-weight: 600;
@@ -190,5 +213,29 @@
     &:hover {
         background-color: color.adjust(v.$brand, $lightness: 25%);
         box-shadow: 0 12px 32px rgba(66, 71, 97, 0.15);
+    }
+}
+
+.security-message {
+    display: flex;
+    flex-direction: column;
+    .headline {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #1a1a1a;
+    }
+
+    .subtext {
+        font-size: 0.95rem;
+        color: #b02a37;
+    }
+}
+
+.password-toggle-icon {
+    font-size: 1.2rem;
+    color: #aaa;
+
+    &:hover {
+        color: #555;
     }
 }

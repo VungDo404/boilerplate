@@ -3,7 +3,9 @@ package com.app.boilerplate.Service.Account;
 import com.app.boilerplate.Decorator.Confirmcredential.ConfirmCredential;
 import com.app.boilerplate.Domain.User.User;
 import com.app.boilerplate.Domain.User.User_;
+import com.app.boilerplate.Exception.AuthenticatorSecretRetrievalException;
 import com.app.boilerplate.Exception.BadRequestException;
+import com.app.boilerplate.Exception.NotFoundException;
 import com.app.boilerplate.Mapper.IUserMapper;
 import com.app.boilerplate.Service.Authentication.TwoFactorService;
 import com.app.boilerplate.Service.Authorization.AuthorizeService;
@@ -12,13 +14,11 @@ import com.app.boilerplate.Service.Storage.StorageService;
 import com.app.boilerplate.Service.Token.TokenService;
 import com.app.boilerplate.Service.User.UserService;
 import com.app.boilerplate.Shared.Account.Dto.ChangePasswordDto;
+import com.app.boilerplate.Shared.Account.Dto.EnableAuthenticatorDto;
 import com.app.boilerplate.Shared.Account.Event.EmailActivationEvent;
 import com.app.boilerplate.Shared.Account.Event.ResetPasswordEvent;
 import com.app.boilerplate.Shared.Account.Event.SendEmailActivationEvent;
-import com.app.boilerplate.Shared.Account.Model.ProfileModel;
-import com.app.boilerplate.Shared.Account.Model.RegisterResultModel;
-import com.app.boilerplate.Shared.Account.Model.SecurityInfoModel;
-import com.app.boilerplate.Shared.Account.Model.TOTPModel;
+import com.app.boilerplate.Shared.Account.Model.*;
 import com.app.boilerplate.Shared.Authentication.LoginProvider;
 import com.app.boilerplate.Shared.Authentication.TokenType;
 import com.app.boilerplate.Shared.Authorization.Model.AuthorityModel;
@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -77,27 +78,53 @@ public class AccountService {
     }
 
     @ConfirmCredential
-    public TOTPModel enableTwoFactor(UUID userId) {
+    public void enableTwoFactor(UUID userId) {
         final var user = userService.getUserById(userId);
         if (user.getIsTwoFactorEnabled())
             throw new BadRequestException("error.account.enable.two-factor");
         user.setIsTwoFactorEnabled(true);
-        final var totp = twoFactorService.generateSecret(user.getUsername());
-        tokenService.addAuthenticatorToken(user, totp.getSecret());
-        return totp;
+        userService.save(user);
+    }
+
+    @ConfirmCredential
+    public TwoFactorModel getTwoFactorInfo(UUID userId){
+        final var user = userService.getUserById(userId);
+
+        return TwoFactorModel.builder()
+            .twoFactorEnable(user.getIsTwoFactorEnabled())
+            .email(user.getEmail())
+            .lastAuthenticatorUpdate(user.getLastAuthenticatorUpdate())
+            .build();
     }
 
     @ConfirmCredential
     public void disableTwoFactor(UUID userId) {
         final var user = userService.getUserById(userId);
         user.setIsTwoFactorEnabled(false);
-        tokenService.deleteAuthenticatorToken(user);
+        userService.save(user);
     }
 
-    public TOTPModel getTwoFactor(UUID userId) {
+    @ConfirmCredential
+    public void enableAuthenticator(UUID userId, EnableAuthenticatorDto authenticatorDto){
         final var user = userService.getUserById(userId);
-        final var token = tokenService.getAuthenticatorToken(user);
-        return twoFactorService.getUri(token.getValue());
+        twoFactorService.validateAuthenticatorCode(userId, authenticatorDto.getTwoFactorCode());
+        user.setLastAuthenticatorUpdate(LocalDate.now());
+        userService.save(user);
+    }
+
+    @ConfirmCredential
+    public void disableAuthenticator(UUID userId){
+        final var user = userService.getUserById(userId);
+        user.setLastAuthenticatorUpdate(null);
+        tokenService.deleteAuthenticatorToken(user);
+        userService.save(user);
+    }
+
+    public TOTPModel getAuthenticatorInfo(UUID userId) {
+        final var user = userService.getUserById(userId);
+        if(user.getLastAuthenticatorUpdate() != null)
+            throw new AuthenticatorSecretRetrievalException();
+        return getOrCreateAuthenticatorTokenInfo(user);
     }
 
     @EventListener(EmailActivationEvent.class)
@@ -234,5 +261,16 @@ public class AccountService {
             .twoFactorEnable(user.getIsTwoFactorEnabled())
             .passwordLastUpdate(lastChange.toLocalDate())
             .build();
+    }
+
+    protected TOTPModel getOrCreateAuthenticatorTokenInfo(User user){
+        try {
+            final var token = tokenService.getAuthenticatorToken(user);
+            return twoFactorService.getUri(token.getValue());
+        }catch (NotFoundException e){
+            final var totp = twoFactorService.generateSecret(user.getUsername());
+            tokenService.addAuthenticatorToken(user, totp.getSecret());
+            return totp;
+        }
     }
 }

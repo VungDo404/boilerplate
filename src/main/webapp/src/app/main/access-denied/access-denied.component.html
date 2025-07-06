@@ -1,1 +1,14 @@
-<p>access-denied works!</p>
+<div class="access-denied-card">
+    <h1>{{'AccessDenied' | translate}}</h1>
+    <div class="image-container">
+        <p-image src="src/assets/logos/06.svg" alt="Logo" width="200"/>
+    </div>
+    <p>{{'AccessDeniedMessage' | translate}}</p>
+    <div class="buttons">
+        <p-button
+                label="{{'GoHome' | translate}}"
+                [styleClass]="'primary-btn'"
+                [routerLink]="['/']"
+        />
+    </div>
+</div>

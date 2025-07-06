@@ -1,0 +1,101 @@
+@use 'variable' as v;
+@use "util" as u;
+@use "header/util" as hu;
+
+:host {
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+
+    .button-container{
+        position: relative;
+        width: fit-content;
+    }
+    p-button {
+        ::ng-deep button.primary-btn {
+            @extend .primary-btn !optional;
+            height: 50px !important;
+        }
+    }
+
+    .option-container {
+        .recovery-email-container, .authenticator-container-message{
+            display: flex;
+            gap: 1rem;
+
+            p {
+                font-size: 0.95rem;
+            }
+
+            p-image {
+                width: 181px;
+                align-self: flex-start;
+            }
+        }
+        .authenticator-container{
+            .primary-btn{
+                margin-bottom: 16px;
+            }
+            ::ng-deep button.primary-btn {
+                @extend .primary-btn !optional;
+                height: 50px !important;
+                max-width: 100%;
+                border-radius: 25px;
+            }
+            .authenticator-button-group{
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                width: 70%;
+                div{
+                    i{
+                        font-size: 1.5rem;
+                    }
+                }
+            }
+        }
+    }
+    .bold{
+        font-weight: bold;
+    }
+    .qr-container{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        position: relative;
+        min-height: 300px;
+    }
+
+    .button-group-container{
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .otp-container{
+        display: flex;
+        justify-content: center;
+        .custom-otp-input {
+            width: 40px;
+            font-size: 36px;
+            border: 0 none;
+            appearance: none;
+            text-align: center;
+            transition: all 0.2s;
+            background: transparent;
+            border-bottom: 2px solid gray;
+            border-radius: 0;
+        }
+
+        .custom-otp-input:focus {
+            outline: 0 none;
+            border-bottom-color: black;
+        }
+    }
+
+    .check-success-container{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}

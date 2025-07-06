@@ -1,7 +1,5 @@
 <header *ngIf="title" class="header-container">
-    <h2>{{ title }}</h2>
-    <span>{{ description }}</span>
+    <h2>{{ title | translate }}</h2>
+    <span *ngIf="description">{{ description | translate }}</span>
 </header>
-<ng-container *ngFor="let item of items; let isLast = last">
-    <app-accordion-item [mode]="mode" [isLast]="isLast" [item]="item"></app-accordion-item>
-</ng-container>
+<ng-content></ng-content>

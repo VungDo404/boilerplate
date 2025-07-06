@@ -65,4 +65,34 @@ export class AccountService {
         const url = this.baseUrl + "/change-password";
         return this.http.post(url, body);
     }
+
+    enableTwoFactor(id: string){
+        const url = this.baseUrl + "/code/user/" + id;
+        return this.http.patch(url, {});
+    }
+
+    disableTwoFactor(id: string){
+        const url = this.baseUrl + "/code/user/" + id;
+        return this.http.delete(url);
+    }
+
+    getTwoFactor(id: string){
+        const url = this.baseUrl + "/code/user/" + id;
+        return this.http.get<TwoFactorInfo>(url);
+    }
+
+    getAuthenticator(id: string){
+        const url = this.baseUrl + "/authenticator/user/" + id;
+        return this.http.get<AuthenticatorInfo>(url);
+    }
+
+    enableAuthenticator(id: string, body: EnableAuthenticator){
+        const url = this.baseUrl + "/authenticator/user/" + id;
+        return this.http.patch(url, body);
+    }
+
+    disableAuthenticator(id: string){
+        const url = this.baseUrl + "/authenticator/user/" + id;
+        return this.http.delete(url);
+    }
 }

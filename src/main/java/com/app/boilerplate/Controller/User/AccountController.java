@@ -5,12 +5,10 @@ import com.app.boilerplate.Decorator.RateLimit.RateLimit;
 import com.app.boilerplate.Service.Account.AccountService;
 import com.app.boilerplate.Shared.Account.Dto.ChangePasswordDto;
 import com.app.boilerplate.Shared.Account.Dto.EmailDto;
+import com.app.boilerplate.Shared.Account.Dto.EnableAuthenticatorDto;
 import com.app.boilerplate.Shared.Account.Dto.ResetPasswordDto;
 import com.app.boilerplate.Shared.Account.Group.RegisterUser;
-import com.app.boilerplate.Shared.Account.Model.ProfileModel;
-import com.app.boilerplate.Shared.Account.Model.RegisterResultModel;
-import com.app.boilerplate.Shared.Account.Model.SecurityInfoModel;
-import com.app.boilerplate.Shared.Account.Model.TOTPModel;
+import com.app.boilerplate.Shared.Account.Model.*;
 import com.app.boilerplate.Shared.User.Dto.CreateUserDto;
 import com.app.boilerplate.Shared.User.Dto.UpdateUserDto;
 import com.app.boilerplate.Util.PermissionUtil;
@@ -54,6 +52,7 @@ public class AccountController {
     @RateLimit(capacity = 100, tokens = 10, duration = 5, timeUnit = ChronoUnit.SECONDS, key = "'emailActivation-' + #ip")
     @PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.WRITE +
         "')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @GetMapping("/email-activation")
     public void emailActivation(@RequestParam("key") String key) {
         accountService.emailVerification(key);
@@ -79,27 +78,50 @@ public class AccountController {
     @RateLimit(capacity = 100, tokens = 10, duration = 5, timeUnit = ChronoUnit.SECONDS, key = "'resetPassword-' + #ip")
     @PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.WRITE +
         "')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping("/reset-password")
     public void resetPassword(@RequestBody @Valid ResetPasswordDto request, @RequestParam("key") String key) {
         accountService.resetPassword(key, request.getPassword());
     }
 
     @PreAuthorize("hasPermission(#id.toString(), '" + PermissionUtil.USER + "', '" + PermissionUtil.WRITE + "')")
-    @PatchMapping("/code/user/{id}")
-    public TOTPModel enableTwoFactor(@PathVariable @NotNull UUID id) {
-        return accountService.enableTwoFactor(id);
-    }
-
-    @PreAuthorize("hasPermission(#id.toString(), '" + PermissionUtil.USER + "', '" + PermissionUtil.WRITE + "')")
     @GetMapping("/code/user/{id}")
-    public TOTPModel getTwoFactorIfEnable(@PathVariable @NotNull UUID id) {
-        return accountService.getTwoFactor(id);
+    public TwoFactorModel getTwoFactor(@PathVariable @NotNull UUID id) {
+        return accountService.getTwoFactorInfo(id);
     }
 
     @PreAuthorize("hasPermission(#id.toString(), '" + PermissionUtil.USER + "', '" + PermissionUtil.WRITE + "')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PatchMapping("/code/user/{id}")
+    public void enableTwoFactor(@PathVariable @NotNull UUID id) {
+        accountService.enableTwoFactor(id);
+    }
+
+    @PreAuthorize("hasPermission(#id.toString(), '" + PermissionUtil.USER + "', '" + PermissionUtil.WRITE + "')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/code/user/{id}")
     public void disableTwoFactor(@PathVariable @NotNull UUID id) {
         accountService.disableTwoFactor(id);
+    }
+
+    @PreAuthorize("hasPermission(#id.toString(), '" + PermissionUtil.USER + "', '" + PermissionUtil.WRITE + "')")
+    @GetMapping("/authenticator/user/{id}")
+    public TOTPModel getAuthenticator(@PathVariable @NotNull UUID id) {
+        return accountService.getAuthenticatorInfo(id);
+    }
+
+    @PreAuthorize("hasPermission(#id.toString(), '" + PermissionUtil.USER + "', '" + PermissionUtil.WRITE + "')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PatchMapping("/authenticator/user/{id}")
+    public void enableAuthenticator(@PathVariable @NotNull UUID id, @RequestBody @Valid EnableAuthenticatorDto request) {
+        accountService.enableAuthenticator(id, request);
+    }
+
+    @PreAuthorize("hasPermission(#id.toString(), '" + PermissionUtil.USER + "', '" + PermissionUtil.WRITE + "')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/authenticator/user/{id}")
+    public void disableAuthenticator(@PathVariable @NotNull UUID id) {
+        accountService.disableAuthenticator(id);
     }
 
     @PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.AUTHENTICATION + "', '" + PermissionUtil.DELETE +

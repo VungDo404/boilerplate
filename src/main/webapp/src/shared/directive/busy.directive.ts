@@ -1,4 +1,4 @@
-import { Directive, Input, OnChanges, SimpleChanges, ViewContainerRef} from '@angular/core';
+import { booleanAttribute, Directive, Input, OnChanges, SimpleChanges, ViewContainerRef } from '@angular/core';
 import {NgxSpinnerComponent, NgxSpinnerService} from "ngx-spinner";
 
 @Directive({
@@ -6,7 +6,7 @@ import {NgxSpinnerComponent, NgxSpinnerService} from "ngx-spinner";
 	selector: '[appBusy]'
 })
 export class BusyDirective implements OnChanges {
-	@Input() busyIf!: boolean;
+	@Input({ transform: booleanAttribute }) busyIf!: boolean;
 	private spinnerName = '';
 	private isBusy = false;
 	constructor(private viewContainerRef: ViewContainerRef, private ngxSpinnerService: NgxSpinnerService) {

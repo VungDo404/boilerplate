@@ -17,3 +17,5 @@ declare interface ProblemDetailWithFieldError extends ProblemDetail {
     fieldErrors: FieldError[];
 }
 
+type BooleanMap = Record<string, boolean>;
+
