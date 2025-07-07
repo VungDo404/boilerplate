@@ -1,5 +1,7 @@
 package com.app.boilerplate.Security;
 
+import com.app.boilerplate.Shared.Authentication.LoginProvider;
+
 import java.util.Map;
 
 public class GoogleOAuth2UserInfo extends OAuth2UserInfo {
@@ -24,5 +26,10 @@ public class GoogleOAuth2UserInfo extends OAuth2UserInfo {
     @Override
     public String getImageUrl() {
         return (String) attributes.get("picture");
+    }
+
+    @Override
+    public LoginProvider getLoginProvider() {
+        return LoginProvider.GOOGLE;
     }
 }

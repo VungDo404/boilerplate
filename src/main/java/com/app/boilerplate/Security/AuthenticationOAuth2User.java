@@ -1,6 +1,5 @@
 package com.app.boilerplate.Security;
 
-import com.app.boilerplate.Domain.User.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,7 +14,7 @@ import java.util.Map;
 @Builder
 public class AuthenticationOAuth2User implements OAuth2User {
 	private OAuth2User oauth2User;
-	private User user;
+	private OAuth2UserInfo oauth2UserInfo;
 
 	@Override
 	public Map<String, Object> getAttributes() {

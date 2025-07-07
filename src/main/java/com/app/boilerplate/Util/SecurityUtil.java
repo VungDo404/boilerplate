@@ -1,5 +1,6 @@
 package com.app.boilerplate.Util;
 
+import com.app.boilerplate.Security.AuthenticationOAuth2User;
 import com.app.boilerplate.Shared.Authentication.AccessJwt;
 import org.springframework.security.acls.domain.PrincipalSid;
 import org.springframework.security.core.Authentication;
@@ -54,7 +55,7 @@ public class SecurityUtil {
 
     public static boolean isAnonymous() {
         final var principal = getPrincipal();
-        return principal instanceof String strPrincipal && strPrincipal.equals(AppConsts.ANONYMOUS_USER);
+        return (principal == null) || (principal instanceof String strPrincipal && strPrincipal.equals(AppConsts.ANONYMOUS_USER)) || (principal instanceof AuthenticationOAuth2User);
     }
 
     public static UUID getUserId() {

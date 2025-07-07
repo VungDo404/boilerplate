@@ -4,7 +4,6 @@ import com.app.boilerplate.Domain.Common.AuditEnversRevision;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.envers.EntityTrackingRevisionListener;
 import org.hibernate.envers.RevisionType;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
@@ -13,12 +12,10 @@ public class ApplicationRevisionListener implements EntityTrackingRevisionListen
 	@Override
 	public void newRevision(final Object revisionEntity) {
 		final var revision = (AuditEnversRevision) revisionEntity;
-		final var authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (authentication != null && authentication.isAuthenticated()
-				&& !AppConsts.ANONYMOUS_USER.equals(authentication.getPrincipal())){
-			revision.setUserId(SecurityUtil.getAccessJwt().getSub());
-		}else{
+		if (SecurityUtil.isAnonymous()){
 			revision.setUserId(AppConsts.SYSTEM_USER_ID);
+		}else{
+			revision.setUserId(SecurityUtil.getAccessJwt().getSub());
 		}
 	}
 

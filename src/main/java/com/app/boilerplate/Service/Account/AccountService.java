@@ -27,10 +27,12 @@ import com.app.boilerplate.Shared.User.Dto.UpdateUserDto;
 import com.app.boilerplate.Util.SecurityUtil;
 import com.app.boilerplate.Util.StorageConsts;
 import lombok.RequiredArgsConstructor;
+import org.apache.tika.mime.MimeTypeException;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -149,14 +151,15 @@ public class AccountService {
         final var token = tokenService.getTokenByTypeAndValue(TokenType.RESET_PASSWORD_TOKEN, key);
         final var user = token.getUser();
         user.setPassword(newPassword);
-        user.setCredentialsNonExpired(false);
+        user.setCredentialsNonExpired(true);
         if (user.getEmailSpecify() == null) {
             user.setEmailSpecify(LocalDateTime.now());
         }
+        userService.save(user);
         tokenService.deleteByValue(key);
     }
 
-    @Async
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void processLockoutFailed(String username) {
         final var user = userService.getUserByUsernameAndProvider(username, LoginProvider.LOCAL);
         if (!user.getIsLockoutEnabled()) return;
@@ -165,14 +168,14 @@ public class AccountService {
             if (user.getAccessFailedCount() == 0) {
                 user.setLockoutEndDate(LocalDateTime.now()
                     .plus(LOCK_OUT_TIME));
-                user.setAccountNonLocked(false);
             }
         } else {
             user.setAccessFailedCount(ACCESS_FAILED_ATTEMPTS - 1);
-            user.setAccountNonLocked(true);
             user.setLockoutEndDate(null);
         }
+        user.setSecurityStamp(UUID.randomUUID().toString());
         userService.save(user);
+        return;
     }
 
     @Async
@@ -192,7 +195,7 @@ public class AccountService {
         tokenService.deleteByValue(key);
     }
 
-    public URL avatar(UUID userId, MultipartFile file) throws IOException {
+    public URL avatar(UUID userId, MultipartFile file) throws IOException, MimeTypeException {
         final var user = userService.getUserById(userId);
         if (user.getImage() != null && storageService.isS3Url(user.getImage())) {
             final var oldKey = storageService.extractObjectKey(user.getImage(), StorageConsts.PUBLIC);
@@ -259,7 +262,7 @@ public class AccountService {
 
         return SecurityInfoModel.builder()
             .twoFactorEnable(user.getIsTwoFactorEnabled())
-            .passwordLastUpdate(lastChange.toLocalDate())
+            .passwordLastUpdate(lastChange != null ? lastChange.toLocalDate() : null)
             .build();
     }
 

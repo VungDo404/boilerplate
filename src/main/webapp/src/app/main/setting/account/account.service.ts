@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AccountService as AS } from "../../../../shared/service/http/account.service";
 import { SessionService } from "../../../../shared/service/session.service";
-import { finalize, forkJoin } from "rxjs";
+import { defaultIfEmpty, finalize, combineLatest } from "rxjs";
 
 @Injectable({
     providedIn: 'root'
@@ -20,7 +20,7 @@ export class AccountService {
                 this.phoneNumber = response.phoneNumber ?? '';
                 this.gender = response.gender !== undefined ? response.gender : null;
                 this.displayName = response.displayName ?? '';
-                this.dateOfBirth = response.dateOfBirth ? response.dateOfBirth : null;
+                this.dateOfBirth = response.dateOfBirth ? new Date(response.dateOfBirth) : null;
                 cb(
                     this.phoneNumber,
                     this.gender,
@@ -42,24 +42,26 @@ export class AccountService {
             !!(body.dateOfBirth && !this.compareDate(body.dateOfBirth, this.dateOfBirth));
 
         if (hasChanges) {
-            observables.push(this.accountService.updateUserInfo(this.sessionService.id,body));
+            observables.push(this.accountService.updateUserInfo(this.sessionService.id, body).pipe(defaultIfEmpty(null)));
         }
 
         if (avatar) {
-            observables.push(this.accountService.avatar(this.sessionService.id,avatar));
+            observables.push(this.accountService.avatar(this.sessionService.id, avatar).pipe(defaultIfEmpty(null)));
         }
 
-        forkJoin(observables).pipe(finalize(cb)).subscribe({
+        combineLatest(observables).pipe(finalize(cb)).subscribe({
             next: () => {
                 this.phoneNumber = body.phoneNumber ?? this.phoneNumber;
                 this.gender = body.gender ?? this.gender;
                 this.displayName = body.displayName ?? this.displayName;
                 this.dateOfBirth = body.dateOfBirth ?? this.dateOfBirth;
+                if (avatar)
+                    this.sessionService.avatar = URL.createObjectURL(avatar);
             }
         })
     }
 
-    private compareDate(d1: Date | null | undefined, d2: Date | null | undefined){
+    private compareDate(d1: Date | null | undefined, d2: Date | null | undefined) {
         if (!d1 && !d2) return true;
         if (!d1 || !d2) return false;
 

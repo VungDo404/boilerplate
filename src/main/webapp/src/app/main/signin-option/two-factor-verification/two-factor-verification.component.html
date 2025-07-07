@@ -4,8 +4,9 @@
 </div>
 <div class="button-container" *ngIf=" id | permission: 'User': Action.Write">
     <p-button
+            *ngIf="twoFactorInfo"
             label="{{buttonText | translate}}"
-            [styleClass]="'primary-btn' + (twoFactorInfo?.twoFactorEnable ? ' outline' : '')"
+            [styleClass]="'primary-btn' + (twoFactorInfo.twoFactorEnable ? ' outline' : '')"
             (click)="handleTwoFactor()"
     />
 </div>
@@ -118,7 +119,7 @@
                 [allowEmptyString]="true">
 
         </qrcode>
-        <p *ngIf="authenticatorInfo?.secret">{{ authenticatorInfo?.secret }}</p>
+        <p *ngIf="authenticatorInfo?.secret">{{ authenticatorInfo.secret }}</p>
         <ng-container appBusy [busyIf]="loadingQRModal"></ng-container>
     </div>
     <ng-template #footer>

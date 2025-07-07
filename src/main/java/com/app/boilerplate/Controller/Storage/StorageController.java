@@ -6,6 +6,7 @@ import com.app.boilerplate.Service.Storage.StorageService;
 import com.app.boilerplate.Util.PermissionUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.apache.tika.mime.MimeTypeException;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +34,7 @@ public class StorageController {
         @ValidFile(maxSize = "9MB", allowedContentTypes = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
         @RequestPart(value = "file")
         MultipartFile file,
-        @RequestHeader("X-Bucket-Name") String bucketName) throws IOException {
+        @RequestHeader("X-Bucket-Name") String bucketName) throws IOException, MimeTypeException {
         return storageService.uploadFile(file, bucketName);
     }
 

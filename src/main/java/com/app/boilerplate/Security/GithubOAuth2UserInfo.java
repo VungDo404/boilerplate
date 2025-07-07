@@ -1,5 +1,7 @@
 package com.app.boilerplate.Security;
 
+import com.app.boilerplate.Shared.Authentication.LoginProvider;
+
 import java.util.Map;
 
 public class GithubOAuth2UserInfo extends OAuth2UserInfo {
@@ -25,5 +27,10 @@ public class GithubOAuth2UserInfo extends OAuth2UserInfo {
     @Override
     public String getImageUrl() {
         return (String) attributes.get("avatar_url");
+    }
+
+    @Override
+    public LoginProvider getLoginProvider() {
+        return LoginProvider.GITHUB;
     }
 }

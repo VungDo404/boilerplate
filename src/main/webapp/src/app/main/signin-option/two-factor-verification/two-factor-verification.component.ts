@@ -59,7 +59,6 @@ export class TwoFactorVerificationComponent extends BaseComponent implements OnI
     form!: FormGroup;
 
     constructor(
-        private securityService: SecurityService,
         private sessionService: SessionService,
         private factorVerificationService: TwoFactorVerificationService,
         private translate: TranslateService,
@@ -81,6 +80,9 @@ export class TwoFactorVerificationComponent extends BaseComponent implements OnI
     }
 
     handleTwoFactor() {
+        if (!this.twoFactorInfo) {
+            return;
+        }
         if (!this.twoFactorInfo.twoFactorEnable) {
             const cb = () => {
                 this.dialogVisibility.turnOn2FA = true;
@@ -94,6 +96,9 @@ export class TwoFactorVerificationComponent extends BaseComponent implements OnI
     }
 
     handleDisable() {
+        if (!this.twoFactorInfo) {
+            return;
+        }
         if (this.twoFactorInfo.twoFactorEnable) {
             const cb = () => {
                 this.twoFactorInfo.twoFactorEnable = false;

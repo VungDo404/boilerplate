@@ -134,7 +134,7 @@ public class User implements UserDetails, Identifiable<UUID> {
 
     @Audited(withModifiedFlag = true)
     @Column(name = "access_failed_count", columnDefinition = "SMALLINT DEFAULT 5", nullable = false)
-    private int accessFailedCount = 5;
+    private int accessFailedCount = 10;
 
     @Audited(withModifiedFlag = true)
     @Column(name = "lockout_end_date")

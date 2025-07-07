@@ -25,6 +25,7 @@ export class Oauth2CallbackComponent implements OnInit {
             }
             const cb = () => {
                 this.spinnerService.hide();
+                window.location.href = this.loginService.redirectUrl ?? '/';
             }
             this.loginService.login(tokenResult, cb);
         });

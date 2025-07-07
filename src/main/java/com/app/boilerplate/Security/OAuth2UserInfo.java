@@ -1,5 +1,6 @@
 package com.app.boilerplate.Security;
 
+import com.app.boilerplate.Shared.Authentication.LoginProvider;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Map;
@@ -12,4 +13,5 @@ public abstract class OAuth2UserInfo {
     public abstract String getName();
     public abstract String getEmail();
     public abstract String getImageUrl();
+    public abstract LoginProvider getLoginProvider();
 }

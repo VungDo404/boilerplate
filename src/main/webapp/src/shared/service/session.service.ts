@@ -74,6 +74,10 @@ export class SessionService {
         })
     );
 
+    set avatar(url){
+        this.avatarSubject.next(url);
+    }
+
     get isAuthenticated(){
         return this.userIdSubject.value !== DEFAULT_UUID;
     }

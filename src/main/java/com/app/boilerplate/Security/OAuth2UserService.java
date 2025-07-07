@@ -1,8 +1,6 @@
 package com.app.boilerplate.Security;
 
 import com.app.boilerplate.Service.Authentication.OAuth2Service;
-import com.app.boilerplate.Service.User.UserService;
-import com.app.boilerplate.Shared.Authentication.LoginProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -16,7 +14,7 @@ import java.util.HashMap;
 @RequiredArgsConstructor
 @Component
 public class OAuth2UserService extends DefaultOAuth2UserService {
-    private final UserService userService;
+
     private final OAuth2Service oAuth2Service;
     @Override
     public AuthenticationOAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -27,22 +25,18 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
     private AuthenticationOAuth2User process(OAuth2UserRequest userRequest, OAuth2User oAuth2User){
         final var provider = userRequest.getClientRegistration().getRegistrationId();
         OAuth2UserInfo oAuth2UserInfo;
-        LoginProvider loginProvider;
         if (provider.equals("google")){
             oAuth2UserInfo = new GoogleOAuth2UserInfo(oAuth2User.getAttributes());
-            loginProvider = LoginProvider.GOOGLE;
         }else if (provider.equals("github")){
             oAuth2User = processGetGithubEmail(userRequest, oAuth2User);
             oAuth2UserInfo = new GithubOAuth2UserInfo(oAuth2User.getAttributes());
-            loginProvider = LoginProvider.GITHUB;
 
         }else {
             throw new OAuth2AuthenticationException("Login with " + provider + " is not supported yet.");
         }
-        final var user = userService.getOrCreateExternalUserIfNotExists(oAuth2UserInfo, loginProvider);
         return AuthenticationOAuth2User.builder()
-            .user(user)
             .oauth2User(oAuth2User)
+            .oauth2UserInfo(oAuth2UserInfo)
             .build();
     }
 

@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface AclSidRepository extends JpaRepository<AclSid, Long> {
 	List<AclSid> findByPrincipal(boolean principal);
+
+	AclSid findAclSidBySidAndPrincipal(String sid, boolean principal);
 }

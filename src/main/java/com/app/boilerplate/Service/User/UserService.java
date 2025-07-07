@@ -7,7 +7,8 @@ import com.app.boilerplate.Repository.UserRepository;
 import com.app.boilerplate.Security.OAuth2UserInfo;
 import com.app.boilerplate.Shared.Account.Event.EmailActivationEvent;
 import com.app.boilerplate.Shared.Authentication.LoginProvider;
-import com.app.boilerplate.Shared.Authorization.Event.ObjectIdentityEvent;
+import com.app.boilerplate.Shared.Authorization.Event.AclEvent;
+import com.app.boilerplate.Shared.Authorization.Event.AuthorityAfterRegisterEvent;
 import com.app.boilerplate.Shared.User.Dto.CreateUserDto;
 import com.app.boilerplate.Shared.User.Dto.PostUserDto;
 import com.app.boilerplate.Shared.User.Dto.UpdateUserDto;
@@ -22,6 +23,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.acls.domain.PrincipalSid;
 import org.springframework.security.acls.model.AlreadyExistsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -103,23 +105,27 @@ public class UserService {
             .orElseThrow();
         if (shouldSendConfirmationEmail)
             eventPublisher.publishEvent(new EmailActivationEvent(user));
-        eventPublisher.publishEvent(new ObjectIdentityEvent<>(user));
+        eventPublisher.publishEvent(new AuthorityAfterRegisterEvent(user));
+
+        eventPublisher.publishEvent(new AclEvent<>(
+            user,
+            new PrincipalSid(user.getProvider().toString() + ":" + user.getUsername()
+            )));
         return user;
     }
 
+    @Transactional
     @CachePut(value = "user", key = "#id")
     public User putUser(UpdateUserDto request, UUID id) {
-
-        return Optional.of(id)
-            .map(this::getUserById)
-            .map(user -> {
-                userMapper.update(user, request);
-                user.setSecurityStamp(UUID.randomUUID()
-                    .toString());
-                log.debug("Updated Information for User: {}", user);
-                return save(user);
-            })
+        User user = userRepository.findById(id)
             .orElseThrow(() -> new NotFoundException("", "error.user.id.notfound", id));
+
+        log.debug("Before update: {}", user);
+        userMapper.update(user, request);
+        user.setSecurityStamp(UUID.randomUUID().toString());
+        log.debug("After update: {}", user);
+
+        return userRepository.saveAndFlush(user);
     }
 
     @CacheEvict(value = "user", key = "#id")
@@ -129,7 +135,7 @@ public class UserService {
 
     @CachePut(value = "user", key = "#user.id")
     public User save(User user) {
-        return userRepository.save(user);
+        return userRepository.saveAndFlush(user);
     }
 
 }

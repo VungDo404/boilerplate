@@ -3,6 +3,10 @@ package com.app.boilerplate.Service.Storage;
 import com.app.boilerplate.Util.StorageConsts;
 import io.awspring.cloud.s3.S3Template;
 import lombok.RequiredArgsConstructor;
+import org.apache.tika.Tika;
+import org.apache.tika.mime.MimeType;
+import org.apache.tika.mime.MimeTypeException;
+import org.apache.tika.mime.MimeTypes;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -23,14 +27,14 @@ public class StorageService {
     @Value("${spring.cloud.aws.s3.endpoint}")
     private String endpoint;
 
-    public String uploadFile(MultipartFile file, String bucketName) throws IOException {
-        final var key = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+    public String uploadFile(MultipartFile file, String bucketName) throws IOException, MimeTypeException {
+        final var key = System.currentTimeMillis() + getExtension(file);
         s3Template.upload(bucketName, key, file.getInputStream());
         return key;
     }
 
-    public String uploadFile(MultipartFile file, String bucketName, String dir) throws IOException {
-        final var key = dir + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+    public String uploadFile(MultipartFile file, String bucketName, String dir) throws IOException, MimeTypeException {
+        final var key = dir + System.currentTimeMillis() + getExtension(file);
         s3Template.upload(bucketName, key, file.getInputStream());
         return key;
     }
@@ -54,6 +58,14 @@ public class StorageService {
 
     public String extractObjectKey(String fileUrl, String bucketName) {
         return fileUrl.replace(endpoint + "/" + bucketName + "/", "");
+    }
+
+    private String getExtension(MultipartFile file) throws IOException, MimeTypeException {
+        Tika tika = new Tika();
+        String mimeType = tika.detect(file.getInputStream());
+        MimeTypes allTypes = MimeTypes.getDefaultMimeTypes();
+        MimeType mime = allTypes.forName(mimeType);
+        return mime.getExtension();
     }
 
 }

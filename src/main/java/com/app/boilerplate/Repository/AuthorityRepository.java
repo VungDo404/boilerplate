@@ -3,6 +3,7 @@ package com.app.boilerplate.Repository;
 import com.app.boilerplate.Domain.Authorization.Authority;
 import com.app.boilerplate.Domain.Authorization.AuthorityId;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -56,5 +57,14 @@ public interface AuthorityRepository extends JpaRepository<Authority, AuthorityI
     """, nativeQuery = true)
     List<Object[]> findAclEntriesBySid(@Param("authorities") Collection<String> authorities);
 
-
+    @Modifying
+    @Query(value = """
+    INSERT INTO authority (user_id, sid_id, priority)
+    SELECT UUID_TO_BIN(:userId), s.id, v.priority
+    FROM acl_sid s
+    JOIN (
+        SELECT 'ROLE_AUTHENTICATE' as role_name, 50 as priority
+    ) AS v ON s.sid = v.role_name
+    """, nativeQuery = true)
+    void insertAuthoritiesAfterRegister(@Param("userId") String userId);
 }

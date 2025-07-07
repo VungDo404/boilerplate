@@ -19,7 +19,7 @@ public class PreAuthenticationChecker implements UserDetailsChecker {
 			throw new ClassCastException("UserDetails must be an instance of User");
 		if(!user.isEnabled())
 			throw new DisabledException("error.auth.disabled");
-		if(!user.getAccountNonLocked() && user.getLockoutEndDate().isAfter(LocalDateTime.now()))
+		if(user.getIsLockoutEnabled() && user.getLockoutEndDate() != null && user.getLockoutEndDate().isAfter(LocalDateTime.now()))
 			throw new LockedException(DateTimeUtil.formatDateTime(user.getLockoutEndDate()));
 		if(!user.getAccountNonExpired())
 			throw new AccountExpiredException("error.auth.expired");

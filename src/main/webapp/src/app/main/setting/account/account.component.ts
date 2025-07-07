@@ -52,7 +52,7 @@ export class AccountComponent extends BaseComponent implements OnInit {
         { name: 'Male', key: 0 },
         { name: 'Female', key: 1 }
     ]
-    private avatarFile!: File;
+    private avatarFile!: File | undefined;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -145,6 +145,7 @@ export class AccountComponent extends BaseComponent implements OnInit {
             cb,
             this.avatarFile ?? undefined
         )
+        this.avatarFile = undefined;
     }
 
     get userId() {

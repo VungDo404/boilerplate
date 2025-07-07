@@ -30,7 +30,7 @@ public class AclConfig {
 
     @Bean
     public AclAuthorizationStrategy aclAuthorizationStrategy() {
-        return new AclAuthorizationStrategyImpl(new SimpleGrantedAuthority("ROLE_APPLICATION_ADMINISTRATOR"));
+        return new AclAuthorizationStrategyImpl(new SimpleGrantedAuthority("ROLE_AUTHENTICATION_ANONYMOUS"));
     }
 
     @Bean

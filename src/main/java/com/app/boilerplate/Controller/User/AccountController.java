@@ -17,6 +17,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
+import org.apache.tika.mime.MimeTypeException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -137,7 +138,7 @@ public class AccountController {
         @PathVariable @NotNull UUID id,
         @ValidFile(maxSize = "1MB", allowedContentTypes = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
         @RequestPart(value = "file")
-        MultipartFile file) throws IOException {
+        MultipartFile file) throws IOException, MimeTypeException {
         return accountService.avatar(id, file);
     }
 

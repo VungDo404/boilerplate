@@ -5,6 +5,7 @@ import com.app.boilerplate.Repository.*;
 import com.app.boilerplate.Service.User.UserService;
 import com.app.boilerplate.Shared.Authorization.Dto.CreateAuthorityDto;
 import com.app.boilerplate.Shared.Authorization.Dto.CreateObjectIdentityDto;
+import com.app.boilerplate.Shared.Authorization.Event.AuthorityAfterRegisterEvent;
 import com.app.boilerplate.Shared.Authorization.Event.ObjectIdentityEvent;
 import com.app.boilerplate.Shared.Authorization.Model.AuthorityModel;
 import com.app.boilerplate.Util.SecurityUtil;
@@ -149,6 +150,11 @@ public class AuthorizeService {
         return returnedObjectIdentity.getId();
     }
 
+    @EventListener(AuthorityAfterRegisterEvent.class)
+    public void addAuthority(AuthorityAfterRegisterEvent event){
+        final var id = event.getUser().getId().toString();
+        authorityRepository.insertAuthoritiesAfterRegister(id);
+    }
 
     @EventListener(ObjectIdentityEvent.class)
     public void addObjectIdentity(ObjectIdentityEvent<?> event) {

@@ -51,10 +51,11 @@ public class SecurityConfig {
         HttpSecurity http,
         JwtDecoder jwtDecoder,
         JwtAuthenticationConverter authenticationConverter,
+        ClientRegistrationRepository repository,
         OAuth2AuthenticationSuccessHandler successHandler,
-        OAuth2UserService oAuth2UserService,
-        ClientRegistrationRepository repository) throws Exception {
-        http.anonymous(anonymous -> anonymous
+        OAuth2UserService oAuth2UserService) throws Exception {
+        http
+            .anonymous(anonymous -> anonymous
                 .principal(AppConsts.ANONYMOUS_USER)
                 .authorities("ROLE_AUTHENTICATION_ANONYMOUS"))
             .authorizeHttpRequests(auth -> auth.anyRequest()
