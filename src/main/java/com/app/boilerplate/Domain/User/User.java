@@ -2,7 +2,7 @@ package com.app.boilerplate.Domain.User;
 
 import com.app.boilerplate.Shared.Authentication.Gender;
 import com.app.boilerplate.Shared.Authentication.LoginProvider;
-import com.app.boilerplate.Shared.Common.Identifiable;
+import com.app.boilerplate.Shared.Common.IdentifiableUserResource;
 import com.app.boilerplate.Shared.User.UserListener;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -39,7 +39,7 @@ import java.util.UUID;
         @UniqueConstraint(name = "uq_user_username_provider", columnNames = {User_.USERNAME, User_.PROVIDER})
     }
 )
-public class User implements UserDetails, Identifiable<UUID> {
+public class User implements UserDetails, IdentifiableUserResource<UUID> {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -146,4 +146,13 @@ public class User implements UserDetails, Identifiable<UUID> {
         return Collections.emptyList();
     }
 
+    @Override
+    public User getUser() {
+        return this;
+    }
+
+    @Transient
+    public String getSid(){
+        return provider + ":" + username;
+    }
 }

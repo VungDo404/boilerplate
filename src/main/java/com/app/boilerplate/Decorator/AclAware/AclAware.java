@@ -1,4 +1,4 @@
-package com.app.boilerplate.Decorator.Confirmcredential;
+package com.app.boilerplate.Decorator.AclAware;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,6 +7,6 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ConfirmCredential {
-
+public @interface AclAware {
+    int[] permissions() default {};
 }

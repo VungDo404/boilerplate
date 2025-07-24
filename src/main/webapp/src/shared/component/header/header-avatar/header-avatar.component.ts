@@ -44,7 +44,6 @@ export class HeaderAvatarComponent extends BaseComponent implements OnInit {
 
     }
 
-
     override ngOnDestroy(): void {
         super.ngOnDestroy();
         this.headerMenuService.dispose();

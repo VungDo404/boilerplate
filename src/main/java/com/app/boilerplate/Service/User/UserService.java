@@ -1,13 +1,14 @@
 package com.app.boilerplate.Service.User;
 
+import com.app.boilerplate.Decorator.AclAware.AclAware;
 import com.app.boilerplate.Domain.User.User;
 import com.app.boilerplate.Exception.NotFoundException;
 import com.app.boilerplate.Mapper.IUserMapper;
 import com.app.boilerplate.Repository.UserRepository;
+import com.app.boilerplate.Security.HierarchicalPermission;
 import com.app.boilerplate.Security.OAuth2UserInfo;
 import com.app.boilerplate.Shared.Account.Event.EmailActivationEvent;
 import com.app.boilerplate.Shared.Authentication.LoginProvider;
-import com.app.boilerplate.Shared.Authorization.Event.AclEvent;
 import com.app.boilerplate.Shared.Authorization.Event.AuthorityAfterRegisterEvent;
 import com.app.boilerplate.Shared.User.Dto.CreateUserDto;
 import com.app.boilerplate.Shared.User.Dto.PostUserDto;
@@ -23,7 +24,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.acls.domain.PrincipalSid;
 import org.springframework.security.acls.model.AlreadyExistsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -79,6 +79,7 @@ public class UserService {
                 () -> new NotFoundException("", "error.user.email.notfound", email));
     }
 
+    @AclAware(permissions = {HierarchicalPermission.MASK_READ, HierarchicalPermission.MASK_WRITE})
     @CachePut(value = "user", key = "#result.id")
     public User createUser(CreateUserDto request, Boolean shouldSendConfirmationEmail, LoginProvider loginProvider) {
         if (loginProvider.equals(LoginProvider.LOCAL))
@@ -107,10 +108,6 @@ public class UserService {
             eventPublisher.publishEvent(new EmailActivationEvent(user));
         eventPublisher.publishEvent(new AuthorityAfterRegisterEvent(user));
 
-        eventPublisher.publishEvent(new AclEvent<>(
-            user,
-            new PrincipalSid(user.getProvider().toString() + ":" + user.getUsername()
-            )));
         return user;
     }
 
@@ -122,7 +119,8 @@ public class UserService {
 
         log.debug("Before update: {}", user);
         userMapper.update(user, request);
-        user.setSecurityStamp(UUID.randomUUID().toString());
+        user.setSecurityStamp(UUID.randomUUID()
+            .toString());
         log.debug("After update: {}", user);
 
         return userRepository.saveAndFlush(user);

@@ -34,7 +34,7 @@ public class AclObjectIdentity {
 	@JoinColumn(name = "object_id_class", nullable = false, foreignKey = @ForeignKey(name = "fk_acl_object_identity_class"))
 	private AclClass objectIdClass;
 
-	@Column(name = "object_id_identity", nullable = false, length = 36)
+	@Column(name = "object_id_identity", nullable = false, length = 100)
 	private String objectIdIdentity;
 
 	@ManyToOne

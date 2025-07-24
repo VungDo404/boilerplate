@@ -1,9 +1,7 @@
 package com.app.boilerplate.Service.Authorization;
 
 import com.app.boilerplate.Security.HierarchicalPermission;
-import com.app.boilerplate.Shared.Authorization.Event.AclEvent;
 import com.app.boilerplate.Util.SecurityUtil;
-import org.springframework.context.event.EventListener;
 import org.springframework.security.acls.domain.GrantedAuthoritySid;
 import org.springframework.security.acls.domain.ObjectIdentityImpl;
 import org.springframework.security.acls.domain.PrincipalSid;
@@ -107,37 +105,13 @@ public class AccessControlListService extends JdbcMutableAclService {
         return createOrRetrieveSidPrimaryKey(sidName, sidIsPrincipal, allowCreate);
     }
 
-    @EventListener
-    public void persistAcl(AclEvent<?> event){
-        final var parentId = "0";
-        final var owner = event.getPrincipalSid();
-        final var className = event.getEntity().getClass();
-        final var  childOid = new ObjectIdentityImpl(className, event.getEntity().getId().toString());
-        final var  childAcl = createAcl(childOid, owner.getPrincipal(), true);
-        final var  parentOid = new ObjectIdentityImpl(className, parentId);
-        final Acl parentAcl;
-        try {
-            parentAcl = readAclById(parentOid);
-        } catch (NotFoundException e) {
-            throw new RuntimeException("Parent ACL not found for ID: " + parentId);
-        }
-        childAcl.setParent(parentAcl); //error on this line
-
-        var nextAvailableIndex = childAcl.getEntries().size();
-        childAcl.insertAce(nextAvailableIndex++, HierarchicalPermission.READ, owner, true);
-        childAcl.insertAce(nextAvailableIndex, HierarchicalPermission.WRITE, owner, true);
-        updateAcl(childAcl);
-    }
-
     @Override
     public MutableAcl createAcl(ObjectIdentity objectIdentity) throws AlreadyExistsException {
         return createAcl(objectIdentity, SecurityUtil.getPrincipalSid()
             .getPrincipal(), true);
     }
 
-    public MutableAcl createAcl(
-        ObjectIdentity objectIdentity, String sidName,
-        boolean principal) {
+    public MutableAcl createAcl(ObjectIdentity objectIdentity, String sidName, boolean principal) {
         Assert.notNull(objectIdentity, "Object Identity required");
 
         if (retrieveObjectIdentityPrimaryKey(objectIdentity) != null) {

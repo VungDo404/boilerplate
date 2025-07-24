@@ -4,7 +4,8 @@ export enum Action{
     Create = 1 << 2,
     Delete = 1 << 3,
     Grant = 1 << 4,
-    Admin = 1 << 5
+    Admin = 1 << 5,
+    View = 1 << 6
 }
 
 export enum Locale {

@@ -129,7 +129,7 @@ public class AccountService {
         return getOrCreateAuthenticatorTokenInfo(user);
     }
 
-    @EventListener(EmailActivationEvent.class)
+    @EventListener
     public void emailActivationEvent(EmailActivationEvent event) {
         emailActivation(event.getUser());
     }

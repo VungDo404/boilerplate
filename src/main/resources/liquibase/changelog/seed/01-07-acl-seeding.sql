@@ -4,7 +4,11 @@ VALUES ('com.app.boilerplate.Domain.User.User', 'java.lang.String'),
        ('com.app.boilerplate.Domain.Authentication', 'java.lang.Long'),
        ('com.app.boilerplate.Domain.Authorization', 'java.lang.Long'),
        ('com.app.boilerplate.File', 'java.lang.Long'),
-       ('com.app.boilerplate.Domain', 'java.lang.Long');
+       ('com.app.boilerplate.Domain', 'java.lang.Long'),
+       ('com.app.boilerplate.Domain.Notification.Notification', 'java.lang.Long'),
+       ('com.app.boilerplate.Domain.Notification.NotificationTopic', 'java.lang.Long'),
+       ('com.app.boilerplate.Domain.Notification.TopicSubscription', 'java.lang.String'),
+       ('com.app.boilerplate.Domain.Notification.NotificationUser', 'java.lang.String');
 -- ROLE_RESOURCE_PERMISSION
 INSERT INTO acl_sid(principal, sid)
 VALUES (0, 'ROLE_APPLICATION_ADMINISTRATOR'),
@@ -67,7 +71,8 @@ SET
 @grant = 1 << 4;
 SET
 @admin = 1 << 5;
-
+SET
+@view = 1 << 6;
 SET
 @acl_class_user_id = (
     SELECT id
@@ -75,6 +80,33 @@ SET
     WHERE class = 'com.app.boilerplate.Domain.User.User'
 );
 
+SET
+@acl_class_noti_id = (
+    SELECT id
+    FROM acl_class
+    WHERE class = 'com.app.boilerplate.Domain.Notification.Notification'
+);
+
+SET
+@acl_class_noti_topic_id = (
+    SELECT id
+    FROM acl_class
+    WHERE class = 'com.app.boilerplate.Domain.Notification.NotificationTopic'
+);
+
+SET
+@acl_class_topic_sub_id = (
+    SELECT id
+    FROM acl_class
+    WHERE class = 'com.app.boilerplate.Domain.Notification.TopicSubscription'
+);
+
+SET
+@acl_class_noti_user_id = (
+    SELECT id
+    FROM acl_class
+    WHERE class = 'com.app.boilerplate.Domain.Notification.NotificationUser'
+);
 INSERT INTO acl_object_identity(object_id_class, object_id_identity, parent_object, owner_sid, entries_inheriting)
 SELECT acl_class.id, 0, NULL, @role_admin_app_id, 1
 FROM acl_class
@@ -137,6 +169,50 @@ SET
         	AND object_id_identity = 0
 );
 
+SET
+@noti_obj_id = (
+         SELECT id
+         FROM acl_object_identity
+         WHERE object_id_class = (
+         		SELECT id
+    			FROM acl_class
+    			WHERE class = 'com.app.boilerplate.Domain.Notification.Notification')
+        	AND object_id_identity = 0
+);
+
+SET
+@noti_topic_obj_id = (
+         SELECT id
+         FROM acl_object_identity
+         WHERE object_id_class = (
+         		SELECT id
+    			FROM acl_class
+    			WHERE class = 'com.app.boilerplate.Domain.Notification.NotificationTopic')
+        	AND object_id_identity = 0
+);
+
+SET
+@topic_sub_obj_id = (
+         SELECT id
+         FROM acl_object_identity
+         WHERE object_id_class = (
+         		SELECT id
+    			FROM acl_class
+    			WHERE class = 'com.app.boilerplate.Domain.Notification.TopicSubscription')
+        	AND object_id_identity = 0
+);
+
+SET
+@noti_user_obj_id = (
+         SELECT id
+         FROM acl_object_identity
+         WHERE object_id_class = (
+         		SELECT id
+    			FROM acl_class
+    			WHERE class = 'com.app.boilerplate.Domain.Notification.NotificationUser')
+        	AND object_id_identity = 0
+);
+
 UPDATE acl_object_identity
 SET parent_object = @application_obj_id
 WHERE entries_inheriting = 1
@@ -151,6 +227,38 @@ SELECT @acl_class_user_id,
         1
 FROM user u;
 
+INSERT INTO acl_object_identity (object_id_class, object_id_identity, parent_object, owner_sid, entries_inheriting)
+SELECT @acl_class_noti_id,
+       id,
+       @noti_obj_id,
+       @role_admin_app_id,
+       1
+FROM notification;
+
+INSERT INTO acl_object_identity (object_id_class, object_id_identity, parent_object, owner_sid, entries_inheriting)
+SELECT @acl_class_noti_topic_id,
+       id,
+       @noti_topic_obj_id,
+       @role_admin_app_id,
+       1
+FROM notification_topic;
+
+INSERT INTO acl_object_identity (object_id_class, object_id_identity, parent_object, owner_sid, entries_inheriting)
+SELECT @acl_class_topic_sub_id,
+       CONCAT(BIN_TO_UUID(user_id), ':', notification_topic_id),
+       @topic_sub_obj_id,
+       @role_admin_app_id,
+       1
+FROM topic_subscription;
+
+INSERT INTO acl_object_identity (object_id_class, object_id_identity, parent_object, owner_sid, entries_inheriting)
+SELECT @acl_class_noti_user_id,
+       CONCAT(BIN_TO_UUID(user_id), ':', notification_id),
+       @topic_sub_obj_id,
+       @role_admin_app_id,
+       1
+FROM notification_user;
+
 INSERT INTO acl_entry(acl_object_identity, ace_order, sid, mask, granting, audit_success, audit_failure)
 VALUES (@application_obj_id, 1, @role_admin_app_id, @admin, 1, 1, 1),
        (@user_obj_id, 1, @role_user_app_id, @admin, 1, 1, 1),
@@ -161,14 +269,15 @@ VALUES (@application_obj_id, 1, @role_admin_app_id, @admin, 1, 1, 1),
        (@authentication_obj_id, 5, @role_anonymous, @delete, 1, 1, 1),
        (@authentication_obj_id, 6, @role_authen_id, @delete, 1, 1, 1),
        (@authorization_obj_id, 1, @role_author_app_id, @admin, 1, 1, 1),
-       (@domain_obj_id, 1, @role_domain_app_id, @admin, 1, 1, 1);
+       (@domain_obj_id, 1, @role_domain_app_id, @admin, 1, 1, 1),
+       (@topic_sub_obj_id, 1, @role_authen_app_id, @view, 1, 1, 1),
+       (@noti_user_obj_id, 1, @role_authen_app_id, @view, 1, 1, 1);
 
 INSERT INTO acl_entry(acl_object_identity, ace_order, sid, mask, granting, audit_success, audit_failure)
 SELECT aoi.id, seq.ace_order, aoi.owner_sid, seq.mask, 1, 1, 1
 FROM acl_object_identity aoi
-         JOIN (
-    SELECT 1 AS ace_order, @read AS mask
-    UNION ALL
-    SELECT 2 AS ace_order, @write AS mask
-) seq ON 1=1
-WHERE aoi.object_id_class = @acl_class_user_id AND aoi.id <> @user_obj_id;
+         JOIN (SELECT 1 AS ace_order, @read AS mask
+               UNION ALL
+               SELECT 2 AS ace_order, @write AS mask) seq ON 1 = 1
+WHERE aoi.object_id_class = @acl_class_user_id
+  AND aoi.id <> @user_obj_id;

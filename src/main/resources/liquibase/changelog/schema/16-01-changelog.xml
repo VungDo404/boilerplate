@@ -41,7 +41,7 @@
 			<column name="object_id_class" type="BIGINT UNSIGNED">
 				<constraints nullable="false"/>
 			</column>
-			<column name="object_id_identity" type="VARCHAR(36)">
+			<column name="object_id_identity" type="VARCHAR(100)">
 				<constraints nullable="false"/>
 			</column>
 			<column name="parent_object" type="BIGINT UNSIGNED"/>

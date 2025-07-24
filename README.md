@@ -57,6 +57,8 @@ devices.
 📦 Object Storage for File Uploads (MinIO): The API uses MinIO with S3 compatibility, allowing seamless integration with
 Amazon S3 or any S3-compatible storage.
 
+📢 **Real-time In-App Notifications:** Push live updates to users using Server-Sent Events (SSE).
+
 📚 **API Documentation with Swagger:**  Generate interactive and up-to-date API documentation automatically with
 Swagger. Simplify API exploration and integration for both frontend developers and external consumers.
 
@@ -64,9 +66,7 @@ Swagger. Simplify API exploration and integration for both frontend developers a
 
 🗄️ **Database Migrations with Liquibase:**  Streamline database schema management.
 
-🔒 **Fine-grained Authorization with Spring ACL:** Implement granular access control and secure the application
-resources. Spring ACL (Access Control List) provides a powerful framework for defining and enforcing authorization
-rules.
+🔒 **Fine-grained Authorization with Spring ACL:** Secure application resources with detailed permission control using Spring's ACL framework, enhanced via Strategy Pattern for clean handling of polymorphic domain types.
 
 ⚡ **Redis Caching:** Boost performance and scalability by caching frequently accessed data in Redis.
 
