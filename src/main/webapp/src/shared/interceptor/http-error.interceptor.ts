@@ -75,9 +75,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
                                 this.notifyService.option1(translations['SignIn']),
                                 () => {
                                     this.logoutService.logout(() => {
-                                        this.router.navigate(['/login']).then(r => {
-                                            window.location.reload();
-                                        });
+                                        window.location.href = '/login'
                                     });
 
                                 }

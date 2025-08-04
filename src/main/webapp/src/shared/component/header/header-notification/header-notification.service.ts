@@ -1,29 +1,74 @@
 import { Injectable } from '@angular/core';
 import { NotificationService } from "../../../service/http/notification.service";
-import { EventSourceMessage } from "@microsoft/fetch-event-source/lib/cjs/parse";
+import { TopicService } from "../../../service/http/topic.service";
+import { SessionService } from "../../../service/session.service";
+import { Subscription } from "rxjs";
 
 @Injectable({
     providedIn: 'root'
 })
 export class HeaderNotificationService {
     notifications!: Notification[];
-    private controller: AbortController | null = null;
+    private sseSubscription?: Subscription;
 
-    constructor(private notificationService: NotificationService) { }
+    constructor(
+        private notificationService: NotificationService,
+        private topicService: TopicService,
+        private sessionService: SessionService
+    ) { }
 
     startEventSource() {
-        const onmessage = (event: EventSourceMessage) => {
-            const result = JSON.parse(event.data) as Notification
-            this.notifications.unshift(result);
-        }
-        this.notificationService.notificationSource(onmessage);
+        this.sseSubscription = this.notificationService.notificationSource().subscribe(event => {
+            if (event.type === 'error') {
+                const errorEvent = event as ErrorEvent;
+                console.error(errorEvent.error, errorEvent.message);
+            } else {
+                const messageEvent = event as MessageEvent<string>;
+                const no: Notification = JSON.parse(messageEvent.data);
+                this.notifications.unshift(no);
+                if (this.notifications.length > 10) {
+                    this.notifications.length = 10;
+                }
+            }
+        });
     }
 
-    getNotifications(){
+    getNotifications() {
         this.notificationService.getNotification().subscribe({
             next: (response) => {
                 this.notifications = response;
             }
+        });
+    }
+
+    toggleReadStatus(id: number, cb: () => void) {
+        this.notificationService.toggleRead(id, this.sessionService.id).subscribe({
+            next: cb
+        });
+    }
+
+    deleteNotificationForUser(id: number, cb: () => void) {
+        this.notificationService.deleteNotification(id, this.sessionService.id).subscribe({
+            next: cb
+        });
+    }
+
+    toggleTopicSubscription(id: number, cb: () => void, isSubscribe: boolean) {
+        this.topicService.toggleTopicSubscription(id, this.sessionService.id).subscribe({
+            next: () => {
+                if(isSubscribe){
+                    this.stopEventSource();
+                    this.startEventSource();
+                }
+                cb();
+            }
         })
+    }
+
+    private stopEventSource() {
+        if (this.sseSubscription) {
+            this.sseSubscription.unsubscribe();
+            this.sseSubscription = undefined;
+        }
     }
 }

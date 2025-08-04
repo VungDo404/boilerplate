@@ -3,9 +3,10 @@ declare interface Notification{
     title: string;
     message: string;
     type: NotificationType;
-    url: string;
-    notificationTopic: NotificationTopic;
+    url?: string;
+    notificationTopicModel?: NotificationTopic;
     createdAt: Date;
+    isRead: boolean;
 }
 
 declare type NotificationType = 'INFO' | 'ERROR' | 'ALERT' | 'WARNING';
@@ -13,4 +14,5 @@ declare type NotificationType = 'INFO' | 'ERROR' | 'ALERT' | 'WARNING';
 declare interface NotificationTopic {
     id: number;
     name: string;
+    muted: boolean;
 }

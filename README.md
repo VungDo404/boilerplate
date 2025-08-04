@@ -41,7 +41,8 @@ to speed up development by providing these features out of the box, allowing dev
 
 ## <a name="features">🔋 Features</a>
 
-🛡️ **Secure Authentication:** Signup, Login, Logout, Spring Security, JWT sessions, Verify Email, Reset Password,
+🛡️ **Secure Authentication:** Signup, Login, Logout, Spring Security, JWT sessions (using access & refresh tokens with
+rotation and whitelist validation), Verify Email, Reset Password,
 Two-Factor Authentication (support multiple providers like Email and Google Authenticator), External Login with
 Github and Google, Account Lockout.
 
@@ -66,7 +67,8 @@ Swagger. Simplify API exploration and integration for both frontend developers a
 
 🗄️ **Database Migrations with Liquibase:**  Streamline database schema management.
 
-🔒 **Fine-grained Authorization with Spring ACL:** Secure application resources with detailed permission control using Spring's ACL framework, enhanced via Strategy Pattern for clean handling of polymorphic domain types.
+🔒 **Fine-grained Authorization with Spring ACL:** Secure application resources with detailed permission control using
+Spring's ACL framework, enhanced via Strategy Pattern for clean handling of polymorphic domain types.
 
 ⚡ **Redis Caching:** Boost performance and scalability by caching frequently accessed data in Redis.
 

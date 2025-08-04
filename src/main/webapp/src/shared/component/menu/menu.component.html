@@ -1,9 +1,12 @@
 <div
-    #menu
+    #menuEl="appMenu"
+    appMenu
     class="menu-container"
-    *ngIf="menuService.isVisible"
+    *ngIf="isVisible"
+    (onPositionChange)="onPositionChange($event)"
     [style.top.px]="position.top"
     [style.left.px]="position.left"
+    (onHide)="onHide()"
 >
     <div>
         <h2 *ngIf="getCurrentMenuData.title"

@@ -44,3 +44,5 @@ declare interface SettingSidebarItem {
 }
 
 declare type AccordionMode = 'compact' | 'wide';
+
+declare type MenuPosition  = 'left' | 'bottom-left';

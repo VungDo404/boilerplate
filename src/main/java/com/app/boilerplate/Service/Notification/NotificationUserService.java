@@ -6,13 +6,17 @@ import com.app.boilerplate.Domain.Notification.NotificationUser;
 import com.app.boilerplate.Domain.User.User;
 import com.app.boilerplate.Repository.NotificationUserRepository;
 import com.app.boilerplate.Security.HierarchicalPermission;
+import com.app.boilerplate.Shared.Notification.Model.NotificationWithReadModel;
+import com.app.boilerplate.Shared.Notification.NotificationUserId;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -38,4 +42,25 @@ public class NotificationUserService {
 
         return CompletableFuture.completedFuture(notificationUserRepository.saveAll(entities));
     }
+
+    public List<NotificationWithReadModel> findAllNotificationModelUsers(UUID userId, List<Long> notificationIds) {
+        return notificationUserRepository.getNotification(userId, notificationIds);
+    }
+
+    public NotificationUser deleteNotificationUser(UUID userId, Long notificationId) {
+        NotificationUserId id = new NotificationUserId(userId, notificationId);
+        Optional<NotificationUser> existing = notificationUserRepository.findById(id);
+        existing.ifPresent(notificationUserRepository::delete);
+        return existing.orElse(null);
+    }
+
+    public void toggleReadStatus(UUID userId, Long notificationId){
+        NotificationUserId id = new NotificationUserId(userId, notificationId);
+        NotificationUser notificationUser = notificationUserRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("NotificationUser not found"));
+
+        notificationUser.setIsRead(!notificationUser.getIsRead());
+        notificationUserRepository.save(notificationUser);
+    }
+
 }

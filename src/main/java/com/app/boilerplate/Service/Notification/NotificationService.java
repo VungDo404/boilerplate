@@ -10,10 +10,10 @@ import com.app.boilerplate.Service.Revision.RevisionService;
 import com.app.boilerplate.Service.Translation.TranslateService;
 import com.app.boilerplate.Shared.Notification.Dto.SendNotificationDto;
 import com.app.boilerplate.Shared.Notification.Model.NotificationModel;
+import com.app.boilerplate.Shared.Notification.Model.NotificationWithReadModel;
 import com.app.boilerplate.Util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.envers.RevisionType;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -38,7 +38,7 @@ public class NotificationService {
     private final INotificationMapper notificationMapper;
     private final RevisionService revisionService;
     private final TranslateService translateService;
-    private final ApplicationEventPublisher eventPublisher;
+    private final NotificationTopicService notificationTopicService;
 
     public void addEmitter(SseEmitter emitter) {
         final var userId = SecurityUtil.getUserId();
@@ -76,7 +76,19 @@ public class NotificationService {
         final List<SseEmitter> emittersForTopic = topicEmitters.get(topic);
         final var notification = createNotification(notificationDto);
         final var notificationModel = notificationMapper.toNotificationModel(notification);
+
         notificationModel.setCreatedAt(LocalDateTime.now());
+        notificationModel.setIsRead(false);
+
+        final var args = Optional.ofNullable(notification.getMessageArguments())
+            .map(s -> s.split(","))
+            .map(arr -> Arrays.stream(arr)
+                .map(String::trim)
+                .toArray())
+            .orElse(new Object[0]);
+        notificationModel.setTitle(translateService.getMessage(notificationModel.getTitle()));
+        notificationModel.setMessage(translateService.getMessage(notificationModel.getMessage(), args));
+
         final var userIds = topicSubscriptionService.getActiveUserIdsForTopic(notificationDto.getNotificationTopicId());
 
         Optional.ofNullable(emittersForTopic)
@@ -114,9 +126,9 @@ public class NotificationService {
             .map(r -> ((NotificationUser) r[0]).getNotification()
                 .getId())
             .toList();
-        final var notifications = notificationRepository.findAllById(notificationIds);
+        final var notifications = notificationUserService.findAllNotificationModelUsers(userId, notificationIds);
         final var notificationMap = notifications.stream()
-            .collect(Collectors.toMap(Notification::getId, Function.identity()));
+            .collect(Collectors.toMap(NotificationWithReadModel::getId, Function.identity()));
 
         return results.stream()
             .filter(r -> r[0] instanceof NotificationUser)
@@ -124,6 +136,11 @@ public class NotificationService {
                 final var notificationUser = (NotificationUser) r[0];
                 final var notification = notificationMap.get(notificationUser.getNotification()
                     .getId());
+
+                if (notification == null) {
+                    return null;
+                }
+
                 final var args = Optional.ofNullable(notification.getMessageArguments())
                     .map(s -> s.split(","))
                     .map(arr -> Arrays.stream(arr)
@@ -139,12 +156,25 @@ public class NotificationService {
 
                 return model;
             })
+            .filter(Objects::nonNull)
             .toList();
     }
 
     @AclAware
     public Notification createNotification(SendNotificationDto notificationDto) {
         final var notification = notificationMapper.toNotification(notificationDto);
+        final var topic = notificationTopicService.getById(notificationDto.getNotificationTopicId());
+        notification.setNotificationTopic(topic);
         return notificationRepository.save(notification);
+    }
+
+    public void toggleSubscribe(UUID userId, Long topicId) {
+        final var ts = topicSubscriptionService.toggleMuteTopic(userId, topicId);
+        if(ts.getMuted()) {
+           final var emitter = userEmitters.get(userId);
+           if(emitter != null) {
+               removeEmitter(ts.getNotificationTopic().getName(), emitter);
+           }
+        }
     }
 }

@@ -1,8 +1,8 @@
 package com.app.boilerplate.Shared.Notification.Model;
 
-import com.app.boilerplate.Domain.Notification.NotificationTopic;
 import com.app.boilerplate.Shared.Notification.NotificationType;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
+@AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class NotificationModel {
     private Long id;
@@ -20,6 +21,7 @@ public class NotificationModel {
     private String message;
     private NotificationType type;
     private URL url;
-    private NotificationTopic notificationTopic;
+    private NotificationTopicModel notificationTopicModel;
     private LocalDateTime createdAt;
+    private Boolean isRead;
 }

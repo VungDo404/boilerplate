@@ -1,3 +1,12 @@
-<p-overlay-badge value="0" severity="danger">
-    <p-avatar icon="pi pi-bell" size="large" shape="circle" />
-</p-overlay-badge>
+<div (click)="menu.toggle($event)">
+    <p-overlay-badge [value]="count" severity="danger">
+        <p-avatar icon="pi pi-bell" size="large" shape="circle"/>
+    </p-overlay-badge>
+</div>
+<app-notification-menu
+    #menu
+    [items]="items"
+    (onDelete)="onDelete($event)"
+    (onToggleRead)="onToggleRead($event)"
+    (onToggleSubscription)="onToggleSubscription($event)"
+></app-notification-menu>

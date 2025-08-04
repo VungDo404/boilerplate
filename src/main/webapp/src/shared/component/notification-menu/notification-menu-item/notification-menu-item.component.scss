@@ -1,0 +1,112 @@
+:host {
+    display: block;
+
+    .notification-item {
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+        align-items: stretch;
+        padding: 10px 15px;
+        border-bottom: 1px solid #e0e0e0;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+
+        &:hover {
+            background-color: #f4f6f8;
+            .actions{
+                .more-icon {
+                    opacity: 1;
+                }
+            }
+
+        }
+
+        &.disable-hover:hover {
+            background-color: transparent;
+
+            .actions {
+                .more-icon {
+                    opacity: 1;
+                }
+            }
+        }
+
+        .text-content {
+            flex: 1;
+            overflow: hidden;
+
+            .title {
+                font-weight: 600;
+                font-size: 0.95rem;
+                color: #2c3e50;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .message {
+                font-size: 0.85rem;
+                color: #6c757d;
+                display: -webkit-box;
+                -webkit-line-clamp: 3;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .timestamp {
+                font-size: 0.75rem;
+                color: #999;
+                margin-top: 2px;
+            }
+        }
+
+        .actions {
+            display: flex;
+            align-items: center;
+            position: relative;
+            margin-left: 12px;
+
+            .more-icon {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 30px;
+                height: 30px;
+                font-size: 1.1rem;
+                color: #999;
+                opacity: 0;
+                transition: opacity 0.2s ease-in-out;
+                position: absolute;
+                right: 18px;
+                top: 50%;
+                transform: translateY(-50%);
+                border-radius: 50px;
+                background-color: #e0e0e0;
+                cursor: pointer;
+                z-index: 1;
+
+                &:hover {
+                    background-color: #d0d0d0;
+                }
+
+                &.active {
+                    opacity: 1;
+                    color: #333;
+                }
+            }
+
+            .unread-dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background-color: #007ad9;
+                margin-left: 10px;
+            }
+        }
+    }
+
+    .unread {
+        font-weight: bold;
+    }
+}

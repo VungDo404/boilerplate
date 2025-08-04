@@ -62,6 +62,15 @@
   "SignOut": "Đăng xuất",
   "Language": "Ngôn ngữ",
   "LanguageTitle": "Chọn ngôn ngữ của bạn",
+  "MarkRead": "Đánh dấu là đã đọc",
+  "MarkUnread": "Đánh dấu là chưa đọc",
+  "DeleteNotification": "Xoá thông báo này",
+  "TurnOffNotifications": "Tắt các thông báo này",
+  "TurnOnNotifications": "Bật các thông báo này",
+  "DeleteNotificationMessage": "Thông báo đã đươc xóa",
+  "NoNotificationMessage": "Bạn không có thông báo mới",
+  "SubscribeTopicMessage": "Bạn sẽ nhận được thông báo từ {0}",
+  "UnsubscribeTopicMessage": "Bạn sẽ không còn nhận được thông báo từ {0}",
 
   "BackToHome": "Trở về trang chủ",
   "Account": "Tài khoản",
@@ -130,6 +139,6 @@
   "Verify": "Xác minh",
   "RemoveAuthenticator": "Xóa ứng dụng xác thực?",
   "RemoveAuthenticatorMessage": "Để tiếp tục đăng nhập và giữ an toàn cho tài khoản của bạn, hãy đảm bảo bạn có các tùy chọn đăng nhập khác trước khi xóa tùy chọn này.",
-  "SetUpAuthenticatorSuccess": "Đã thiết lập ứng dụng xác thực thành công"
-
+  "SetUpAuthenticatorSuccess": "Đã thiết lập ứng dụng xác thực thành công",
+  "RemoveUpAuthenticatorSuccess": "Ứng dụng xác thực đã được gỡ bỏ"
 }

@@ -4,18 +4,6 @@
 @use "variable" as v;
 
 .menu-container {
-    background-color: v.$white;
-    width: 300px;
-    max-width: 300px;
-    max-height: 747px;
-    border-radius: 12px;
-    overflow-x: hidden;
-    box-shadow: 0 4px 32px 0 rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    z-index: 100;
-
     .menu-section {
         &.bottom-border {
             border-bottom: 1px solid rgba(0, 0, 0, 0.1);

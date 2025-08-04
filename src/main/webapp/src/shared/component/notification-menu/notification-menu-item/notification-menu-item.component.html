@@ -1,0 +1,26 @@
+<div
+        class="notification-item"
+        [class.unread]="!item.isRead"
+        [routerLink]="item.url"
+        (click)="read()"
+        [class.disable-hover]="hoveringMoreIcon"
+>
+    <div class="text-content">
+        <div class="title">{{ item.title }}</div>
+        <div class="message">{{ item.message }}</div>
+        <div class="timestamp">{{ item.createdAt | date: 'short' }}</div>
+    </div>
+
+    <div class="actions">
+        <span class="more-icon"
+              [class.active]="menuVisible || hoveringMoreIcon"
+              (click)="onActionMenu($event, mn)"
+              (mouseenter)="hoveringMoreIcon = true"
+              (mouseleave)="hoveringMoreIcon = false"
+        >
+            <i class="pi pi-ellipsis-h"></i>
+        </span>
+        <span class="unread-dot" *ngIf="!item.isRead"></span>
+    </div>
+    <p-menu #mn [model]="action" [popup]="true" appendTo="body" (onHide)="menuVisible = false"></p-menu>
+</div>

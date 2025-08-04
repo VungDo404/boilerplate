@@ -1,6 +1,7 @@
 package com.app.boilerplate.Controller.Notification;
 
 import com.app.boilerplate.Service.Notification.NotificationService;
+import com.app.boilerplate.Service.Notification.NotificationUserService;
 import com.app.boilerplate.Shared.Notification.Dto.SendNotificationDto;
 import com.app.boilerplate.Shared.Notification.Model.NotificationModel;
 import com.app.boilerplate.Util.PermissionUtil;
@@ -16,6 +17,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 @Tag(name = "Notification")
 @RequiredArgsConstructor
@@ -23,6 +25,7 @@ import java.util.List;
 @RestController
 public class NotificationController {
     private final NotificationService notificationService;
+    private final NotificationUserService notificationUserService;
 
     @PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.NOTIFICATION_TOPIC + "', '" + PermissionUtil.VIEW +
         "')")
@@ -51,6 +54,7 @@ public class NotificationController {
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
+            notificationService.removeEmitter(emitter);
             emitter.complete();
         }
 
@@ -65,10 +69,25 @@ public class NotificationController {
         return "Notification sent to topic '" + topic;
     }
 
-    @PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.NOTIFICATION_USER + "', '" + PermissionUtil.VIEW +
+    @PreAuthorize("hasPermission('" + PermissionUtil.ROOT + "', '" + PermissionUtil.NOTIFICATION_USER + "', '" + PermissionUtil.VIEW +
         "')")
     @GetMapping
     public List<NotificationModel> getNotifications(@ParameterObject Pageable pageable) {
         return notificationService.getLatestNotifications(pageable.getPageNumber(), pageable.getPageSize());
     }
+
+    @PreAuthorize("hasPermission(#userId.toString() + ':' + #id.toString(), '" + PermissionUtil.NOTIFICATION_USER + "', '" + PermissionUtil.DELETE + "')")
+    @DeleteMapping("/{id}/user/{userId}")
+    public void deleteById(@PathVariable Long id, @PathVariable UUID userId) {
+        notificationUserService.deleteNotificationUser(userId, id);
+    }
+
+    @PreAuthorize("hasPermission(#userId.toString() + ':' + #id.toString(), '" + PermissionUtil.NOTIFICATION_USER +
+        "', '" + PermissionUtil.WRITE + "')")
+    @PatchMapping("/{id}/user/{userId}")
+    public void toggleReadStatus(@PathVariable Long id, @PathVariable UUID userId){
+        notificationUserService.toggleReadStatus(userId, id);
+    }
+
+
 }

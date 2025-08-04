@@ -26,4 +26,5 @@ public class SendNotificationDto {
     @NotNull(message = "{validation.notification.topic.required}")
     private final Long notificationTopicId;
     private final URL url;
+    private final String messageArguments;
 }

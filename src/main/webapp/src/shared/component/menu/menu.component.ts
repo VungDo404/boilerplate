@@ -1,8 +1,17 @@
-import { Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import {
+    ChangeDetectorRef,
+    Component,
+    Input,
+    OnChanges,
+    OnInit,
+    SimpleChanges,
+    ViewChild
+} from '@angular/core';
 import { NgForOf, NgIf } from "@angular/common";
 import { MenuProfileItemComponent } from "./menu-profile-item/menu-profile-item.component";
 import { MenuLinkItemComponent } from "./menu-link-item/menu-link-item.component";
 import { MenuService } from "./menu.service";
+import { MenuDirective } from "../../directive/menu.directive";
 
 @Component({
     selector: 'b-menu',
@@ -10,34 +19,39 @@ import { MenuService } from "./menu.service";
         NgIf,
         NgForOf,
         MenuProfileItemComponent,
-        MenuLinkItemComponent
+        MenuLinkItemComponent,
+        MenuDirective
     ],
     templateUrl: './menu.component.html',
     standalone: true,
     styleUrl: './menu.component.scss'
 })
-export class MenuComponent implements OnDestroy, OnInit, OnChanges {
-    @ViewChild('menu') menuRef!: ElementRef;
+export class MenuComponent implements OnInit, OnChanges {
+    @ViewChild('menuEl', { static: false }) menuDirective!: MenuDirective;
     @Input() items!: MenuData;
     @Input() currentMenu!: keyof MenuData;
 
     position = { top: 0, left: 0 };
-    private resizeListener?: (event: Event) => void;
-    private clickListener?: (event: Event) => void;
-    private triggerElement?: HTMLElement;
-    private readonly SPACING = 8;
 
-    constructor(protected menuService: MenuService) { }
+    constructor(protected menuService: MenuService, private changeDetectorRef: ChangeDetectorRef) { }
 
     toggle(event: Event) {
-        event.stopPropagation()
+        event.stopPropagation();
         if (this.menuService.isVisible) {
-            this.hide();
-            this.menuService.hide();
+            this.onHide();
         } else {
             this.menuService.show();
-            this.show(event);
+            this.changeDetectorRef.detectChanges();
+            this.menuDirective.show(event.currentTarget as HTMLElement);
         }
+    }
+
+    onPositionChange(pos: { top: number; left: number }) {
+        this.position = pos;
+    }
+
+    onHide(){
+        this.menuService.hide();
     }
 
     protected get getCurrentMenuData() {
@@ -54,75 +68,8 @@ export class MenuComponent implements OnDestroy, OnInit, OnChanges {
         this.menuService.navigateBack();
     }
 
-    private show(event: Event) {
-        this.triggerElement = event.target as HTMLElement;
-        setTimeout(() => {
-            this.updatePosition();
-        }, 0);
-        setTimeout(() => {
-            this.addClickOutsideListener();
-        }, 10);
-        this.addResizeListener();
-    }
-
-    private hide() {
-        this.removeClickOutsideListener();
-        this.removeResizeListener();
-        this.triggerElement = undefined;
-    }
-
-    private updatePosition() {
-        if (!this.triggerElement) return;
-
-        const rect = this.triggerElement.getBoundingClientRect();
-        const menu = this.menuRef.nativeElement as HTMLElement;
-        if (!menu) return;
-
-        const menuRect = menu.getBoundingClientRect();
-
-        this.position = {
-            top: rect.top + window.scrollY,
-            left: rect.left + window.scrollX - menuRect.width - this.SPACING
-        };
-    }
-
-    private addResizeListener() {
-        this.resizeListener = () => this.updatePosition();
-        window.addEventListener('resize', this.resizeListener);
-    }
-
-    private removeResizeListener() {
-        if (this.resizeListener) {
-            window.removeEventListener('resize', this.resizeListener);
-            this.resizeListener = undefined;
-        }
-    }
-
-    private addClickOutsideListener() {
-        this.removeClickOutsideListener();
-
-        this.clickListener = (event: Event) => {
-            const target = event.target as HTMLElement;
-            const menu = this.menuRef?.nativeElement as HTMLElement;
-
-            if (menu &&
-                !menu.contains(target) &&
-                this.triggerElement &&
-                !this.triggerElement.contains(target)) {
-
-                this.hide();
-                this.menuService.hide();
-            }
-        };
-
-        document.addEventListener('click', this.clickListener, true);
-    }
-
-    private removeClickOutsideListener() {
-        if (this.clickListener) {
-            document.removeEventListener('click', this.clickListener);
-            this.clickListener = undefined;
-        }
+    protected get isVisible(){
+        return this.menuService.isVisible
     }
 
     private addSubMenuCallBack() {
@@ -136,10 +83,6 @@ export class MenuComponent implements OnDestroy, OnInit, OnChanges {
                 }
             }
         }
-    }
-
-    ngOnDestroy(): void {
-        this.hide();
     }
 
     ngOnInit(): void {

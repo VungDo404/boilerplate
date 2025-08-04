@@ -1,0 +1,34 @@
+<div
+    #menuEl="appMenu"
+    appMenu
+    [ignoreClickSelectors]="['.p-menu']"
+    position="bottom-left"
+    *ngIf="isVisible"
+    (onPositionChange)="onPositionChange($event)"
+    (onHide)="onHide()"
+    [style.top.px]="position.top"
+    [style.left.px]="position.left"
+    class="menu-container"
+>
+    <div>
+        <h2 class="menu-header">
+            <span>{{ 'Notification' | translate }}</span>
+        </h2>
+        <ng-container *ngIf="items.length > 0; else noItems">
+            <div *ngFor="let item of items">
+                <app-notification-menu-item
+                        [item]="item"
+                        (onDelete)="handleDelete($event)"
+                        (onToggleRead)="handleToggleRead($event)"
+                        (onToggleSubscription)="handleToggleSubscription($event)"
+                ></app-notification-menu-item>
+            </div>
+        </ng-container>
+
+        <ng-template #noItems>
+            <div class="empty-state">
+                {{ 'NoNotificationMessage' | translate }}
+            </div>
+        </ng-template>
+    </div>
+</div>
