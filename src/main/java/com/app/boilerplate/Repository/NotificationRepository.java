@@ -6,4 +6,5 @@ import org.springframework.data.repository.history.RevisionRepository;
 
 public interface NotificationRepository extends JpaRepository<Notification, Long>, RevisionRepository<Notification,
     Long, Integer> {
+    Notification findByTitleOrMessage(String title, String message);
 }

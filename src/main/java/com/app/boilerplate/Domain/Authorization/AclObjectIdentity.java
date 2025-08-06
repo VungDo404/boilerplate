@@ -47,4 +47,5 @@ public class AclObjectIdentity {
 
 	@Column(name = "entries_inheriting", nullable = false)
 	private boolean entriesInheriting;
+
 }

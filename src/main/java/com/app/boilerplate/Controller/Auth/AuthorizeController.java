@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RateLimit(capacity = 100, tokens = 10, duration = 5, timeUnit = ChronoUnit.SECONDS, key = "'authorize-' + #ip")
-@Tag(name = "AuthorizeController")
+@Tag(name = "Authorize")
 @RequiredArgsConstructor
 @RequestMapping("/authorize")
 @RestController

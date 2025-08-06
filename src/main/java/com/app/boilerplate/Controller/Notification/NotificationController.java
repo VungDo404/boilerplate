@@ -5,6 +5,7 @@ import com.app.boilerplate.Service.Notification.NotificationUserService;
 import com.app.boilerplate.Shared.Notification.Dto.SendNotificationDto;
 import com.app.boilerplate.Shared.Notification.Model.NotificationModel;
 import com.app.boilerplate.Util.PermissionUtil;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,8 @@ public class NotificationController {
     private final NotificationService notificationService;
     private final NotificationUserService notificationUserService;
 
-    @PreAuthorize("hasPermission(" + PermissionUtil.ROOT + ", '" + PermissionUtil.NOTIFICATION_TOPIC + "', '" + PermissionUtil.VIEW +
+    @Hidden
+    @PreAuthorize("hasPermission('" + PermissionUtil.ROOT + "', '" + PermissionUtil.TOPIC_SUBSCRIPTION + "', '" + PermissionUtil.VIEW +
         "')")
     @GetMapping(value = "/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter subscribe() {
@@ -88,6 +90,5 @@ public class NotificationController {
     public void toggleReadStatus(@PathVariable Long id, @PathVariable UUID userId){
         notificationUserService.toggleReadStatus(userId, id);
     }
-
 
 }

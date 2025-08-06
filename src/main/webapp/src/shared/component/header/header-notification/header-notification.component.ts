@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { OverlayBadge } from "primeng/overlaybadge";
-import { Avatar } from "primeng/avatar";
 import { BaseComponent } from "../../base.component";
 import { HeaderNotificationService } from "./header-notification.service";
 import { NotificationMenuComponent } from "../../notification-menu/notification-menu.component";
@@ -12,7 +11,6 @@ import { take } from "rxjs";
     selector: 'app-header-notification',
     imports: [
         OverlayBadge,
-        Avatar,
         NotificationMenuComponent
     ],
     templateUrl: './header-notification.component.html',

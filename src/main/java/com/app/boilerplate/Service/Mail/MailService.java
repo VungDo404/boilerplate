@@ -91,7 +91,7 @@ public class MailService {
         this.sendEmailSync(user.getEmail(), subject, content, false, true);
     }
 
-    @EventListener(ResetPasswordEvent.class)
+    @EventListener
     @Async
     public void sendResetPasswordEmail(ResetPasswordEvent event) {
         final var locale = LocaleContextHolder.getLocale();
@@ -106,7 +106,7 @@ public class MailService {
                 locale, properties);
     }
 
-    @EventListener(SendEmailActivationEvent.class)
+    @EventListener
     @Async
     public void sendEmailActivation(SendEmailActivationEvent event) {
         final var locale = LocaleContextHolder.getLocale();
@@ -122,7 +122,7 @@ public class MailService {
                 locale, properties);
     }
 
-    @EventListener(TwoFactorCodeEvent.class)
+    @EventListener
     @Async
     public void sendTwoFactorCode(TwoFactorCodeEvent event) {
         final var locale = LocaleContextHolder.getLocale();

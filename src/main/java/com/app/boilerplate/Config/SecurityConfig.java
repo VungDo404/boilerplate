@@ -27,23 +27,23 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
-    @Bean
-    @Order(1)
-    public SecurityFilterChain swaggerSecurityFilterChain(HttpSecurity http) throws Exception {
-        http.securityMatcher("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/swagger/login")
-            .authorizeHttpRequests(auth -> auth.requestMatchers("/swagger/login")
-                .permitAll()
-                .anyRequest()
-                .authenticated())
-            .formLogin(form -> form.loginPage("/swagger/login")
-                .failureUrl("/swagger/login?error=true")
-                .permitAll())
-            .logout(logout -> logout.logoutUrl("/swagger/logout")
-                .logoutSuccessUrl("/swagger/login?logout=true"))
-            .csrf(AbstractHttpConfigurer::disable)
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
-        return http.build();
-    }
+//    @Bean
+//    @Order(1)
+//    public SecurityFilterChain swaggerSecurityFilterChain(HttpSecurity http) throws Exception {
+//        http.securityMatcher("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/swagger/login")
+//            .authorizeHttpRequests(auth -> auth.requestMatchers("/swagger/login")
+//                .permitAll()
+//                .anyRequest()
+//                .authenticated())
+//            .formLogin(form -> form.loginPage("/swagger/login")
+//                .failureUrl("/swagger/login?error=true")
+//                .permitAll())
+//            .logout(logout -> logout.logoutUrl("/swagger/logout")
+//                .logoutSuccessUrl("/swagger/login?logout=true"))
+//            .csrf(AbstractHttpConfigurer::disable)
+//            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
+//        return http.build();
+//    }
 
     @Bean
     @Order(2)

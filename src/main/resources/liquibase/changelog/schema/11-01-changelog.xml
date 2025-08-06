@@ -44,6 +44,9 @@
             <column name="name" type="VARCHAR(10)">
                 <constraints nullable="false"/>
             </column>
+            <column name="subscribe_by_default" type="bit">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
     <changeSet id="1752211289089-10" author="Admin (generated)">
@@ -55,6 +58,7 @@
             <column name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_notification_topic_history"/>
             </column>
+            <column name="subscribe_by_default" type="bit"/>
         </createTable>
     </changeSet>
     <changeSet id="1752211289089-11" author="Admin (generated)">

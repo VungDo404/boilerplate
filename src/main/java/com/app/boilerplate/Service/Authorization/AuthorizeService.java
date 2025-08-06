@@ -3,9 +3,9 @@ package com.app.boilerplate.Service.Authorization;
 import com.app.boilerplate.Domain.Authorization.*;
 import com.app.boilerplate.Repository.*;
 import com.app.boilerplate.Service.User.UserService;
+import com.app.boilerplate.Shared.Account.Event.RegisterUserEvent;
 import com.app.boilerplate.Shared.Authorization.Dto.CreateAuthorityDto;
 import com.app.boilerplate.Shared.Authorization.Dto.CreateObjectIdentityDto;
-import com.app.boilerplate.Shared.Authorization.Event.AuthorityAfterRegisterEvent;
 import com.app.boilerplate.Shared.Authorization.Event.ObjectIdentityEvent;
 import com.app.boilerplate.Shared.Authorization.Model.AuthorityModel;
 import com.app.boilerplate.Shared.Common.Identifiable;
@@ -312,7 +312,7 @@ public class AuthorizeService {
     }
 
     @EventListener
-    public void addAuthority(AuthorityAfterRegisterEvent event) {
+    public void addAuthority(RegisterUserEvent event) {
         final var id = event.getUser()
             .getId()
             .toString();

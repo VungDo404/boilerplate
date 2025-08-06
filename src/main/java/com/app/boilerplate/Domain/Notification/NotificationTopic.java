@@ -29,4 +29,8 @@ public class NotificationTopic implements Serializable, Identifiable<Long> {
     @NotAudited
     @Column(name = "name", nullable = false, unique = true, length = 10, updatable = false)
     private String name;
+
+    @Column(name = "subscribe_by_default", nullable = false)
+    private Boolean subscribeByDefault;
+
 }

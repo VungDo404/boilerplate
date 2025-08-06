@@ -15,7 +15,7 @@ import com.app.boilerplate.Service.Token.TokenService;
 import com.app.boilerplate.Service.User.UserService;
 import com.app.boilerplate.Shared.Account.Dto.ChangePasswordDto;
 import com.app.boilerplate.Shared.Account.Dto.EnableAuthenticatorDto;
-import com.app.boilerplate.Shared.Account.Event.EmailActivationEvent;
+import com.app.boilerplate.Shared.Account.Event.RegisterUserEvent;
 import com.app.boilerplate.Shared.Account.Event.ResetPasswordEvent;
 import com.app.boilerplate.Shared.Account.Event.SendEmailActivationEvent;
 import com.app.boilerplate.Shared.Account.Model.*;
@@ -130,7 +130,7 @@ public class AccountService {
     }
 
     @EventListener
-    public void emailActivationEvent(EmailActivationEvent event) {
+    public void emailActivationEvent(RegisterUserEvent event) {
         emailActivation(event.getUser());
     }
 
@@ -149,6 +149,10 @@ public class AccountService {
 
     public void resetPassword(String key, String newPassword) {
         final var token = tokenService.getTokenByTypeAndValue(TokenType.RESET_PASSWORD_TOKEN, key);
+
+        if (token == null)
+            throw new NotFoundException("Not found", "error.auth.reset-password");
+
         final var user = token.getUser();
         user.setPassword(newPassword);
         user.setCredentialsNonExpired(true);

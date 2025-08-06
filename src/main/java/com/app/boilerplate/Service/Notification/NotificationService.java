@@ -8,12 +8,14 @@ import com.app.boilerplate.Mapper.INotificationMapper;
 import com.app.boilerplate.Repository.NotificationRepository;
 import com.app.boilerplate.Service.Revision.RevisionService;
 import com.app.boilerplate.Service.Translation.TranslateService;
+import com.app.boilerplate.Shared.Account.Event.RegisterUserEvent;
 import com.app.boilerplate.Shared.Notification.Dto.SendNotificationDto;
 import com.app.boilerplate.Shared.Notification.Model.NotificationModel;
 import com.app.boilerplate.Shared.Notification.Model.NotificationWithReadModel;
 import com.app.boilerplate.Util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.envers.RevisionType;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -176,5 +178,13 @@ public class NotificationService {
                removeEmitter(ts.getNotificationTopic().getName(), emitter);
            }
         }
+    }
+
+    @EventListener
+    public void addNotificationAfterRegister(RegisterUserEvent event){
+        final var user = event.getUser();
+        final var notification = notificationRepository.findByTitleOrMessage("notification.welcome.title","notification.welcome.message");
+
+        notificationUserService.createNotificationUsers(List.of(user), notification);
     }
 }

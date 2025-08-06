@@ -1,5 +1,5 @@
-INSERT INTO notification_topic(name)
-VALUES ('general');
+INSERT INTO notification_topic(name, subscribe_by_default)
+VALUES ('general', true);
 
 INSERT INTO notification(title, message, type, url)
 VALUES ('notification.welcome.title', 'notification.welcome.message', 'INFO', null);

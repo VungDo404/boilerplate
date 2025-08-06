@@ -15,6 +15,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,6 +32,10 @@ public class NotificationUserService {
     @Async
     public CompletableFuture<List<NotificationUser>> createNotificationUsersAsync(List<UUID> userIds, Notification notification) {
 
+        if (notification == null) {
+            return CompletableFuture.completedFuture(Collections.emptyList());
+        }
+
         final var entities = userIds.stream()
             .map(userId -> {
                 final var nu = new NotificationUser();
@@ -41,6 +46,24 @@ public class NotificationUserService {
             .toList();
 
         return CompletableFuture.completedFuture(notificationUserRepository.saveAll(entities));
+    }
+
+    @AclAware(permissions = {HierarchicalPermission.MASK_DELETE, HierarchicalPermission.MASK_WRITE})
+    public List<NotificationUser> createNotificationUsers(List<User> users, Notification notification){
+        if (notification == null) {
+            return Collections.emptyList();
+        }
+
+        final var entities = users.stream()
+            .map(user -> {
+                final var nu = new NotificationUser();
+                nu.setUser(user);
+                nu.setNotification(notification);
+                return nu;
+            })
+            .toList();
+
+        return notificationUserRepository.saveAll(entities);
     }
 
     public List<NotificationWithReadModel> findAllNotificationModelUsers(UUID userId, List<Long> notificationIds) {

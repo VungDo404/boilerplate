@@ -92,7 +92,7 @@
 		<addUniqueConstraint tableName="acl_entry" columnNames="acl_object_identity, ace_order" constraintName="unique_acl_entry"/>
 		<addForeignKeyConstraint baseTableName="acl_entry" baseColumnNames="acl_object_identity"
 								 referencedTableName="acl_object_identity" referencedColumnNames="id"
-								 constraintName="fk_acl_entry_object"/>
+								 constraintName="fk_acl_entry_object" onDelete="CASCADE"/>
 		<addForeignKeyConstraint baseTableName="acl_entry" baseColumnNames="sid"
 								 referencedTableName="acl_sid" referencedColumnNames="id"
 								 constraintName="fk_acl_entry_acl"/>
